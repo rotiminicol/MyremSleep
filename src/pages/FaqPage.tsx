@@ -1,40 +1,34 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 
 const faqs = [
   {
-    question: "What is Remsleep?",
-    answer: "Remsleep is a premium sleep wellness brand dedicated to helping you achieve better rest through thoughtfully designed products and sleep solutions. We combine modern technology with natural elements to enhance your sleep quality."
+    question: "When will REMsleep launch?",
+    answer: "We are preparing our first drop now and plan to launch in early 2026. Waiting list members receive first access, priority updates, and launch details first."
   },
   {
-    question: "How do I place an order?",
-    answer: "You can place an order directly through our website. Simply browse our products, select your items, and proceed to checkout. We accept various payment methods including major credit cards and digital wallets."
+    question: "When will orders be delivered?",
+    answer: "Orders will begin dispatching as soon as we go live. Most UK deliveries arrive within 2–5 working days after dispatch. You will receive a shipping confirmation email with tracking once your order ships."
   },
   {
-    question: "What is your return policy?",
-    answer: "We offer a 30-day return policy for unused and unopened products. If you're not satisfied with your purchase, please contact our customer service team within 30 days of receiving your order to initiate a return."
+    question: "Do you deliver internationally?",
+    answer: "For our first drop, we are focused on UK delivery. We will share international delivery options with the waiting list as soon as they are confirmed."
   },
   {
-    question: "How long does shipping take?",
-    answer: "We process all orders within 1-2 business days. Standard shipping typically takes 3-5 business days within the US. International shipping times may vary depending on the destination."
+    question: "What products are coming?",
+    answer: "Our first drop is luxe bedding essentials in calm, grounding colours, including:\n\n• Duvet covers\n• Pillowcases\n• Bedding sets and bundles (limited quantities)"
   },
   {
-    question: "Do you ship internationally?",
-    answer: "Yes, we ship to most countries worldwide. Shipping costs and delivery times vary by location. You'll see the exact shipping costs at checkout based on your delivery address."
+    question: "Will there be early access or perks for the waiting list?",
+    answer: "Yes. Waiting list subscribers receive early access, first notice of launch perks, and a chance to receive an exclusive gift."
   },
   {
-    question: "How can I track my order?",
-    answer: "Once your order has shipped, you'll receive a confirmation email with a tracking number. You can use this number to track your package directly with the shipping carrier."
+    question: "How will I know when you launch?",
+    answer: "We will email you as soon as the store opens. To make sure you receive it, add hello@myremsleep.com to your contacts."
   },
   {
-    question: "What payment methods do you accept?",
-    answer: "We accept all major credit cards (Visa, Mastercard, American Express, Discover), PayPal, and Apple Pay for your convenience."
-  },
-  {
-    question: "How do I contact customer support?",
-    answer: "Our customer support team is available Monday through Friday, 9 AM to 5 PM EST. You can reach us at support@remsleep.com or through the contact form on our website."
+    question: "Can I unsubscribe at any time?",
+    answer: "Yes. Every email includes an unsubscribe link, and you can opt out whenever you like."
   }
 ];
 
@@ -42,99 +36,203 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-b border-gray-200 py-4">
+    <div className="border-b border-gray-300">
       <button
-        className="w-full flex justify-between items-center text-left"
+        className="w-full flex justify-between items-center text-left py-6 group"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <h3 className="text-lg font-medium text-gray-900">{question}</h3>
-        {isOpen ? (
-          <ChevronUp className="h-5 w-5 text-gray-500" />
-        ) : (
-          <ChevronDown className="h-5 w-5 text-gray-500" />
-        )}
+        <h3 className="text-sm font-medium text-gray-800 tracking-wide uppercase pr-4">{question}</h3>
+        <Plus 
+          className={`h-5 w-5 text-gray-600 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
+        />
       </button>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-          className="mt-2"
-        >
-          <p className="text-gray-600">{answer}</p>
-        </motion.div>
-      )}
+      <div 
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? 'max-h-96 pb-6' : 'max-h-0'
+        }`}
+      >
+        <p className="text-gray-600 leading-relaxed pr-8">{answer}</p>
+      </div>
     </div>
   );
 }
 
-export function FaqPage() {
+function ContactForm({ onClose }: { onClose: () => void }) {
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!subject.trim() || !message.trim()) {
+      setError('Please fill in all fields');
+      return;
+    }
+    
+    const mailtoLink = `mailto:hello@remsleep.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+    window.location.href = mailtoLink;
+    onClose();
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-montserrat">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-sm shadow-xl w-full max-w-md relative">
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          aria-label="Close"
+        >
+          <X className="h-6 w-6" />
+        </button>
+        
+        <div className="p-6">
+          <h3 className="text-2xl font-serif mb-6 text-gray-900">Contact Us</h3>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                Subject
+              </label>
+              <input
+                type="text"
+                id="subject"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                placeholder="How can we help?"
+                required
+              />
+            </div>
+            
+            <div className="mb-6">
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                Message
+              </label>
+              <textarea
+                id="message"
+                rows={4}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                placeholder="Tell us more about your inquiry..."
+                required
+              />
+            </div>
+            
+            {error && (
+              <div className="mb-4 text-red-600 text-sm">
+                {error}
+              </div>
+            )}
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-[#e8e3dc] hover:bg-[#ddd8d1] text-gray-800 px-6 py-2 rounded-sm text-sm font-medium transition-colors"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function FaqPage() {
+  const [showContactForm, setShowContactForm] = useState(false);
+  return (
+    <div className="min-h-screen bg-[#f5f1ed]">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Link to="/" className="inline-block">
-            <img 
-              src="/logo5.png" 
-              alt="Remsleep" 
-              className="h-10 w-auto brightness-0"
-            />
-          </Link>
+      <header className="border-b border-gray-200 bg-[#f5f1ed]">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-center">
+            <a href="/" className="hover:opacity-80 transition-opacity">
+              <img 
+                src="/logo5.png" 
+                alt="REMsleep Logo" 
+                className="h-12 w-auto" 
+              />
+            </a>
+          </div>
         </div>
       </header>
 
-      <motion.main 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.2 }}
-        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-      >
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
-          <p className="text-gray-600">Find answers to common questions about our products and services</p>
-        </div>
+      {/* Hero Section */}
+      <div className="max-w-4xl mx-auto px-6 pt-16 pb-12 text-center">
+        <h1 className="text-5xl md:text-6xl font-serif mb-6 text-gray-900">
+          Frequently Asked Questions
+        </h1>
+        <p className="text-gray-600 text-lg mb-2">
+          Everything you need to know about our upcoming launch and first drop.
+        </p>
+        <p className="text-gray-600 text-lg">
+          Join the waiting list for first access and priority updates.
+        </p>
+      </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
-          <div className="space-y-4">
+      {/* FAQ Section */}
+      <div className="max-w-6xl mx-auto px-6 pb-12">
+        <div className="bg-white rounded-sm shadow-sm">
+          <div className="px-8 md:px-20 py-2">
             {faqs.map((faq, index) => (
               <FaqItem key={index} question={faq.question} answer={faq.answer} />
             ))}
           </div>
+        </div>
+      </div>
 
-          <div className="mt-12 text-center">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Still have questions?</h3>
-            <p className="text-gray-600 mb-6">We're here to help! Contact our support team for more information.</p>
-            <a
-              href="mailto:support@remsleep.com"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors"
-            >
-              Contact Support
-            </a>
+      {/* Image Gallery */}
+      <div className="max-w-6xl mx-auto px-6 pb-12">
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="aspect-[4/3] bg-gray-200 rounded-sm overflow-hidden">
+            <img 
+              src="/faq1.png" 
+              alt="Sleep wellness product"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="aspect-[4/3] bg-gray-200 rounded-sm overflow-hidden">
+            <img 
+              src="/faq2.png" 
+              alt="Sleep wellness product in use"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
-      </motion.main>
+      </div>
 
-      <footer className="bg-white border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-sm text-gray-500">
-              &copy; 2026 Remsleep. All rights reserved.
-            </div>
-            <div className="mt-4 md:mt-0">
-              <Link to="/terms" className="text-sm text-gray-500 hover:text-gray-700 mr-4">
-                Terms & Policy
-              </Link>
-              <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
-                Back to Home
-              </Link>
-            </div>
-          </div>
+      {/* Contact Section */}
+      <div className="max-w-6xl mx-auto px-6 pb-20">
+        <div className="bg-white rounded-sm shadow-sm px-8 md:px-20 py-16 text-center">
+          <p className="text-sm tracking-widest text-gray-500 mb-4 uppercase">Have more questions?</p>
+          <h2 className="text-4xl md:text-5xl font-serif mb-6 text-gray-900">
+            Get in Touch
+          </h2>
+          <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+            We're here to help. Contact our friendly customer service team for personal support.
+          </p>
+          <button 
+            onClick={() => setShowContactForm(true)}
+            className="bg-[#e8e3dc] hover:bg-[#ddd8d1] text-gray-800 px-10 py-4 rounded-full text-sm tracking-widest uppercase transition-colors"
+          >
+            Contact Us
+          </button>
+          {showContactForm && <ContactForm onClose={() => setShowContactForm(false)} />}
         </div>
-      </footer>
+      </div>
     </div>
   );
 }
-
-export default FaqPage;
