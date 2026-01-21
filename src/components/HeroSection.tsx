@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Instagram } from 'lucide-react';
 import { SubscriptionForm } from './SubscriptionForm';
 import { QuestionnaireModal } from './QuestionnaireModal';
+import { Link } from 'react-router-dom';
 
 export function HeroSection() {
   const [subscribedName, setSubscribedName] = useState<string | null>(null);
@@ -134,7 +135,7 @@ export function HeroSection() {
           className="py-6 px-6 text-center"
         >
           <p className="text-hero-text-muted/60 text-xs font-medium">
-            &copy; 2026 Remsleep. <a href="/terms" className="hover:underline">Terms & Policy</a> • <a href="/faq" className="hover:underline">FAQ</a>
+            &copy; 2026 Remsleep. <Link to="/terms" className="hover:underline">Terms & Policy</Link> • <Link to="/faq" className="hover:underline">FAQ</Link>
           </p>
         </motion.footer>
       </div>
