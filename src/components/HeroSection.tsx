@@ -63,15 +63,15 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="text-center mb-8 sm:mb-10"
+                className="text-center mb-1 sm:mb-2 max-w-3xl mx-auto"
               >
-                <h2 className="text-tagline text-hero-text mb-2 tracking-tight">
-                  <span className="font-black italic">REST</span>
+                <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-hero-text mb-4 sm:mb-6 tracking-tight leading-tight">
+                  <span className="font-black">REST</span>
                   <span className="font-medium"> is not a routine.</span>
                 </h2>
-                <h2 className="text-tagline text-hero-text tracking-tight">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-hero-text tracking-tight leading-tight">
                   <span className="font-medium">It is a </span>
-                  <span className="font-black italic underline decoration-3 underline-offset-4">RITUAL</span>
+                  <span className="font-black">RITUAL</span>
                   <span className="font-medium">.</span>
                 </h2>
               </motion.div>
@@ -81,7 +81,7 @@ export function HeroSection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-hero-text-muted text-sm sm:text-base md:text-lg mb-8 sm:mb-10 font-medium tracking-wide"
+                className="text-hero-text-muted text-sm sm:text-base md:text-lg mb-6 sm:mb-8 font-medium tracking-wide"
               >
                 Early access and launch pricing.
               </motion.p>
@@ -134,7 +134,7 @@ export function HeroSection() {
           className="py-6 px-6 text-center"
         >
           <p className="text-hero-text-muted/60 text-xs font-medium">
-            © 2026 Remsleep. <a href="/terms" className="hover:underline">Terms</a> and <a href="/policy" className="hover:underline">Policy</a>
+            &copy; 2026 Remsleep. <a href="/terms" className="hover:underline">Terms & Policy</a> • <a href="/faq" className="hover:underline">FAQ</a>
           </p>
         </motion.footer>
       </div>
