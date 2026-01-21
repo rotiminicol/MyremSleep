@@ -22,7 +22,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex flex-col">
+    <section className="relative min-h-screen flex flex-col font-montserrat">
       {/* Video Background */}
       <video
         autoPlay
@@ -58,12 +58,12 @@ export function HeroSection() {
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
           {!showThankYou ? (
             <>
-              {/* Tagline - Updated with bolder Montserrat styling */}
+              {/* Tagline */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="text-center mb-8 sm:mb-10 font-montserrat"
+                className="text-center mb-8 sm:mb-10"
               >
                 <h2 className="text-tagline text-hero-text mb-2 tracking-tight">
                   <span className="font-black italic">REST</span>
@@ -81,12 +81,12 @@ export function HeroSection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-hero-text-muted text-sm sm:text-base md:text-lg mb-8 sm:mb-10 font-body tracking-wide"
+                className="text-hero-text-muted text-sm sm:text-base md:text-lg mb-8 sm:mb-10 font-medium tracking-wide"
               >
                 Early access and launch pricing.
               </motion.p>
 
-              {/* Subscription Form */}
+              {/* Subscription Form - Make sure SubscriptionForm also uses Montserrat */}
               <SubscriptionForm onSubscribe={handleSubscribe} />
 
               {/* Privacy Note */}
@@ -94,7 +94,7 @@ export function HeroSection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.6 }}
-                className="text-hero-text-muted/70 text-xs sm:text-sm mt-6 font-body"
+                className="text-hero-text-muted/70 text-xs sm:text-sm mt-6 font-medium"
               >
                 Quiet updates only. Unsubscribe anytime.
               </motion.p>
@@ -107,17 +107,17 @@ export function HeroSection() {
               transition={{ duration: 0.5 }}
               className="text-center"
             >
-              <h2 className="text-tagline text-hero-text mb-4 font-montserrat font-black">
+              <h2 className="text-tagline text-hero-text mb-4 font-black">
                 Thank you, {subscribedName}.
               </h2>
-              <p className="text-hero-text-muted text-base sm:text-lg font-body max-w-md mb-8">
+              <p className="text-hero-text-muted text-base sm:text-lg font-medium max-w-md mb-8">
                 You're on the list. We'll be in touch soon with early access to our first drop.
               </p>
               <a
                 href="https://www.instagram.com/myremsleepclub/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 btn-hero rounded-lg font-body"
+                className="inline-flex items-center gap-2 btn-hero rounded-lg font-medium"
               >
                 <Instagram className="w-5 h-5" />
                 Follow us on Instagram
@@ -133,7 +133,7 @@ export function HeroSection() {
           transition={{ delay: 1, duration: 0.6 }}
           className="py-6 px-6 text-center"
         >
-          <p className="text-hero-text-muted/60 text-xs font-body">
+          <p className="text-hero-text-muted/60 text-xs font-medium">
             © 2026 Remsleep. <a href="/terms" className="hover:underline">Terms</a> and <a href="/policy" className="hover:underline">Policy</a>
           </p>
         </motion.footer>
