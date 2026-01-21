@@ -1,0 +1,145 @@
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { SubscriptionForm } from './SubscriptionForm';
+import { QuestionnaireModal } from './QuestionnaireModal';
+
+export function HeroSection() {
+  const [subscribedEmail, setSubscribedEmail] = useState<string | null>(null);
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
+
+  const handleSubscribe = (email: string) => {
+    setSubscribedEmail(email);
+    setShowQuestionnaire(true);
+  };
+
+  const handleQuestionnaireComplete = () => {
+    setShowQuestionnaire(false);
+    setShowThankYou(true);
+  };
+
+  const handleQuestionnaireClose = () => {
+    setShowQuestionnaire(false);
+    setShowThankYou(true);
+  };
+
+  return (
+    <section className="relative min-h-screen flex flex-col">
+      {/* Video Background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="hero-video-bg"
+        poster="/videos/hero-background.mp4"
+      >
+        <source src="/videos/hero-background.mp4" type="video/mp4" />
+      </video>
+
+      {/* Overlay */}
+      <div className="hero-overlay" />
+
+      {/* Content */}
+      <div className="relative z-10 flex-1 flex flex-col">
+        {/* Logo */}
+        <motion.header 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="pt-8 sm:pt-12 px-6 text-center"
+        >
+          <h1 className="text-2xl sm:text-3xl md:text-4xl tracking-tight">
+            <span className="font-display font-bold text-hero-text">REM</span>
+            <span className="font-display font-normal text-hero-text">sleep</span>
+          </h1>
+        </motion.header>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+          {!showThankYou ? (
+            <>
+              {/* Tagline */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="text-center mb-8 sm:mb-10"
+              >
+                <h2 className="text-tagline text-hero-text mb-2">
+                  <span className="font-bold italic">REST</span>
+                  <span className="font-normal"> is not a routine.</span>
+                </h2>
+                <h2 className="text-tagline text-hero-text">
+                  <span className="font-normal">It is a </span>
+                  <span className="font-bold italic underline decoration-2 underline-offset-4">RITUAL</span>
+                  <span className="font-normal">.</span>
+                </h2>
+              </motion.div>
+
+              {/* Subtitle */}
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="text-hero-text-muted text-sm sm:text-base md:text-lg mb-8 sm:mb-10 font-body tracking-wide"
+              >
+                Early access and launch pricing.
+              </motion.p>
+
+              {/* Subscription Form */}
+              <SubscriptionForm onSubscribe={handleSubscribe} />
+
+              {/* Privacy Note */}
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="text-hero-text-muted/70 text-xs sm:text-sm mt-6 font-body"
+              >
+                Quiet updates only. Unsubscribe anytime.
+              </motion.p>
+            </>
+          ) : (
+            /* Thank You State */
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              <h2 className="text-tagline text-hero-text mb-4">
+                Thank you.
+              </h2>
+              <p className="text-hero-text-muted text-base sm:text-lg font-body max-w-md">
+                You're on the list. We'll be in touch soon with early access to our first drop.
+              </p>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <motion.footer 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.6 }}
+          className="py-6 px-6 text-center"
+        >
+          <p className="text-hero-text-muted/60 text-xs font-body">
+            © 2026 Remsleep. All rights reserved.
+          </p>
+        </motion.footer>
+      </div>
+
+      {/* Questionnaire Modal */}
+      <QuestionnaireModal
+        isOpen={showQuestionnaire}
+        email={subscribedEmail || ''}
+        onComplete={handleQuestionnaireComplete}
+        onClose={handleQuestionnaireClose}
+      />
+    </section>
+  );
+}
+
+export default HeroSection;

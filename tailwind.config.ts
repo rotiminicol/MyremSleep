@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -46,6 +50,17 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        hero: {
+          overlay: "hsl(var(--hero-overlay))",
+          text: "hsl(var(--hero-text))",
+          "text-muted": "hsl(var(--hero-text-muted))",
+        },
+        selection: {
+          border: "hsl(var(--selection-border))",
+          bg: "hsl(var(--selection-bg))",
+          "selected-border": "hsl(var(--selection-selected-border))",
+          "selected-bg": "hsl(var(--selection-selected-bg))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
