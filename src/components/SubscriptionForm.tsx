@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { subscribeToKlaviyo } from '@/services/klaviyo';
 
 interface SubscriptionFormProps {
-  onSubscribe: (email: string) => void;
+  onSubscribe: (name: string, email: string) => void;
 }
 
 export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
@@ -13,27 +13,42 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
   const [error, setError] = useState('');
 
   const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Comprehensive email validation regex
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
     return emailRegex.test(email);
+  };
+
+  const validateName = (name: string): boolean => {
+    // Name must be at least 2 characters and contain only letters, spaces, hyphens, apostrophes
+    const nameRegex = /^[a-zA-Z][a-zA-Z\s'-]{1,49}$/;
+    return nameRegex.test(name.trim());
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
+    const trimmedName = firstName.trim();
+    const trimmedEmail = email.trim().toLowerCase();
+
     // Validation
-    if (!firstName.trim()) {
-      setError('Please enter your name');
+    if (!trimmedName) {
+      setError('Please enter your full name');
       return;
     }
 
-    if (!email.trim()) {
-      setError('Please enter your email');
+    if (!validateName(trimmedName)) {
+      setError('Please enter a valid name (2-50 letters)');
       return;
     }
 
-    if (!validateEmail(email.trim())) {
-      setError('Please enter a valid email');
+    if (!trimmedEmail) {
+      setError('Please enter your email address');
+      return;
+    }
+
+    if (!validateEmail(trimmedEmail)) {
+      setError('Please enter a valid email address');
       return;
     }
 
@@ -41,12 +56,12 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
 
     try {
       const success = await subscribeToKlaviyo({
-        email: email.trim(),
-        firstName: firstName.trim(),
+        email: trimmedEmail,
+        firstName: trimmedName,
       });
 
       if (success) {
-        onSubscribe(email.trim());
+        onSubscribe(trimmedName, trimmedEmail);
       } else {
         setError('Something went wrong. Please try again.');
       }

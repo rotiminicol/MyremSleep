@@ -5,14 +5,13 @@
  */
 
 import { useState, useEffect } from 'react';
-import { X, Check } from 'lucide-react';
-import { updateProfileWithQuestionnaire, trackQuestionnaireSkipped, type QuestionnaireData } from '@/services/klaviyo';
+import { Check } from 'lucide-react';
+import { updateProfileWithQuestionnaire, type QuestionnaireData } from '@/services/klaviyo';
 
 interface QuestionnaireModalProps {
   isOpen: boolean;
   email: string;
   onComplete: () => void;
-  onClose: () => void;
 }
 
 const TOTAL_STEPS = 5;
@@ -66,7 +65,7 @@ const bedFeelingOptions = [
   { value: 'cocoon', label: 'A cocoon', description: 'Warm, cosy, tucked-in' },
 ];
 
-export function QuestionnaireModal({ isOpen, email, onComplete, onClose }: QuestionnaireModalProps) {
+export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireModalProps) {
   const [step, setStep] = useState(1);
   const [bedSize, setBedSize] = useState<string | null>(null);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -90,32 +89,6 @@ export function QuestionnaireModal({ isOpen, email, onComplete, onClose }: Quest
       setIsExiting(false);
     }
   }, [isOpen]);
-
-  // Handle escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        handleSkip();
-      }
-    };
-    
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen]);
-
-  const handleClose = (skipTracking = false) => {
-    setIsExiting(true);
-    setTimeout(() => {
-      if (!skipTracking) {
-        trackQuestionnaireSkipped(email);
-      }
-      onClose();
-    }, 300);
-  };
-
-  const handleSkip = () => {
-    handleClose(false);
-  };
 
   const handleColorToggle = (color: string) => {
     setSelectedColors(prev => {
@@ -153,6 +126,8 @@ export function QuestionnaireModal({ isOpen, email, onComplete, onClose }: Quest
   };
 
   const handleSubmit = async () => {
+    if (!canProceed()) return;
+    
     setIsSubmitting(true);
     
     const data: QuestionnaireData = {
@@ -197,10 +172,9 @@ export function QuestionnaireModal({ isOpen, email, onComplete, onClose }: Quest
 
   return (
     <div 
-      className={`fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center sm:p-4 transition-opacity duration-300 z-50 ${
+      className={`fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center sm:p-4 transition-opacity duration-300 z-50 ${
         isExiting ? 'opacity-0' : 'opacity-100'
       }`}
-      onClick={(e) => e.target === e.currentTarget && handleSkip()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="questionnaire-title"
@@ -210,14 +184,6 @@ export function QuestionnaireModal({ isOpen, email, onComplete, onClose }: Quest
           isExiting ? 'animate-modal-exit' : 'animate-modal-enter'
         } [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
       >
-        {/* Close Button */}
-        <button
-          onClick={handleSkip}
-          className="absolute top-3 sm:top-4 right-3 sm:right-4 p-2 text-muted-foreground hover:text-foreground transition-colors z-10"
-          aria-label="Close questionnaire"
-        >
-          <X className="w-5 h-5" />
-        </button>
 
         {/* Header */}
         <div className="text-center mb-5 sm:mb-6 pr-8">
@@ -377,10 +343,6 @@ export function QuestionnaireModal({ isOpen, email, onComplete, onClose }: Quest
               </button>
             )}
           </div>
-          
-          <button onClick={handleSkip} className="btn-ghost text-muted-foreground text-xs sm:text-sm py-2 font-body">
-            Skip for now
-          </button>
         </div>
 
         {/* Progress Indicator */}

@@ -1,24 +1,22 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Instagram } from 'lucide-react';
 import { SubscriptionForm } from './SubscriptionForm';
 import { QuestionnaireModal } from './QuestionnaireModal';
 
 export function HeroSection() {
+  const [subscribedName, setSubscribedName] = useState<string | null>(null);
   const [subscribedEmail, setSubscribedEmail] = useState<string | null>(null);
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
 
-  const handleSubscribe = (email: string) => {
+  const handleSubscribe = (name: string, email: string) => {
+    setSubscribedName(name);
     setSubscribedEmail(email);
     setShowQuestionnaire(true);
   };
 
   const handleQuestionnaireComplete = () => {
-    setShowQuestionnaire(false);
-    setShowThankYou(true);
-  };
-
-  const handleQuestionnaireClose = () => {
     setShowQuestionnaire(false);
     setShowThankYou(true);
   };
@@ -47,12 +45,13 @@ export function HeroSection() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="pt-8 sm:pt-12 px-6 text-center"
+          className="pt-8 sm:pt-12 px-6 flex justify-center"
         >
-          <h1 className="text-2xl sm:text-3xl md:text-4xl tracking-tight">
-            <span className="font-display font-bold text-hero-text">REM</span>
-            <span className="font-display font-normal text-hero-text">sleep</span>
-          </h1>
+          <img 
+            src="/logo5.png" 
+            alt="Remsleep" 
+            className="h-12 sm:h-16 md:h-20 w-auto"
+          />
         </motion.header>
 
         {/* Main Content */}
@@ -109,11 +108,20 @@ export function HeroSection() {
               className="text-center"
             >
               <h2 className="text-tagline text-hero-text mb-4">
-                Thank you.
+                Thank you, {subscribedName}.
               </h2>
-              <p className="text-hero-text-muted text-base sm:text-lg font-body max-w-md">
+              <p className="text-hero-text-muted text-base sm:text-lg font-body max-w-md mb-8">
                 You're on the list. We'll be in touch soon with early access to our first drop.
               </p>
+              <a
+                href="https://www.instagram.com/myremsleepclub/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 btn-hero rounded-lg font-body"
+              >
+                <Instagram className="w-5 h-5" />
+                Follow us on Instagram
+              </a>
             </motion.div>
           )}
         </div>
@@ -136,7 +144,6 @@ export function HeroSection() {
         isOpen={showQuestionnaire}
         email={subscribedEmail || ''}
         onComplete={handleQuestionnaireComplete}
-        onClose={handleQuestionnaireClose}
       />
     </section>
   );
