@@ -50,7 +50,7 @@ export function HeroSection() {
           <img 
             src="/logo5.png" 
             alt="Remsleep" 
-            className="h-12 sm:h-16 md:h-20 w-auto"
+            className="h-12 sm:h-16 md:h-20 w-auto brightness-0 invert"
           />
         </motion.header>
 
@@ -134,7 +134,7 @@ export function HeroSection() {
           className="py-6 px-6 text-center"
         >
           <p className="text-hero-text-muted/60 text-xs font-body">
-            © 2026 Remsleep. All rights reserved.
+            © 2026 Remsleep. <a href="/terms" className="hover:underline">Terms</a> and <a href="/policy" className="hover:underline">Policy</a>
           </p>
         </motion.footer>
       </div>
