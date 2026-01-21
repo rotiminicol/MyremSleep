@@ -58,21 +58,21 @@ export function HeroSection() {
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
           {!showThankYou ? (
             <>
-              {/* Tagline */}
+              {/* Tagline - Updated with bolder Montserrat styling */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="text-center mb-8 sm:mb-10"
+                className="text-center mb-8 sm:mb-10 font-montserrat"
               >
-                <h2 className="text-tagline text-hero-text mb-2">
-                  <span className="font-bold italic">REST</span>
-                  <span className="font-normal"> is not a routine.</span>
+                <h2 className="text-tagline text-hero-text mb-2 tracking-tight">
+                  <span className="font-black italic">REST</span>
+                  <span className="font-medium"> is not a routine.</span>
                 </h2>
-                <h2 className="text-tagline text-hero-text">
-                  <span className="font-normal">It is a </span>
-                  <span className="font-bold italic underline decoration-2 underline-offset-4">RITUAL</span>
-                  <span className="font-normal">.</span>
+                <h2 className="text-tagline text-hero-text tracking-tight">
+                  <span className="font-medium">It is a </span>
+                  <span className="font-black italic underline decoration-3 underline-offset-4">RITUAL</span>
+                  <span className="font-medium">.</span>
                 </h2>
               </motion.div>
 
@@ -107,7 +107,7 @@ export function HeroSection() {
               transition={{ duration: 0.5 }}
               className="text-center"
             >
-              <h2 className="text-tagline text-hero-text mb-4">
+              <h2 className="text-tagline text-hero-text mb-4 font-montserrat font-black">
                 Thank you, {subscribedName}.
               </h2>
               <p className="text-hero-text-muted text-base sm:text-lg font-body max-w-md mb-8">
