@@ -1,97 +1,255 @@
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Plus, X } from 'lucide-react';
 
-export function TermsPage() {
+const terms = [
+  {
+    title: "1. Introduction",
+    content: `Welcome to REMsleep. These Terms of Service ("Terms") govern your access to and use of our website, products, and services (collectively, "Services"). By accessing or using our Services, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our Services.`
+  },
+  {
+    title: "2. Privacy Policy",
+    content: `Your privacy is important to us. Our Privacy Policy explains how we collect, use, and protect your personal information. By using our Services, you agree to our collection and use of information as described in the Privacy Policy.`
+  },
+  {
+    title: "3. Intellectual Property",
+    content: `All content included on our site, such as text, graphics, logos, and images, is the property of REMsleep or its content suppliers and protected by international copyright laws. You may not reproduce, distribute, modify, or create derivative works of any content without our prior written consent.`
+  },
+  {
+    title: "4. Limitation of Liability",
+    content: `REMsleep shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your access to or use of, or inability to access or use, the Services. In no event shall our total liability to you for all damages exceed the amount you paid to us, if any, for accessing or using our Services.`
+  },
+  {
+    title: "5. Changes to Terms",
+    content: `We may update these Terms from time to time. We will notify you of any changes by posting the new Terms on this page and updating the "Last updated" date. Your continued use of our Services after such modifications constitutes your acceptance of the revised Terms.`
+  },
+  {
+    title: "6. Contact Us",
+    content: `If you have any questions about these Terms, please contact us at hello@myremsleep.com. We will respond to your inquiry as soon as possible.`
+  }
+];
+
+function TermItem({ title, content }: { title: string; content: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-montserrat">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Link to="/" className="inline-block">
-            <img 
-              src="/logo5.png" 
-              alt="Remsleep" 
-              className="h-10 w-auto brightness-0"
-            />
-          </Link>
-        </div>
-      </header>
-
-      <motion.main 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.2 }}
-        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+    <div className="border-b border-gray-300">
+      <button
+        className="w-full flex justify-between items-center text-left py-6 group"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Terms & Policy</h1>
-          <p className="text-gray-600">Last updated: January 21, 2026</p>
-        </div>
-
-        <div className="space-y-8">
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              Welcome to Remsleep. These Terms of Service ("Terms") govern your access to and use of our website, products, and services (collectively, "Services").
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">2. Privacy Policy</h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              Your privacy is important to us. Our Privacy Policy explains how we collect, use, and protect your personal information. By using our Services, you agree to our collection and use of information as described in the Privacy Policy.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">3. Intellectual Property</h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              All content included on our site, such as text, graphics, logos, and images, is the property of Remsleep or its content suppliers and protected by international copyright laws.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">4. Limitation of Liability</h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              Remsleep shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your access to or use of, or inability to access or use, the Services.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">5. Changes to Terms</h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We may update these Terms from time to time. We will notify you of any changes by posting the new Terms on this page and updating the "Last updated" date.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">6. Contact Us</h2>
-            <p className="text-gray-700 leading-relaxed">
-              If you have any questions about these Terms, please contact us at <a href="mailto:info@remsleep.com" className="text-blue-600 hover:underline">info@remsleep.com</a>.
-            </p>
-          </section>
-        </div>
-      </motion.main>
-
-      <footer className="bg-white border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-sm text-gray-500">
-              &copy; 2026 Remsleep. All rights reserved.
-            </div>
-            <div className="mt-4 md:mt-0">
-              <Link to="/faq" className="text-sm text-gray-500 hover:text-gray-700 mr-4">
-                FAQ
-              </Link>
-              <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
-                Back to Home
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+        <h3 className="text-sm font-medium text-gray-800 tracking-wide pr-4">{title}</h3>
+        <Plus 
+          className={`h-5 w-5 text-gray-600 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
+        />
+      </button>
+      <div 
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? 'max-h-96 pb-6' : 'max-h-0'
+        }`}
+      >
+        <p className="text-gray-600 leading-relaxed pr-8 whitespace-pre-line">{content}</p>
+      </div>
     </div>
   );
 }
 
-export default TermsPage;
+function ContactForm({ onClose }: { onClose: () => void }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Basic validation
+    if (!name.trim() || !email.trim() || !subject.trim() || !message.trim()) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    
+    // Prepare email body with name and email included
+    const emailBody = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${message}`;
+    const mailtoLink = `mailto:hello@myremsleep.com?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+    window.location.href = mailtoLink;
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-sm shadow-xl w-full max-w-md relative">
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          aria-label="Close"
+        >
+          <X className="h-6 w-6" />
+        </button>
+        
+        <div className="p-6">
+          <h3 className="text-2xl font-serif mb-6 text-gray-900">Contact Us</h3>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  placeholder="your@email.com"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="mb-4">
+              <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                Subject *
+              </label>
+              <input
+                type="text"
+                id="subject"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                placeholder="How can we help?"
+                required
+              />
+            </div>
+            
+            <div className="mb-6">
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                Message *
+              </label>
+              <textarea
+                id="message"
+                rows={4}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                placeholder="Tell us more about your inquiry..."
+                required
+              />
+            </div>
+            
+            {error && (
+              <div className="mb-4 text-red-600 text-sm">
+                {error}
+              </div>
+            )}
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-[#e8e3dc] hover:bg-[#ddd8d1] text-gray-800 px-6 py-2 rounded-sm text-sm font-medium transition-colors"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function TermsPage() {
+  const [showContactForm, setShowContactForm] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-[#f5f1ed]">
+      {/* Header */}
+      <header className="border-b border-gray-200 bg-[#f5f1ed]">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-center">
+            <a href="/" className="hover:opacity-80 transition-opacity">
+              <img 
+                src="/logo5.png" 
+                alt="REMsleep Logo" 
+                className="h-12 w-auto" 
+              />
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <div className="max-w-4xl mx-auto px-6 pt-16 pb-12 text-center">
+        <h1 className="text-5xl md:text-6xl font-serif mb-6 text-gray-900">
+          Terms & Conditions
+        </h1>
+        <p className="text-gray-600 text-lg mb-2">
+          Last updated: January 22, 2026
+        </p>
+      </div>
+
+      {/* Terms Section */}
+      <div className="max-w-6xl mx-auto px-6 pb-12">
+        <div className="bg-white rounded-sm shadow-sm">
+          <div className="px-8 md:px-20 py-2">
+            {terms.map((term, index) => (
+              <TermItem key={index} title={term.title} content={term.content} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Section */}
+      <div className="max-w-6xl mx-auto px-6 pb-20">
+        <div className="bg-white rounded-sm shadow-sm px-8 md:px-20 py-16 text-center">
+          <p className="text-sm tracking-widest text-gray-500 mb-4 uppercase">Have questions about our terms?</p>
+          <h2 className="text-4xl md:text-5xl font-serif mb-6 text-gray-900">
+            Get in Touch
+          </h2>
+          <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+            We're here to help. Contact our friendly customer service team for personal support.
+          </p>
+          <button 
+            onClick={() => setShowContactForm(true)}
+            className="bg-[#e8e3dc] hover:bg-[#ddd8d1] text-gray-800 px-10 py-4 rounded-full text-sm tracking-widest uppercase transition-colors"
+          >
+            Contact Us
+          </button>
+          {showContactForm && <ContactForm onClose={() => setShowContactForm(false)} />}
+        </div>
+      </div>
+    </div>
+  );
+}

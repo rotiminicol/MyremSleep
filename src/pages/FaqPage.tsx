@@ -58,6 +58,8 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
 }
 
 function ContactForm({ onClose }: { onClose: () => void }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,12 +68,22 @@ function ContactForm({ onClose }: { onClose: () => void }) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!subject.trim() || !message.trim()) {
+    // Basic validation
+    if (!name.trim() || !email.trim() || !subject.trim() || !message.trim()) {
       setError('Please fill in all fields');
       return;
     }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
     
-    const mailtoLink = `mailto:hello@remsleep.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+    // Prepare email body with name and email included
+    const emailBody = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${message}`;
+    const mailtoLink = `mailto:hello@myremsleep.com?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
     window.location.href = mailtoLink;
     onClose();
   };
@@ -91,9 +103,40 @@ function ContactForm({ onClose }: { onClose: () => void }) {
           <h3 className="text-2xl font-serif mb-6 text-gray-900">Contact Us</h3>
           
           <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  placeholder="your@email.com"
+                  required
+                />
+              </div>
+            </div>
+            
             <div className="mb-4">
               <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                Subject
+                Subject *
               </label>
               <input
                 type="text"
@@ -108,7 +151,7 @@ function ContactForm({ onClose }: { onClose: () => void }) {
             
             <div className="mb-6">
               <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                Message
+                Message *
               </label>
               <textarea
                 id="message"
@@ -194,27 +237,7 @@ export default function FaqPage() {
         </div>
       </div>
 
-      {/* Image Gallery */}
-      <div className="max-w-6xl mx-auto px-6 pb-12">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="aspect-[4/3] bg-gray-200 rounded-sm overflow-hidden">
-            <img 
-              src="/faq1.png" 
-              alt="Sleep wellness product"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="aspect-[4/3] bg-gray-200 rounded-sm overflow-hidden">
-            <img 
-              src="/faq2.png" 
-              alt="Sleep wellness product in use"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Contact Section */}
+{/* Contact Section */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
         <div className="bg-white rounded-sm shadow-sm px-8 md:px-20 py-16 text-center">
           <p className="text-sm tracking-widest text-gray-500 mb-4 uppercase">Have more questions?</p>
