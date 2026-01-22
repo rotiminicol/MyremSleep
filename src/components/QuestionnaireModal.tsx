@@ -7,6 +7,7 @@
 import { useState, useEffect } from 'react';
 import { Check } from 'lucide-react';
 import { updateProfileWithQuestionnaire, type QuestionnaireData } from '@/services/klaviyo';
+import { trackQuestionnaireComplete } from '@/components/FacebookPixel';
 
 interface QuestionnaireModalProps {
   isOpen: boolean;
@@ -141,6 +142,14 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
 
     try {
       await updateProfileWithQuestionnaire(email, data);
+      // Track questionnaire completion for Facebook Pixel
+      trackQuestionnaireComplete({
+        bedSize: data.bedSize,
+        colors: data.colors,
+        feel: data.feel,
+        priority: data.priority,
+        bedFeeling: data.bedFeeling,
+      });
       setIsExiting(true);
       setTimeout(() => {
         onComplete();
