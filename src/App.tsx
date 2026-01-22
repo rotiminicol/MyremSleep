@@ -7,12 +7,14 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import TermsPage from "./pages/TermsPage";
 import FaqPage from "./pages/FaqPage";
+import { FacebookPixel } from "./components/FacebookPixel";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <FacebookPixel />
       <Toaster />
       <Sonner />
       <BrowserRouter>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { subscribeToKlaviyo } from '@/services/klaviyo';
-
+import { trackSubscription } from '@/components/FacebookPixel';
 interface SubscriptionFormProps {
   onSubscribe: (name: string, email: string) => void;
 }
@@ -154,6 +154,8 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
       });
 
       if (success) {
+        // Track subscription event for Facebook Pixel
+        trackSubscription(trimmedEmail);
         onSubscribe(trimmedName, trimmedEmail);
       } else {
         setError('Something went wrong. Please try again.');
