@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Resend } from 'resend';
 
 interface ContactFormProps {
   onClose: () => void;
@@ -35,17 +35,23 @@ export function ContactForm({ onClose }: ContactFormProps) {
     setIsSubmitting(true);
 
     try {
-      const { error: fnError } = await supabase.functions.invoke('send-contact-email', {
-        body: {
-          name: name.trim(),
-          email: email.trim(),
-          subject: subject.trim(),
-          message: message.trim(),
-        },
+      const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
+      
+      const { data, error } = await resend.emails.send({
+        from: 'onboarding@resend.dev', // You should replace this with your verified domain later
+        to: 'hello@myremsleep.com',
+        subject: `Contact Form: ${subject.trim()}`,
+        html: `
+          <h2>New Contact Form Submission</h2>
+          <p><strong>From:</strong> ${name.trim()} &lt;${email.trim()}&gt;</p>
+          <p><strong>Subject:</strong> ${subject.trim()}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message.trim().replace(/\n/g, '<br>')}</p>
+        `,
       });
 
-      if (fnError) {
-        throw fnError;
+      if (error) {
+        throw error;
       }
 
       toast.success('Message sent successfully!', {

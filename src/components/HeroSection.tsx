@@ -66,11 +66,11 @@ export function HeroSection() {
                 transition={{ delay: 0.2, duration: 0.6 }}
                 className="text-center mb-1 sm:mb-2 max-w-3xl mx-auto"
               >
-                <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-gray-900 mb-4 sm:mb-6 tracking-tight leading-tight">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-black mb-4 sm:mb-6 tracking-tight leading-tight">
                   <span className="font-black">REST</span>
                   <span className="font-medium"> is not a routine.</span>
                 </h2>
-                <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-gray-900 tracking-tight leading-tight">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-black tracking-tight leading-tight">
                   <span className="font-medium">It is a </span>
                   <span className="font-black">RITUAL</span>
                   <span className="font-medium">.</span>
@@ -82,7 +82,7 @@ export function HeroSection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-gray-600 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 font-medium tracking-wide"
+                className="text-black text-sm sm:text-base md:text-lg mb-6 sm:mb-8 font-medium tracking-wide"
               >
                 Early access and launch pricing.
               </motion.p>
@@ -95,9 +95,9 @@ export function HeroSection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.6 }}
-                className="text-gray-500 text-xs sm:text-sm mt-6 font-medium"
+                className="text-black text-xs sm:text-sm mt-6 font-medium"
               >
-                Quiet updates only. <Link to="/unsubscribe" className="underline hover:text-gray-700">Unsubscribe</Link> anytime.
+                Quiet updates only. <Link to="/unsubscribe" className="underline hover:text-gray-700 text-black">Unsubscribe</Link> anytime.
               </motion.p>
             </>
           ) : (
@@ -134,8 +134,8 @@ export function HeroSection() {
           transition={{ delay: 1, duration: 0.6 }}
           className="py-6 px-6 text-center"
         >
-          <p className="text-gray-500 text-xs font-medium">
-            &copy; 2026 Remsleep. <Link to="/terms" className="hover:underline">Terms & Policy</Link> • <Link to="/faq" className="hover:underline">FAQ</Link>
+          <p className="text-black text-xs font-medium">
+            &copy; 2026 Remsleep. <Link to="/terms" className="hover:underline text-black">Terms & Policy</Link> • <Link to="/faq" className="hover:underline text-black">FAQ</Link>
           </p>
         </motion.footer>
       </div>
