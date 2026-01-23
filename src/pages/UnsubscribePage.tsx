@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
@@ -26,12 +26,10 @@ export default function UnsubscribePage() {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.functions.invoke('klaviyo-unsubscribe', {
-        body: { email: trimmedEmail },
-      });
+      const success = await import('@/services/klaviyo').then(m => m.trackUnsubscribe(trimmedEmail));
 
-      if (error) {
-        throw error;
+      if (!success) {
+        throw new Error('Failed to track unsubscribe request');
       }
 
       setIsUnsubscribed(true);
@@ -51,10 +49,10 @@ export default function UnsubscribePage() {
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-center">
             <Link to="/" className="hover:opacity-80 transition-opacity">
-              <img 
-                src="/logo5.png" 
-                alt="REMsleep Logo" 
-                className="h-12 w-auto" 
+              <img
+                src="/logo5.png"
+                alt="REMsleep Logo"
+                className="h-12 w-auto"
               />
             </Link>
           </div>

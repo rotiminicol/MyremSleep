@@ -1,4 +1,4 @@
-// Klaviyo Service - Direct API integration (no edge functions)
+// Klaviyo Service - Direct API integration
 // Uses Klaviyo's client-side subscribe API with public/company key
 
 export interface SubscriberData {
@@ -20,13 +20,19 @@ const KLAVIYO_LIST_ID = import.meta.env.VITE_KLAVIYO_LIST_ID;
 
 export async function subscribeToKlaviyo(data: SubscriberData): Promise<boolean> {
   try {
-    console.log('[Klaviyo] Subscribing:', data);
-    
+    console.log('[Klaviyo] Subscribing via Client API:', data);
+
+    if (!KLAVIYO_PUBLIC_KEY) {
+      console.error('[Klaviyo] Public Key (Company ID) is missing!');
+      return false;
+    }
+    console.log('[Klaviyo] Using Public Key:', KLAVIYO_PUBLIC_KEY.substring(0, 3) + '...');
+
     // Store locally first
     storeLocally(data);
 
-    // Use Klaviyo's client-side subscribe API with company_id header
-    const response = await fetch('https://a.klaviyo.com/client/subscriptions/', {
+    // Use Klaviyo's client-side subscribe API with company_id query param
+    const response = await fetch(`https://a.klaviyo.com/client/subscriptions/?company_id=${KLAVIYO_PUBLIC_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -60,12 +66,9 @@ export async function subscribeToKlaviyo(data: SubscriberData): Promise<boolean>
             },
           },
         },
-        // Company ID is required for client API
-        company_id: KLAVIYO_PUBLIC_KEY,
       }),
     });
 
-    // Klaviyo client API returns 202 for success
     if (response.status === 202 || response.ok) {
       console.log('[Klaviyo] Subscription successful');
       return true;
@@ -81,12 +84,12 @@ export async function subscribeToKlaviyo(data: SubscriberData): Promise<boolean>
 }
 
 export async function updateProfileWithQuestionnaire(
-  email: string, 
+  email: string,
   questionnaire: QuestionnaireData
 ): Promise<boolean> {
   try {
-    console.log('[Klaviyo] Updating profile with questionnaire:', { email, questionnaire });
-    
+    console.log('[Klaviyo] Updating profile via Client API:', { email, questionnaire });
+
     // Get the first name from local storage
     const existing = JSON.parse(localStorage.getItem('remsleep_subscribers') || '[]');
     const subscriber = existing.find((sub: SubscriberData) => sub.email === email);
@@ -96,7 +99,7 @@ export async function updateProfileWithQuestionnaire(
     const properties: Record<string, unknown> = {
       source: 'remsleep_website',
     };
-    
+
     if (questionnaire.bedSize) properties.bed_size = questionnaire.bedSize;
     if (questionnaire.colors && questionnaire.colors.length > 0) {
       properties.preferred_colors = questionnaire.colors.join(", ");
@@ -109,7 +112,7 @@ export async function updateProfileWithQuestionnaire(
     properties.questionnaire_completed_at = new Date().toISOString();
 
     // Use Klaviyo's client-side profiles API
-    const response = await fetch('https://a.klaviyo.com/client/profiles/', {
+    const response = await fetch(`https://a.klaviyo.com/client/profiles/?company_id=${KLAVIYO_PUBLIC_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -124,7 +127,6 @@ export async function updateProfileWithQuestionnaire(
             properties: properties,
           },
         },
-        company_id: KLAVIYO_PUBLIC_KEY,
       }),
     });
 
@@ -147,7 +149,7 @@ export async function updateProfileWithQuestionnaire(
 
 export function trackQuestionnaireSkipped(email: string): void {
   console.log('[Klaviyo] Questionnaire skipped:', email);
-  
+
   const existing = JSON.parse(localStorage.getItem('remsleep_subscribers') || '[]');
   const updated = existing.map((sub: SubscriberData & { questionnaireSkipped?: boolean }) => {
     if (sub.email === email) {
@@ -181,4 +183,69 @@ function updateLocalQuestionnaire(email: string, questionnaire: QuestionnaireDat
 
 export function getStoredSubscribers(): Array<SubscriberData & { questionnaire?: QuestionnaireData }> {
   return JSON.parse(localStorage.getItem('remsleep_subscribers') || '[]');
+}
+
+export async function trackContactForm(data: { name: string; email: string; subject: string; message: string }): Promise<boolean> {
+  try {
+    console.log('[Klaviyo] Tracking contact form submission:', data);
+
+    if (!KLAVIYO_PUBLIC_KEY) {
+      console.error('[Klaviyo] Public Key (Company ID) is missing!');
+      return false;
+    }
+
+    // Identify/Create profile + Track Event in one go
+    const response = await fetch(`https://a.klaviyo.com/client/events/?company_id=${KLAVIYO_PUBLIC_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'revision': '2024-02-15',
+      },
+      body: JSON.stringify({
+        data: {
+          type: 'event',
+          attributes: {
+            properties: {
+              Subject: data.subject,
+              Message: data.message,
+              Name: data.name,
+              Source: 'Contact Form'
+            },
+            metric: {
+              data: {
+                type: 'metric',
+                attributes: {
+                  name: 'Contact Form Submitted'
+                }
+              }
+            },
+            profile: {
+              data: {
+                type: 'profile',
+                attributes: {
+                  email: data.email,
+                  first_name: data.name,
+                  properties: {
+                    source: 'remsleep_website',
+                  }
+                }
+              }
+            }
+          }
+        }
+      }),
+    });
+
+    if (response.status === 202 || response.ok) {
+      console.log('[Klaviyo] Contact form tracked successfully');
+      return true;
+    }
+
+    const errorText = await response.text();
+    console.error('[Klaviyo] Track contact form failed:', response.status, errorText);
+    return false;
+  } catch (error) {
+    console.error('[Klaviyo] Track contact form error:', error);
+    return false;
+  }
 }

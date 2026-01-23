@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
-import { Resend } from 'resend';
 
 interface ContactFormProps {
   onClose: () => void;
@@ -18,7 +17,7 @@ export function ContactForm({ onClose }: ContactFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     // Basic validation
     if (!name.trim() || !email.trim() || !subject.trim() || !message.trim()) {
       setError('Please fill in all fields');
@@ -35,23 +34,16 @@ export function ContactForm({ onClose }: ContactFormProps) {
     setIsSubmitting(true);
 
     try {
-      const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
-      
-      const { data, error } = await resend.emails.send({
-        from: 'onboarding@resend.dev', // You should replace this with your verified domain later
-        to: 'hello@myremsleep.com',
-        subject: `Contact Form: ${subject.trim()}`,
-        html: `
-          <h2>New Contact Form Submission</h2>
-          <p><strong>From:</strong> ${name.trim()} &lt;${email.trim()}&gt;</p>
-          <p><strong>Subject:</strong> ${subject.trim()}</p>
-          <p><strong>Message:</strong></p>
-          <p>${message.trim().replace(/\n/g, '<br>')}</p>
-        `,
-      });
+      // Send event to Klaviyo
+      const success = await import('@/services/klaviyo').then(m => m.trackContactForm({
+        name,
+        email,
+        subject,
+        message
+      }));
 
-      if (error) {
-        throw error;
+      if (!success) {
+        throw new Error('Failed to track contact form');
       }
 
       toast.success('Message sent successfully!', {
@@ -72,17 +64,17 @@ export function ContactForm({ onClose }: ContactFormProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-sm shadow-xl w-full max-w-md relative">
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
           aria-label="Close"
         >
           <X className="h-6 w-6" />
         </button>
-        
+
         <div className="p-6">
           <h3 className="text-2xl font-serif mb-6 text-gray-900">Contact Us</h3>
-          
+
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
@@ -114,7 +106,7 @@ export function ContactForm({ onClose }: ContactFormProps) {
                 />
               </div>
             </div>
-            
+
             <div className="mb-4">
               <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
                 Subject *
@@ -129,7 +121,7 @@ export function ContactForm({ onClose }: ContactFormProps) {
                 required
               />
             </div>
-            
+
             <div className="mb-6">
               <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
                 Message *
@@ -144,13 +136,13 @@ export function ContactForm({ onClose }: ContactFormProps) {
                 required
               />
             </div>
-            
+
             {error && (
               <div className="mb-4 text-red-600 text-sm">
                 {error}
               </div>
             )}
-            
+
             <div className="flex justify-end space-x-3">
               <button
                 type="button"
