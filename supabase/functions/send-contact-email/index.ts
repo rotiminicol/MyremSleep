@@ -40,7 +40,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "REMsleep Contact <onboarding@resend.dev>",
+        from: "REMsleep Contact <hello@myremsleep.com>",
         to: ["hello@myremsleep.com"],
         reply_to: email,
         subject: `[Contact Form] ${subject}`,
@@ -74,7 +74,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "REMsleep <onboarding@resend.dev>",
+        from: "REMsleep <hello@myremsleep.com>",
         to: [email],
         subject: "We received your message - REMsleep",
         html: `

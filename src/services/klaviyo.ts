@@ -21,6 +21,9 @@ export async function subscribeToKlaviyo(data: SubscriberData): Promise<boolean>
   try {
     console.log('[Klaviyo] Subscribing:', data);
     
+    // Always store locally first so we have firstName for questionnaire updates
+    storeLocally(data);
+    
     const { data: response, error } = await supabase.functions.invoke('klaviyo-subscribe', {
       body: {
         email: data.email,
@@ -30,8 +33,6 @@ export async function subscribeToKlaviyo(data: SubscriberData): Promise<boolean>
 
     if (error) {
       console.error('[Klaviyo] Subscription error:', error);
-      // Store locally as fallback
-      storeLocally(data);
       return false;
     }
 
@@ -39,7 +40,6 @@ export async function subscribeToKlaviyo(data: SubscriberData): Promise<boolean>
     return true;
   } catch (error) {
     console.error('[Klaviyo] Subscription error:', error);
-    storeLocally(data);
     return false;
   }
 }
@@ -98,8 +98,12 @@ export function trackQuestionnaireSkipped(email: string): void {
 // Helper functions for local storage fallback
 function storeLocally(data: SubscriberData): void {
   const existing = JSON.parse(localStorage.getItem('remsleep_subscribers') || '[]');
-  existing.push({ ...data, subscribedAt: new Date().toISOString() });
-  localStorage.setItem('remsleep_subscribers', JSON.stringify(existing));
+  // Avoid duplicates
+  const alreadyExists = existing.some((sub: SubscriberData) => sub.email === data.email);
+  if (!alreadyExists) {
+    existing.push({ ...data, subscribedAt: new Date().toISOString() });
+    localStorage.setItem('remsleep_subscribers', JSON.stringify(existing));
+  }
 }
 
 function updateLocalQuestionnaire(email: string, questionnaire: QuestionnaireData): void {
