@@ -48,13 +48,13 @@ export function HeroSection() {
           transition={{ duration: 0.6 }}
           className="pt-8 sm:pt-12 px-6 flex justify-center"
         >
-          <Link to="/">
+          <a href="/">
             <img
               src="/logo5.png"
               alt="Remsleep"
               className="h-12 sm:h-16 md:h-20 w-auto hover:opacity-80 transition-opacity"
             />
-          </Link>
+          </a>
         </motion.header>
 
         {/* Main Content */}
