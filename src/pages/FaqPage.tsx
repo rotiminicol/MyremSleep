@@ -43,16 +43,15 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
         onClick={() => setIsOpen(!isOpen)}
       >
         <h3 className="text-sm font-medium text-gray-800 tracking-wide uppercase pr-4">{question}</h3>
-        <Plus 
+        <Plus
           className={`h-5 w-5 text-gray-600 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
         />
       </button>
-      <div 
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-96 pb-6' : 'max-h-0'
-        }`}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 pb-6' : 'max-h-0'
+          }`}
       >
-        <p className="text-gray-600 leading-relaxed pr-8">{answer}</p>
+        <p className="text-gray-600 leading-relaxed pr-8 whitespace-pre-line">{answer}</p>
       </div>
     </div>
   );
@@ -69,10 +68,10 @@ export default function FaqPage() {
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-center">
             <a href="/" className="hover:opacity-80 transition-opacity">
-              <img 
-                src="/logo5.png" 
-                alt="REMsleep Logo" 
-                className="h-12 w-auto" 
+              <img
+                src="/logo5.png"
+                alt="REMsleep Logo"
+                className="h-12 w-auto"
               />
             </a>
           </div>
@@ -103,7 +102,7 @@ export default function FaqPage() {
         </div>
       </div>
 
-{/* Contact Section */}
+      {/* Contact Section */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
         <div className="bg-white rounded-sm shadow-sm px-8 md:px-20 py-16 text-center">
           <p className="text-sm tracking-widest text-gray-500 mb-4 uppercase">Have more questions?</p>
@@ -113,7 +112,7 @@ export default function FaqPage() {
           <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
             We're here to help. Contact our friendly customer service team for personal support.
           </p>
-          <button 
+          <button
             onClick={() => setShowContactForm(true)}
             className="bg-[#e8e3dc] hover:bg-[#ddd8d1] text-gray-800 px-10 py-4 rounded-full text-sm tracking-widest uppercase transition-colors"
           >

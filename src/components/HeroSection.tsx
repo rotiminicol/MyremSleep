@@ -42,17 +42,19 @@ export function HeroSection() {
       {/* Content */}
       <div className="relative z-10 flex-1 flex flex-col">
         {/* Logo */}
-        <motion.header 
+        <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="pt-8 sm:pt-12 px-6 flex justify-center"
         >
-          <img 
-            src="/logo5.png" 
-            alt="Remsleep" 
-            className="h-12 sm:h-16 md:h-20 w-auto"
-          />
+          <Link to="/">
+            <img
+              src="/logo5.png"
+              alt="Remsleep"
+              className="h-12 sm:h-16 md:h-20 w-auto hover:opacity-80 transition-opacity"
+            />
+          </Link>
         </motion.header>
 
         {/* Main Content */}
@@ -60,7 +62,7 @@ export function HeroSection() {
           {!showThankYou ? (
             <>
               {/* Tagline */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
@@ -78,7 +80,7 @@ export function HeroSection() {
               </motion.div>
 
               {/* Subtitle */}
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
@@ -91,7 +93,7 @@ export function HeroSection() {
               <SubscriptionForm onSubscribe={handleSubscribe} />
 
               {/* Privacy Note */}
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.6 }}
@@ -102,7 +104,7 @@ export function HeroSection() {
             </>
           ) : (
             /* Thank You State */
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
@@ -128,14 +130,14 @@ export function HeroSection() {
         </div>
 
         {/* Footer */}
-        <motion.footer 
+        <motion.footer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
           className="py-6 px-6 text-center"
         >
           <p className="text-black text-xs font-medium">
-            &copy; 2026 Remsleep. <Link to="/terms" className="hover:underline text-black">Terms & Policy</Link> • <Link to="/faq" className="hover:underline text-black">FAQ</Link>
+            &copy; 2026 Remsleep. <Link to="/terms" className="hover:underline text-black">Terms</Link> • <Link to="/privacy" className="hover:underline text-black">Privacy Policy</Link> • <Link to="/faq" className="hover:underline text-black">FAQ</Link>
           </p>
         </motion.footer>
       </div>

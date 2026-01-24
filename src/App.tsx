@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import TermsPage from "./pages/TermsPage";
 import FaqPage from "./pages/FaqPage";
 import UnsubscribePage from "./pages/UnsubscribePage";
+import PrivacyPage from "./pages/PrivacyPage";
 import { FacebookPixel } from "./components/FacebookPixel";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/unsubscribe" element={<UnsubscribePage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
