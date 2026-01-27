@@ -13,10 +13,13 @@ export default async function handler(request: Request) {
     }
 
     try {
-        const apiKey = process.env.VITE_RESEND_API_KEY;
+        const apiKey = process.env.VITE_RESEND_API_KEY || process.env.RESEND_API_KEY;
         if (!apiKey) {
-            console.error('Missing VITE_RESEND_API_KEY environment variable');
-            return new Response(JSON.stringify({ error: 'Internal server configuration error' }), {
+            console.error('Missing Resend API Key. Ensure either VITE_RESEND_API_KEY or RESEND_API_KEY is set in your environment variables.');
+            return new Response(JSON.stringify({
+                error: 'Internal server configuration error',
+                details: 'API key is missing in production environment variables.'
+            }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' },
             });
