@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type ViteDevServer } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
@@ -20,22 +20,44 @@ export default defineConfig(({ mode }) => {
       mode === "development" && componentTagger(),
       {
         name: 'api-server',
-        configureServer(server) {
+        configureServer(server: ViteDevServer) {
           server.middlewares.use('/api/send-email', async (req, res, next) => {
             if (req.method === 'POST') {
               let body = '';
-              req.on('data', chunk => {
+              req.on('data', (chunk: Buffer | string) => {
                 body += chunk.toString();
               });
               req.on('end', async () => {
                 try {
-                  const { name, email, subject, message } = JSON.parse(body);
+                  console.log(`[API] Received ${req.method} request to /api/send-email`);
+
+                  if (!body) {
+                    console.error('[API] Empty request body');
+                    res.statusCode = 400;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: 'Empty request body' }));
+                    return;
+                  }
+
+                  const payload = JSON.parse(body);
+                  const { name, email, subject, message } = payload;
+
+                  console.log(`[API] Payload:`, { name, email, subject, message: message?.substring(0, 20) + '...' });
+
+                  if (!env.VITE_RESEND_API_KEY) {
+                    console.error('[API] Missing VITE_RESEND_API_KEY');
+                    res.statusCode = 500;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: 'Server configuration error: Missing API Key' }));
+                    return;
+                  }
+
                   const resend = new Resend(env.VITE_RESEND_API_KEY);
 
                   const { data, error } = await resend.emails.send({
                     from: 'REMsleep Contact <noreply@myremsleep.com>',
                     to: ['hello@myremsleep.com'],
-                    reply_to: email, // Direct reply to user
+                    replyTo: email, // Direct reply to user
                     subject: `[Contact Form] ${subject}`,
                     html: `
                       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -59,20 +81,21 @@ export default defineConfig(({ mode }) => {
                   });
 
                   if (error) {
-                    console.error('Resend Error:', error);
+                    console.error('[API] Resend Error:', error);
                     res.statusCode = 500;
                     res.setHeader('Content-Type', 'application/json');
                     res.end(JSON.stringify({ error: error.message }));
                   } else {
+                    console.log('[API] Success:', data);
                     res.statusCode = 200;
                     res.setHeader('Content-Type', 'application/json');
                     res.end(JSON.stringify({ success: true, data }));
                   }
                 } catch (err: any) {
-                  console.error('Server Error:', err);
+                  console.error('[API] Server Error:', err);
                   res.statusCode = 500;
                   res.setHeader('Content-Type', 'application/json');
-                  res.end(JSON.stringify({ error: err.message }));
+                  res.end(JSON.stringify({ error: `A server error occurred: ${err.message}` }));
                 }
               });
             } else {

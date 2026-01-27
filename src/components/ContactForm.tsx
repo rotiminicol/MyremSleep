@@ -56,14 +56,21 @@ export function ContactForm({ onClose }: ContactFormProps) {
         }),
       });
 
-      const data = await response.json();
+      let data;
+      const responseText = await response.text();
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch (e) {
+        console.error('Failed to parse response as JSON:', responseText);
+        throw new Error(`Server returned non-JSON response: ${responseText.substring(0, 100)}`);
+      }
 
       if (!response.ok) {
         // Fallback for local development without API setup
         if (response.status === 404) {
           throw new Error("API endpoint not found. If running locally, please use 'vercel dev'.");
         }
-        throw new Error(data.error || 'Failed to send message');
+        throw new Error(data.error || `Server error (${response.status})`);
       }
 
       // Track in Klaviyo for marketing flow
