@@ -4,8 +4,6 @@ export const config = {
     runtime: 'edge',
 };
 
-const resend = new Resend(process.env.VITE_RESEND_API_KEY);
-
 export default async function handler(request: Request) {
     if (request.method !== 'POST') {
         return new Response(JSON.stringify({ error: 'Method not allowed' }), {
@@ -15,7 +13,18 @@ export default async function handler(request: Request) {
     }
 
     try {
-        const { name, email, subject, message } = await request.json();
+        const apiKey = process.env.VITE_RESEND_API_KEY;
+        if (!apiKey) {
+            console.error('Missing VITE_RESEND_API_KEY environment variable');
+            return new Response(JSON.stringify({ error: 'Internal server configuration error' }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
+        const resend = new Resend(apiKey);
+        const body = await request.json();
+        const { name, email, subject, message } = body;
 
         if (!name || !email || !subject || !message) {
             return new Response(JSON.stringify({ error: 'Missing required fields' }), {
@@ -27,7 +36,7 @@ export default async function handler(request: Request) {
         const { data, error } = await resend.emails.send({
             from: 'REMsleep Contact <noreply@myremsleep.com>',
             to: ['hello@myremsleep.com'],
-            reply_to: email,
+            replyTo: email,
             subject: `[Contact Form] ${subject}`,
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -61,8 +70,9 @@ export default async function handler(request: Request) {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });
-    } catch (error) {
-        return new Response(JSON.stringify({ error: 'Internal server error' }), {
+    } catch (err: any) {
+        console.error('Server error:', err);
+        return new Response(JSON.stringify({ error: `Internal server error: ${err.message}` }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
         });
