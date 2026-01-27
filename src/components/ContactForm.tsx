@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ContactFormProps {
   onClose: () => void;
@@ -31,20 +32,35 @@ export function ContactForm({ onClose }: ContactFormProps) {
       return;
     }
 
+    // Length validation
+    if (name.length > 100 || email.length > 255 || subject.length > 200 || message.length > 5000) {
+      setError('One or more fields exceed the maximum length');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Send event to Klaviyo
-      const success = await import('@/services/klaviyo').then(m => m.trackContactForm({
+      // Send email via edge function
+      const { data, error: fnError } = await supabase.functions.invoke('send-contact-email', {
+        body: { name: name.trim(), email: email.trim(), subject: subject.trim(), message: message.trim() }
+      });
+
+      if (fnError) {
+        throw new Error(fnError.message || 'Failed to send message');
+      }
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to send message');
+      }
+
+      // Also track in Klaviyo for marketing
+      import('@/services/klaviyo').then(m => m.trackContactForm({
         name,
         email,
         subject,
         message
-      }));
-
-      if (!success) {
-        throw new Error('Failed to track contact form');
-      }
+      })).catch(() => {});
 
       toast.success('Message sent successfully!', {
         description: 'We\'ll get back to you soon.',
