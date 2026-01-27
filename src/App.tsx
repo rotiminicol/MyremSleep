@@ -10,6 +10,7 @@ import FaqPage from "./pages/FaqPage";
 import UnsubscribePage from "./pages/UnsubscribePage";
 import PrivacyPage from "./pages/PrivacyPage";
 import { FacebookPixel } from "./components/FacebookPixel";
+import { GoogleAnalytics } from "./components/GoogleAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <GoogleAnalytics />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/terms" element={<TermsPage />} />
