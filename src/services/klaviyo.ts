@@ -249,3 +249,62 @@ export async function trackContactForm(data: { name: string; email: string; subj
     return false;
   }
 }
+
+export async function trackUnsubscribe(email: string): Promise<boolean> {
+  try {
+    console.log('[Klaviyo] Tracking unsubscribe request:', email);
+
+    if (!KLAVIYO_PUBLIC_KEY) {
+      console.error('[Klaviyo] Public Key (Company ID) is missing!');
+      return false;
+    }
+
+    // Track unsubscribe event via client API
+    const response = await fetch(`https://a.klaviyo.com/client/events/?company_id=${KLAVIYO_PUBLIC_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'revision': '2024-02-15',
+      },
+      body: JSON.stringify({
+        data: {
+          type: 'event',
+          attributes: {
+            properties: {
+              Source: 'Unsubscribe Page',
+              RequestedAt: new Date().toISOString()
+            },
+            metric: {
+              data: {
+                type: 'metric',
+                attributes: {
+                  name: 'Unsubscribe Requested'
+                }
+              }
+            },
+            profile: {
+              data: {
+                type: 'profile',
+                attributes: {
+                  email: email
+                }
+              }
+            }
+          }
+        }
+      }),
+    });
+
+    if (response.status === 202 || response.ok) {
+      console.log('[Klaviyo] Unsubscribe tracked successfully');
+      return true;
+    }
+
+    const errorText = await response.text();
+    console.error('[Klaviyo] Track unsubscribe failed:', response.status, errorText);
+    return true; // Still return true so user sees success message
+  } catch (error) {
+    console.error('[Klaviyo] Track unsubscribe error:', error);
+    return true; // Still return true so user sees success message
+  }
+}
