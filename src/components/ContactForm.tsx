@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
+import { trackContactForm } from '@/services/klaviyo';
 
 interface ContactFormProps {
   onClose: () => void;
@@ -65,13 +66,15 @@ export function ContactForm({ onClose }: ContactFormProps) {
         throw new Error(data.error || 'Failed to send message');
       }
 
-      // Also track in Klaviyo for marketing
-      import('@/services/klaviyo').then(m => m.trackContactForm({
+      // Track in Klaviyo for marketing flow
+      // Await this to ensure it fires before closing
+      console.log('Tracking contact form in Klaviyo...');
+      await trackContactForm({
         name,
         email,
         subject,
         message
-      })).catch(() => { });
+      });
 
       toast.success('Message sent successfully!', {
         description: 'We\'ll get back to you soon.',
