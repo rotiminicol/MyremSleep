@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 
 interface ContactFormProps {
   onClose: () => void;
@@ -41,17 +40,29 @@ export function ContactForm({ onClose }: ContactFormProps) {
     setIsSubmitting(true);
 
     try {
-      // Send email via edge function
-      const { data, error: fnError } = await supabase.functions.invoke('send-contact-email', {
-        body: { name: name.trim(), email: email.trim(), subject: subject.trim(), message: message.trim() }
+      // Send email via Vercel Function (api/send-email)
+      // Note: This works when deployed to Vercel. Locally, ensure you run 'vercel dev'.
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          subject: subject.trim(),
+          message: message.trim(),
+        }),
       });
 
-      if (fnError) {
-        throw new Error(fnError.message || 'Failed to send message');
-      }
+      const data = await response.json();
 
-      if (!data?.success) {
-        throw new Error(data?.error || 'Failed to send message');
+      if (!response.ok) {
+        // Fallback for local development without API setup
+        if (response.status === 404) {
+          throw new Error("API endpoint not found. If running locally, please use 'vercel dev'.");
+        }
+        throw new Error(data.error || 'Failed to send message');
       }
 
       // Also track in Klaviyo for marketing
@@ -60,17 +71,22 @@ export function ContactForm({ onClose }: ContactFormProps) {
         email,
         subject,
         message
-      })).catch(() => {});
+      })).catch(() => { });
 
       toast.success('Message sent successfully!', {
         description: 'We\'ll get back to you soon.',
       });
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error sending contact email:', err);
-      setError('Failed to send message. Please try again.');
+      // More helpful error message
+      const errorMessage = err.message?.includes('API endpoint not found')
+        ? 'Function unavailable locally. Please deploy to test or use "vercel dev".'
+        : 'Failed to send message. Please try again.';
+
+      setError(errorMessage);
       toast.error('Failed to send message', {
-        description: 'Please try again or email us directly at hello@myremsleep.com',
+        description: errorMessage,
       });
     } finally {
       setIsSubmitting(false);
