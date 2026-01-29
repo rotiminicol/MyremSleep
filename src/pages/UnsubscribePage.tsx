@@ -34,6 +34,23 @@ export default function UnsubscribePage() {
 
       setIsUnsubscribed(true);
       toast.success('You have been unsubscribed');
+
+      // Send confirmation email via Resend
+      try {
+        await fetch('/api/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'unsubscribe',
+            email: trimmedEmail,
+          }),
+        });
+      } catch (emailErr) {
+        console.error('Failed to send unsubscribe notification email:', emailErr);
+        // We don't throw here or show an error toast because the primary goal (unsubscribing in Klaviyo) succeeded
+      }
     } catch (err) {
       console.error('Unsubscribe error:', err);
       toast.error('Something went wrong. Please try again.');

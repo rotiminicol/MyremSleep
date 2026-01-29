@@ -15,7 +15,7 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
   const validateEmail = (email: string): boolean => {
     // Basic email format validation
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
-    
+
     if (!emailRegex.test(email)) {
       return false;
     }
@@ -23,7 +23,7 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
     // Check for common domain typos
     const [_, domain] = email.split('@');
     const domainLower = domain.toLowerCase();
-    
+
     // Common email providers and their common typos
     const emailProviders = {
       'gmail.com': [
@@ -83,26 +83,26 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
       if (domainLower === correctDomain) {
         return true;
       }
-      
+
       // If it's a known typo, reject it
       if (typos.includes(domainLower)) {
         return false;
       }
-      
+
       // Check for close matches using Levenshtein distance (for catching typos like 'ghal.com')
       if (domainLower.length >= 4) { // Only check for domains with at least 4 characters
         const correctBase = correctDomain.split('.')[0];
         const inputBase = domainLower.split('.')[0];
-        
+
         // If the base domain is similar to a known domain but not exactly the same, reject it
-        if (inputBase.length >= 4 && 
-            (correctBase.includes(inputBase) || inputBase.includes(correctBase)) &&
-            domainLower !== correctDomain) {
+        if (inputBase.length >= 4 &&
+          (correctBase.includes(inputBase) || inputBase.includes(correctBase)) &&
+          domainLower !== correctDomain) {
           return false;
         }
       }
     }
-    
+
     // Additional check for domains that are too short to be valid
     if (domainLower.split('.').some(part => part.length < 2)) {
       return false;
@@ -156,6 +156,23 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
       if (success) {
         // Track subscription event for Facebook Pixel
         trackSubscription(trimmedEmail);
+
+        // Send Welcome Email
+        try {
+          await fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'welcome',
+              email: trimmedEmail,
+              name: trimmedName,
+            }),
+          });
+        } catch (emailErr) {
+          console.error('Failed to send welcome email:', emailErr);
+          // Don't block user flow if email fails
+        }
+
         onSubscribe(trimmedName, trimmedEmail);
       } else {
         setError('Something went wrong. Please try again.');
@@ -168,7 +185,7 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
   };
 
   return (
-    <motion.form 
+    <motion.form
       onSubmit={handleSubmit}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -231,7 +248,7 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
       </div>
 
       {error && (
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-destructive text-sm mt-3 text-center font-body"

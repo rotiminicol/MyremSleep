@@ -128,9 +128,9 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
 
   const handleSubmit = async () => {
     if (!canProceed()) return;
-    
+
     setIsSubmitting(true);
-    
+
     const data: QuestionnaireData = {
       bedSize: bedSize || undefined,
       colors: selectedColors.length > 0 ? selectedColors : undefined,
@@ -142,6 +142,22 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
 
     try {
       await updateProfileWithQuestionnaire(email, data);
+
+      // Send Internal Notification with Questionnaire Answers
+      try {
+        await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'questionnaire',
+            email: email,
+            answers: data,
+          }),
+        });
+      } catch (emailErr) {
+        console.error('Failed to send questionnaire notification:', emailErr);
+      }
+
       // Track questionnaire completion for Facebook Pixel
       trackQuestionnaireComplete({
         bedSize: data.bedSize,
@@ -180,18 +196,16 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
   };
 
   return (
-    <div 
-      className={`fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center sm:p-4 transition-opacity duration-300 z-50 ${
-        isExiting ? 'opacity-0' : 'opacity-100'
-      }`}
+    <div
+      className={`fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center sm:p-4 transition-opacity duration-300 z-50 ${isExiting ? 'opacity-0' : 'opacity-100'
+        }`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="questionnaire-title"
     >
-      <div 
-        className={`relative max-h-[85vh] sm:max-h-[90vh] w-full sm:max-w-lg bg-background rounded-t-2xl sm:rounded-2xl shadow-xl p-5 sm:p-6 transition-all duration-300 overflow-y-auto ${
-          isExiting ? 'animate-modal-exit' : 'animate-modal-enter'
-        } [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
+      <div
+        className={`relative max-h-[85vh] sm:max-h-[90vh] w-full sm:max-w-lg bg-background rounded-t-2xl sm:rounded-2xl shadow-xl p-5 sm:p-6 transition-all duration-300 overflow-y-auto ${isExiting ? 'animate-modal-exit' : 'animate-modal-enter'
+          } [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
       >
 
         {/* Header */}
@@ -214,9 +228,8 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
               <button
                 key={option.value}
                 onClick={() => setBedSize(option.value)}
-                className={`selection-card w-full text-left py-3 sm:py-4 px-3 sm:px-4 ${
-                  bedSize === option.value ? 'selected' : ''
-                }`}
+                className={`selection-card w-full text-left py-3 sm:py-4 px-3 sm:px-4 ${bedSize === option.value ? 'selected' : ''
+                  }`}
               >
                 <div className="font-medium text-sm sm:text-base text-foreground font-body">{option.label}</div>
               </button>
@@ -233,9 +246,8 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
                   key={option.value}
                   onClick={() => handleColorToggle(option.value)}
                   disabled={selectedColors.length >= 3 && !selectedColors.includes(option.value)}
-                  className={`selection-card text-left flex items-center justify-between py-3 px-3 sm:py-4 sm:px-4 ${
-                    selectedColors.includes(option.value) ? 'selected' : ''
-                  } ${selectedColors.length >= 3 && !selectedColors.includes(option.value) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`selection-card text-left flex items-center justify-between py-3 px-3 sm:py-4 sm:px-4 ${selectedColors.includes(option.value) ? 'selected' : ''
+                    } ${selectedColors.length >= 3 && !selectedColors.includes(option.value) ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className="font-medium text-xs sm:text-base text-foreground font-body">{option.label}</div>
                   {selectedColors.includes(option.value) && (
@@ -244,7 +256,7 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
                 </button>
               ))}
             </div>
-            
+
             {/* Other text input */}
             {selectedColors.includes('other') && (
               <input
@@ -255,7 +267,7 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
                 className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-border rounded-lg bg-background text-sm sm:text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 font-body"
               />
             )}
-            
+
             <p className="text-xs text-muted-foreground text-center font-body">
               {selectedColors.length}/3 selected
             </p>
@@ -269,9 +281,8 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
               <button
                 key={option.value}
                 onClick={() => setFeel(option.value)}
-                className={`selection-card w-full text-left py-3 px-3 sm:py-4 sm:px-4 ${
-                  feel === option.value ? 'selected' : ''
-                }`}
+                className={`selection-card w-full text-left py-3 px-3 sm:py-4 sm:px-4 ${feel === option.value ? 'selected' : ''
+                  }`}
               >
                 <div className="font-medium text-sm sm:text-base text-foreground font-body">{option.label}</div>
                 {option.description && (
@@ -289,9 +300,8 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
               <button
                 key={option.value}
                 onClick={() => setPriority(option.value)}
-                className={`selection-card w-full text-left py-3 px-3 sm:py-4 sm:px-4 ${
-                  priority === option.value ? 'selected' : ''
-                }`}
+                className={`selection-card w-full text-left py-3 px-3 sm:py-4 sm:px-4 ${priority === option.value ? 'selected' : ''
+                  }`}
               >
                 <div className="font-medium text-sm sm:text-base text-foreground font-body">{option.label}</div>
                 {option.description && (
@@ -309,9 +319,8 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
               <button
                 key={option.value}
                 onClick={() => setBedFeeling(option.value)}
-                className={`selection-card w-full text-left py-3 px-3 sm:py-4 sm:px-4 ${
-                  bedFeeling === option.value ? 'selected' : ''
-                }`}
+                className={`selection-card w-full text-left py-3 px-3 sm:py-4 sm:px-4 ${bedFeeling === option.value ? 'selected' : ''
+                  }`}
               >
                 <div className="font-medium text-sm sm:text-base text-foreground font-body">{option.label}</div>
                 {option.description && (
@@ -333,7 +342,7 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
                 Back
               </button>
             )}
-            
+
             {step < TOTAL_STEPS ? (
               <button
                 onClick={handleNext}
@@ -357,11 +366,10 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
         {/* Progress Indicator */}
         <div className="flex justify-center gap-1.5 sm:gap-2 mt-4 sm:mt-6">
           {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-            <div 
-              key={i} 
-              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors ${
-                i + 1 <= step ? 'bg-primary' : 'bg-border'
-              }`} 
+            <div
+              key={i}
+              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors ${i + 1 <= step ? 'bg-primary' : 'bg-border'
+                }`}
             />
           ))}
         </div>
