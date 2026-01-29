@@ -36,19 +36,25 @@ export default async function handler(request: Request) {
             });
         }
 
-        const fontImport = '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">';
+        const fontImport = `
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+        `;
         const commonStyles = `
-            font-family: 'Montserrat', Arial, sans-serif;
+            font-family: 'Montserrat', Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f5f1ed;
             color: #2d2a26;
+            -webkit-font-smoothing: antialiased;
         `;
 
         if (type === 'unsubscribe') {
             const { data, error } = await resend.emails.send({
                 from: 'REMsleep <hello@myremsleep.com>',
                 to: [email],
+                replyTo: 'hello@myremsleep.com',
                 subject: 'Unsubscription Confirmed - REMsleep',
                 html: `
                 <!DOCTYPE html>
@@ -57,35 +63,45 @@ export default async function handler(request: Request) {
                     ${fontImport}
                     <style>
                         body { ${commonStyles} }
-                        .container { max-width: 600px; margin: 40px auto; background-color: #f5f1ed; padding: 60px 40px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
-                        .logo { text-align: center; margin-bottom: 40px; }
-                        .logo img { height: 60px; width: auto; }
-                        .content { text-align: center; line-height: 1.8; }
-                        .serif-header { font-family: 'Times New Roman', serif; font-size: 32px; color: #1a1a1a; margin-bottom: 24px; font-weight: 300; font-style: italic; }
-                        .divider { height: 1px; background-color: #e8e3dc; margin: 40px 0; }
-                        .footer-text { font-size: 13px; color: #999; }
-                        .cta-link { color: #2d2a26; text-decoration: underline; font-weight: 500; }
+                        .outer-container { background-color: #f5f1ed; padding: 60px 20px; }
+                        .container { max-width: 540px; margin: 0 auto; background-color: #f5f1ed; text-align: center; }
+                        .logo { margin-bottom: 50px; }
+                        .logo img { height: 45px; width: auto; opacity: 0.9; }
+                        .serif-header { font-family: 'Playfair Display', serif; font-size: 38px; color: #1a1a1a; margin-bottom: 35px; font-weight: 400; font-style: italic; line-height: 1.2; letter-spacing: -0.5px; }
+                        .content-text { font-size: 15px; line-height: 1.8; color: #4a4a4a; font-weight: 300; letter-spacing: 0.2px; margin-bottom: 30px; }
+                        .divider { height: 1px; background-color: #e8e3dc; margin: 50px auto; width: 60px; }
+                        .footer { margin-top: 50px; padding-top: 30px; border-top: 1px solid #e8e3dc; }
+                        .cta-link { color: #2d2a26; text-decoration: none; font-weight: 500; border-bottom: 1px solid #2d2a26; padding-bottom: 2px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+                        .social-link { text-decoration: none; display: inline-block; margin-top: 25px; }
+                        .social-icon { width: 18px; height: 18px; vertical-align: middle; opacity: 0.7; }
+                        .social-text { font-size: 12px; color: #888; letter-spacing: 1px; margin-left: 8px; vertical-align: middle; text-transform: uppercase; }
                     </style>
                 </head>
                 <body>
-                    <div class="container">
-                        <div class="logo">
-                            <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" />
-                        </div>
-                        <div class="content">
-                            <h1 class="serif-header">Rest is not a routine. It is a ritual.</h1>
-                            <p style="font-size: 16px; color: #4a4a4a; margin-bottom: 30px;">
-                                This email confirms that you've been unsubscribed from the REMsleep mailing list. 
-                                We're sorry to see you go, but we respect your space.
-                            </p>
-                            <p style="font-size: 15px; color: #666;">
-                                You will no longer receive updates about our upcoming drops and quiet wind-down rituals.
-                            </p>
-                            <div class="divider"></div>
-                            <p class="footer-text">
-                                Changed your mind? You can always join the ritual again at <br/>
-                                <a href="https://www.myremsleep.com" class="cta-link">myremsleep.com</a>
-                            </p>
+                    <div class="outer-container">
+                        <div class="container">
+                            <div class="logo">
+                                <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" />
+                            </div>
+                            <div class="content">
+                                <h1 class="serif-header">Rest is not a routine.<br/>It is a ritual.</h1>
+                                <p class="content-text">
+                                    We have processed your request. This email confirms your unsubscription from our journal. 
+                                    While we are sorry to see you go, we respect your quiet space.
+                                </p>
+                                <div class="divider"></div>
+                                <p style="margin-bottom: 20px;">
+                                    <a href="https://www.myremsleep.com" class="cta-link">Return to the ritual</a>
+                                </p>
+                                
+                                <div class="footer">
+                                    <a href="https://www.instagram.com/myremsleepclub/" class="social-link">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/120px-Instagram_icon.png" class="social-icon" alt="Instagram" />
+                                        <span class="social-text">@myremsleepclub</span>
+                                    </a>
+                                    <p style="font-size: 11px; color: #aaa; margin-top: 30px; letter-spacing: 0.5px;">&copy; 2024 REMSLEEP. ALL RIGHTS RESERVED.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </body>
@@ -100,43 +116,79 @@ export default async function handler(request: Request) {
             const welcomeEmail = await resend.emails.send({
                 from: 'Kiki from REMsleep <hello@myremsleep.com>',
                 to: [email],
+                replyTo: 'hello@myremsleep.com',
                 subject: 'Welcome to REMsleep',
                 html: `
                     <!DOCTYPE html>
                     <html>
-                    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333333; margin: 0; padding: 0; background-color: #F5F1ED;">
-                        <div style="max-width: 600px; margin: 40px auto; background-color: #F5F1ED; padding: 40px; border-radius: 4px;">
-                            <p>Hello ${name || 'there'},</p>
-                            
-                            <p>Welcome to REMsleep.</p>
-                            
-                            <p>In a world that rarely slows down, sleep becomes recovery. Renewal. A quiet reset where new dreams take shape.</p>
-                            
-                            <p>We create calm, considered bedding in grounding tones designed to support your wind-down ritual and elevate every moment you spend in bed.</p>
-                            
-                            <p><i>Rest. Renew. Awaken new dreams.</i></p>
-                            
-                            <hr style="border: none; border-top: 1px solid #eeeeee; margin: 30px 0;" />
-                            
-                            <p><strong>Before you go, A Quick Question:</strong></p>
-                            
-                            <p>• Reply with one word:<br/>
-                            What do you want your bedroom to feel like this season?</p>
-                            
-                            <p><i>Calm. Cosy. Restored. Inspired.</i></p>
-                            
-                            <p>I read every reply.</p>
-                            
-                            <p style="margin-top: 30px;">With love,<br/>
-                            <strong>Kiki</strong><br/>
-                            Founder, REMsleep</p>
-                            
-                            <p style="font-size: 12px; color: #999999; margin-top: 40px; border-top: 1px solid #eeeeee; padding-top: 20px;">
-                                P.S. Add <a href="mailto:hello@myremsleep.com" style="color: #999999;">hello@myremsleep.com</a> to your contacts so REMsleep always reaches you.
-                            </p>
-                            
-                            <div style="margin-top: 20px; text-align: left;">
-                                <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" style="height: 30px; width: auto; opacity: 0.8;" />
+                    <head>
+                        ${fontImport}
+                        <style>
+                            body { margin: 0; padding: 0; background-color: #F5F1ED; font-family: 'Montserrat', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+                            .outer { background-color: #F5F1ED; padding: 80px 20px; text-align: center; }
+                            .inner { max-width: 520px; margin: 0 auto; line-height: 1.8; color: #2D2A26; }
+                            .logo-header { margin-bottom: 60px; }
+                            .logo-header img { height: 45px; width: auto; opacity: 0.9; }
+                            .editorial-statement { font-family: 'Playfair Display', serif; font-size: 32px; font-style: italic; color: #1a1a1a; margin-bottom: 45px; line-height: 1.2; letter-spacing: -0.5px; }
+                            p { margin-bottom: 25px; font-weight: 300; letter-spacing: 0.2px; font-size: 15px; }
+                            .divider { border: none; border-top: 1px solid #e8e3dc; margin: 50px auto; width: 60px; }
+                            .reflection-prompt { margin: 60px 0; }
+                            .reflection-title { font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; color: #1a1a1a; margin-bottom: 15px; }
+                            .reflection-options { font-size: 11px; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-top: 15px; }
+                            .signature { margin-top: 70px; }
+                            .kiki-sign { font-family: 'Playfair Display', serif; font-size: 28px; font-style: italic; color: #1a1a1a; margin: 10px 0 5px 0; }
+                            .footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid #e8e3dc; }
+                            .social-link { text-decoration: none; display: inline-block; margin-top: 20px; }
+                            .social-icon { width: 16px; height: 16px; vertical-align: middle; opacity: 0.6; }
+                            .social-text { font-size: 11px; color: #888; letter-spacing: 1px; margin-left: 8px; vertical-align: middle; text-transform: uppercase; }
+                            .ps-text { font-size: 12px; color: #888; margin-top: 30px; font-style: italic; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="outer">
+                            <div class="inner">
+                                <div class="logo-header">
+                                    <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" />
+                                </div>
+                                
+                                <div class="editorial-statement">Welcome to REMsleep</div>
+                                
+                                <p>Hello ${name || 'there'},</p>
+                                
+                                <p>Welcome to REMsleep.</p>
+                                
+                                <p>In a world that rarely slows down, sleep becomes recovery. Renewal. A quiet reset where new dreams take shape.</p>
+                                
+                                <p>We create calm, considered bedding in grounding tones designed to support your wind-down ritual and elevate every moment you spend in bed.</p>
+                                
+                                <p style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; color: #1a1a1a; margin: 35px 0;">Rest. Renew. Awaken new dreams.</p>
+                                
+                                <div class="divider"></div>
+                                
+                                <div class="reflection-prompt">
+                                    <div class="reflection-title">Before you go, A Quick Question:</div>
+                                    <p style="font-style: italic; margin-bottom: 15px;">&bull; Reply with one word:<br/>What do you want your bedroom to feel like this season?</p>
+                                    <div class="reflection-options">Calm &bull; Cosy &bull; Restored &bull; Inspired</div>
+                                    <p style="margin-top: 15px;">I read every reply.</p>
+                                </div>
+                                
+                                <div class="signature">
+                                    <p style="margin-bottom: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; font-size: 12px;">With love,</p>
+                                    <div class="kiki-sign">Kiki</div>
+                                    <p style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 0;">Founder, REMsleep</p>
+                                </div>
+
+                                <p class="ps-text">P.S. Add <a href="mailto:hello@myremsleep.com" style="color: #888;">hello@myremsleep.com</a> to your contacts so REMsleep always reaches you.</p>
+                                
+                                <div class="footer">
+                                    <a href="https://www.instagram.com/myremsleepclub/" class="social-link">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/120px-Instagram_icon.png" class="social-icon" alt="Instagram" />
+                                        <span class="social-text">@myremsleepclub</span>
+                                    </a>
+                                    <p style="font-size: 10px; color: #aaa; margin-top: 35px; letter-spacing: 1px; text-transform: uppercase;">
+                                        &copy; 2024 REMSLEEP. ALL RIGHTS RESERVED.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </body>
@@ -213,6 +265,7 @@ export default async function handler(request: Request) {
             const userEmail = await resend.emails.send({
                 from: 'REMsleep <hello@myremsleep.com>',
                 to: [email],
+                replyTo: 'hello@myremsleep.com',
                 subject: 'We have received your message - REMsleep',
                 html: `
                     <!DOCTYPE html>
@@ -221,34 +274,48 @@ export default async function handler(request: Request) {
                         ${fontImport}
                         <style>
                             body { ${commonStyles} }
-                            .container { max-width: 600px; margin: 40px auto; background-color: #f5f1ed; padding: 60px 40px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
-                            .logo { text-align: center; margin-bottom: 40px; }
-                            .logo img { height: 60px; width: auto; }
-                            .content { line-height: 1.8; color: #4a4a4a; }
-                            .divider { height: 1px; background-color: #e8e3dc; margin: 40px 0; }
-                            .footer { font-size: 14px; color: #666; }
-                            .cta-link { color: #2d2a26; text-decoration: underline; font-weight: 500; }
+                            .outer-container { background-color: #f5f1ed; padding: 60px 20px; }
+                            .container { max-width: 580px; margin: 0 auto; background-color: #f5f1ed; }
+                            .logo { text-align: center; margin-bottom: 50px; }
+                            .logo img { height: 50px; width: auto; }
+                            .content { line-height: 1.8; color: #4a4a4a; font-weight: 300; }
+                            .greeting { font-family: 'Playfair Display', serif; font-size: 28px; font-style: italic; color: #1a1a1a; margin-bottom: 30px; }
+                            .divider { height: 1px; background-color: #e8e3dc; margin: 45px 0; }
+                            .footer { margin-top: 50px; font-size: 14px; color: #666; }
+                            .serif-signoff { font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; color: #1a1a1a; margin-bottom: 25px; }
+                            .social-section { margin-top: 35px; border-top: 1px solid #e8e3dc; padding-top: 30px; }
+                            .social-link { text-decoration: none; color: #2d2a26; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 500; }
+                            .social-icon { width: 16px; height: 16px; vertical-align: middle; margin-right: 8px; opacity: 0.7; }
+                            .faq-link { color: #2d2a26; text-decoration: none; border-bottom: 1px solid #2d2a26; padding-bottom: 2px; font-weight: 500; font-size: 13px; }
                         </style>
                     </head>
                     <body>
-                        <div class="container">
-                            <div class="logo">
-                                <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" />
-                            </div>
-                            <div class="content">
-                                <p style="font-size: 16px; margin-bottom: 24px;">Hi ${name || 'there'},</p>
-                                <p style="margin-bottom: 20px;">Thank you for reaching out. We have received your message and we will be in touch soon.</p>
-                                <p style="margin-bottom: 20px;">In the meantime, if your enquiry relates to our pre-launch, you can reply to this email with a little more detail so we can direct it to the right person.</p>
-                                <p style="margin-bottom: 10px;">You may also find this helpful:</p>
-                                <p style="margin-bottom: 30px;">FAQs: <a href="https://www.myremsleep.com/faq" class="cta-link">myremsleep.com/faq</a></p>
-                                
-                                <div class="divider"></div>
-                                
-                                <div class="footer">
-                                    <p style="font-style: italic; font-weight: 500; color: #2d2a26; margin-bottom: 20px;">Rest. Renew. Awaken new dreams.</p>
-                                    <p style="margin: 0;">With care,</p>
-                                    <p style="margin: 0; font-weight: 700;">REMsleep</p>
-                                    <p style="margin: 5px 0 0 0;"><a href="mailto:hello@myremsleep.com" style="color: #666; text-decoration: none;">hello@myremsleep.com</a></p>
+                        <div class="outer-container">
+                            <div class="container">
+                                <div class="logo">
+                                    <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" />
+                                </div>
+                                <div class="content">
+                                    <h2 class="greeting">Hi ${name || 'there'},</h2>
+                                    <p>Thank you for reaching out to us. We have received your message and will be in touch with you shortly.</p>
+                                    <p>As we prepare for our upcoming drop, we are giving extra attention to every enquiry. If your message relates to our pre-launch, feel free to reply directly to this email with any specific details.</p>
+                                    <p>In the meantime, you may find the information you need in our collection notes:</p>
+                                    <p style="margin-top: 25px;"><a href="https://www.myremsleep.com/faq" class="faq-link">View our FAQs</a></p>
+                                    
+                                    <div class="divider"></div>
+                                    
+                                    <div class="footer">
+                                        <p class="serif-signoff">Rest. Renew. Awaken new dreams.</p>
+                                        <p style="margin: 0; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; font-size: 12px;">With care,</p>
+                                        <p style="margin: 5px 0 0 0; font-weight: 500;">REMsleep Team</p>
+                                        
+                                        <div class="social-section">
+                                            <a href="https://www.instagram.com/myremsleepclub/" class="social-link">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/120px-Instagram_icon.png" class="social-icon" alt="Instagram" />
+                                                @myremsleepclub
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
