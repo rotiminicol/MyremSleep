@@ -86,7 +86,7 @@ export function HeroSection() {
                 transition={{ delay: 0.4, duration: 0.6 }}
                 className="text-black text-sm sm:text-base md:text-lg mb-6 sm:mb-8 font-medium tracking-wide"
               >
-                Early access and launch pricing.
+                A Quiet Wind-down, made effortless.
               </motion.p>
 
               {/* Subscription Form - Make sure SubscriptionForm also uses Montserrat */}
