@@ -58,8 +58,7 @@ export default async function handler(request: Request) {
                 subject: 'Unsubscription Confirmed - REMsleep',
                 text: `Rest is not a routine. It is a ritual.
 
-We have processed your request. This email confirms your unsubscription from our mailing list. 
-While we are sorry to see you go, we respect your quiet space.
+While we are sorry to see you go, we have processed your request. This email confirms your unsubscription from our mailing list.
 
 Return to the ritual: https://www.myremsleep.com
 
@@ -99,8 +98,7 @@ Return to the ritual: https://www.myremsleep.com
                                     <!-- Content -->
                                     <tr>
                                         <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 15px; line-height: 1.8; color: #4a4a4a; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 30px;">
-                                            We have processed your request. This email confirms your unsubscription from our mailing list. 
-                                            While we are sorry to see you go, we respect your quiet space.
+                                           While we are sorry to see you go, we have processed your request. This email confirms your unsubscription from our mailing list.
                                         </td>
                                     </tr>
                                     <!-- Divider -->

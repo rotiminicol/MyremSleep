@@ -107,8 +107,7 @@ export default defineConfig(({ mode }) => {
                                             <!-- Content -->
                                             <tr>
                                                 <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 15px; line-height: 1.8; color: #4a4a4a; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 30px;">
-                                                    We have processed your request. This email confirms your unsubscription from our mailing list. 
-                                                    While we are sorry to see you go, we respect your quiet space.
+                                                    While we are sorry to see you go, we have processed your request. This email confirms your unsubscription from our mailing list.
                                                 </td>
                                             </tr>
                                             <!-- Divider -->
