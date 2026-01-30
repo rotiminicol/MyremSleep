@@ -140,7 +140,7 @@ export default defineConfig(({ mode }) => {
                                                             </tr>
                                                         </table>
                                                     </a>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 11px; color: #aaa; margin-top: 30px; letter-spacing: 0.5px;">&copy; 2024 REMSLEEP. ALL RIGHTS RESERVED.</div>
+                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 11px; color: #aaa; margin-top: 30px; letter-spacing: 0.5px;">&copy; 2026 REMSLEEP. ALL RIGHTS RESERVED.</div>
                                                 </td>
                                             </tr>
                                         </table>
@@ -186,97 +186,97 @@ export default defineConfig(({ mode }) => {
                         <body style="margin: 0; padding: 0; background-color: #F5F1ED;">
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#F5F1ED">
                                 <tr>
-                                    <td align="center" style="padding: 45px 20px;">
+                                    <td align="center" style="padding: 25px 20px 15px 20px;">
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 520px; text-align: center;">
                                             <!-- Logo -->
                                             <tr>
-                                                <td align="center" style="padding-bottom: 35px;">
-                                                    <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" width="160" style="margin: 0 auto; height: auto; opacity: 0.9;" />
+                                                <td align="center" style="padding-bottom: 20px;">
+                                                    <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" width="140" style="margin: 0 auto; height: auto; opacity: 0.9;" />
                                                 </td>
                                             </tr>
                                             <!-- Header -->
                                             <tr>
-                                                <td align="center" style="font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 600; color: #1a1a1a; padding-bottom: 30px; line-height: 1.2; letter-spacing: -0.5px;">
+                                                <td align="center" style="font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: #1a1a1a; padding-bottom: 20px; line-height: 1.2; letter-spacing: -0.5px;">
                                                     Welcome to REMsleep
                                                 </td>
                                             </tr>
                                             <!-- Greeting -->
                                             <tr>
-                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 15px; color: #2D2A26;">
+                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 10px; color: #2D2A26;">
                                                     Hello ${name || 'there'},
                                                 </td>
                                             </tr>
                                             <!-- Body Content -->
                                             <tr>
-                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 15px; color: #2D2A26; line-height: 1.8;">
+                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 10px; color: #2D2A26; line-height: 1.5;">
                                                     In a world that rarely slows down, sleep becomes Recovery, Renewal.<br/>
                                                     A quiet reset where new dreams take shape.
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 15px; color: #2D2A26; line-height: 1.8;">
+                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 10px; color: #2D2A26; line-height: 1.5;">
                                                     We create calm, considered bedding in grounding tones designed to support your wind-down ritual and elevate every moment you spend in bed.
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td align="center" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; color: #1a1a1a; padding: 5px 0 25px 0;">
+                                                <td align="center" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; color: #1a1a1a; padding: 5px 0 15px 0;">
                                                     Rest. Renew. Awaken new dreams.
                                                 </td>
                                             </tr>
                                             <!-- Divider -->
                                             <tr>
-                                                <td align="center" style="padding-bottom: 30px;">
-                                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="60" align="center">
+                                                <td align="center" style="padding-bottom: 20px;">
+                                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="40" align="center">
                                                         <tr><td style="border-top: 1px solid #e8e3dc; height: 1px;"></td></tr>
                                                     </table>
                                                 </td>
                                             </tr>
                                             <!-- Prompt -->
                                             <tr>
-                                                <td align="center" style="padding-bottom: 35px;">
-                                                    <div style="font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; color: #1a1a1a; padding-bottom: 15px;">
-                                                        Before you go, A Quick Question:
+                                                <td align="center" style="padding-bottom: 25px;">
+                                                    <div style="font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; color: #1a1a1a; padding-bottom: 10px;">
+                                                        Before you go, A quick question:
                                                     </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-style: italic; font-size: 15px; font-weight: 300; padding-bottom: 15px; color: #2D2A26;">
+                                                    <div style="font-family: 'Montserrat', sans-serif; font-style: italic; font-size: 14px; font-weight: 300; padding-bottom: 10px; color: #2D2A26;">
                                                         Reply with one word:<br/>What do you want your bedroom to feel like this season?
                                                     </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 11px; color: #1a1a1a; letter-spacing: 2px; text-transform: uppercase; padding-bottom: 15px; font-weight: 600;">
+                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 10px; color: #1a1a1a; letter-spacing: 2px; text-transform: uppercase; padding-bottom: 8px; font-weight: 600;">
                                                         Calm &bull; Cosy &bull; Restored &bull; Inspired
                                                     </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 300; color: #2D2A26;">I read every reply.</div>
+                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; color: #2D2A26;">I read every reply.</div>
                                                 </td>
                                             </tr>
                                             <!-- Signature -->
                                             <tr>
-                                                <td align="center" style="padding-bottom: 40px;">
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; padding-bottom: 10px; color: #2D2A26;">With love,</div>
-                                                    <div style="font-family: 'Playfair Display', serif; font-size: 28px; font-style: italic; color: #1a1a1a; padding-bottom: 5px;">Kiki</div>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px;">Founder, REMsleep</div>
+                                                <td align="center" style="padding-bottom: 25px;">
+                                                    <div style="font-family: 'Montserrat', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; padding-bottom: 5px; color: #2D2A26;">With love,</div>
+                                                    <div style="font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; color: #1a1a1a; padding-bottom: 2px;">Kiki</div>
+                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px;">Founder, REMsleep</div>
                                                 </td>
                                             </tr>
                                             <!-- PS -->
                                             <tr>
-                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 12px; color: #888; font-style: italic; padding-bottom: 40px;">
-                                                    P.S. Add <a href="mailto:hello@myremsleep.com" style="color: #888; text-decoration: underline;">hello@myremsleep.com</a> to your contacts so REMsleep always reaches you.
+                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 11px; color: #888; font-style: italic; padding-bottom: 25px;">
+                                                    P.S. Add <a href="mailto:hello@myremsleep.com" style="color: #888; text-decoration: underline;">hello@myremsleep.com</a> to your contacts.
                                                 </td>
                                             </tr>
                                             <!-- Footer -->
                                             <tr>
-                                                <td align="center" style="border-top: 1px solid #e8e3dc; padding-top: 25px;">
-                                                    <a href="https://www.instagram.com/myremsleepclub/" style="text-decoration: none; display: inline-block; padding-bottom: 20px;">
+                                                <td align="center" style="border-top: 1px solid #e8e3dc; padding-top: 15px;">
+                                                    <a href="https://www.instagram.com/myremsleepclub/" style="text-decoration: none; display: inline-block; padding-bottom: 10px;">
                                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
                                                             <tr>
                                                                 <td>
-                                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/120px-Instagram_icon.png" width="16" height="16" style="opacity: 0.6;" alt="Instagram" />
+                                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/120px-Instagram_icon.png" width="14" height="14" style="opacity: 0.6;" alt="Instagram" />
                                                                 </td>
-                                                                <td style="font-family: 'Montserrat', sans-serif; font-size: 11px; color: #888; letter-spacing: 1px; padding-left: 8px; text-transform: uppercase;">
+                                                                <td style="font-family: 'Montserrat', sans-serif; font-size: 10px; color: #888; letter-spacing: 1px; padding-left: 6px; text-transform: uppercase;">
                                                                     @myremsleepclub
                                                                 </td>
                                                             </tr>
                                                         </table>
                                                     </a>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 10px; color: #aaa; letter-spacing: 1px; text-transform: uppercase; padding-bottom: 15px; line-height: 1.5;">
-                                                        &copy; 2024 REMSLEEP. ALL RIGHTS RESERVED.
+                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 9px; color: #aaa; letter-spacing: 1px; text-transform: uppercase; padding-bottom: 10px; line-height: 1.4;">
+                                                        &copy; 2026 REMSLEEP. ALL RIGHTS RESERVED.
                                                     </div>
                                                 </td>
                                             </tr>
