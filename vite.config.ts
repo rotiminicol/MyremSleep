@@ -6,74 +6,74 @@ import { Resend } from "resend";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-  return {
-    server: {
-      host: "::",
-      port: 8080,
-      hmr: {
-        overlay: false,
-      },
-    },
-    plugins: [
-      react(),
-      mode === "development" && componentTagger(),
-      {
-        name: 'api-server',
-        configureServer(server: ViteDevServer) {
-          server.middlewares.use('/api/send-email', async (req, res, next) => {
-            if (req.method === 'POST') {
-              let body = '';
-              req.on('data', (chunk: Buffer | string) => {
-                body += chunk.toString();
-              });
-              req.on('end', async () => {
-                try {
-                  console.log(`[API] Received ${req.method} request to /api/send-email`);
+    const env = loadEnv(mode, process.cwd(), '');
+    return {
+        server: {
+            host: "::",
+            port: 8080,
+            hmr: {
+                overlay: false,
+            },
+        },
+        plugins: [
+            react(),
+            mode === "development" && componentTagger(),
+            {
+                name: 'api-server',
+                configureServer(server: ViteDevServer) {
+                    server.middlewares.use('/api/send-email', async (req, res, next) => {
+                        if (req.method === 'POST') {
+                            let body = '';
+                            req.on('data', (chunk: Buffer | string) => {
+                                body += chunk.toString();
+                            });
+                            req.on('end', async () => {
+                                try {
+                                    console.log(`[API] Received ${req.method} request to /api/send-email`);
 
-                  if (!body) {
-                    console.error('[API] Empty request body');
-                    res.statusCode = 400;
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify({ error: 'Empty request body' }));
-                    return;
-                  }
+                                    if (!body) {
+                                        console.error('[API] Empty request body');
+                                        res.statusCode = 400;
+                                        res.setHeader('Content-Type', 'application/json');
+                                        res.end(JSON.stringify({ error: 'Empty request body' }));
+                                        return;
+                                    }
 
-                  const payload = JSON.parse(body);
-                  const { type = 'contact', name, email, subject: userSubject, message } = payload;
+                                    const payload = JSON.parse(body);
+                                    const { type = 'contact', name, email, subject: userSubject, message } = payload;
 
-                  console.log(`[API] Payload:`, { type, name, email, subject: userSubject, message: message?.substring(0, 20) + '...' });
+                                    console.log(`[API] Payload:`, { type, name, email, subject: userSubject, message: message?.substring(0, 20) + '...' });
 
-                  if (!email) {
-                    console.error('[API] Missing email');
-                    res.statusCode = 400;
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify({ error: 'Missing email' }));
-                    return;
-                  }
+                                    if (!email) {
+                                        console.error('[API] Missing email');
+                                        res.statusCode = 400;
+                                        res.setHeader('Content-Type', 'application/json');
+                                        res.end(JSON.stringify({ error: 'Missing email' }));
+                                        return;
+                                    }
 
-                  if (!env.VITE_RESEND_API_KEY) {
-                    console.error('[API] Missing VITE_RESEND_API_KEY');
-                    res.statusCode = 500;
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify({ error: 'Server configuration error: Missing API Key' }));
-                    return;
-                  }
+                                    if (!env.VITE_RESEND_API_KEY) {
+                                        console.error('[API] Missing VITE_RESEND_API_KEY');
+                                        res.statusCode = 500;
+                                        res.setHeader('Content-Type', 'application/json');
+                                        res.end(JSON.stringify({ error: 'Server configuration error: Missing API Key' }));
+                                        return;
+                                    }
 
-                  const resend = new Resend(env.VITE_RESEND_API_KEY);
-                  const fontImport = `
+                                    const resend = new Resend(env.VITE_RESEND_API_KEY);
+                                    const fontImport = `
                     <link rel="preconnect" href="https://fonts.googleapis.com">
                     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
                   `;
 
-                  if (type === 'unsubscribe') {
-                    const { data, error } = await resend.emails.send({
-                      from: 'REMsleep <hello@myremsleep.com>',
-                      to: [email],
-                      replyTo: 'hello@myremsleep.com',
-                      subject: 'Unsubscription Confirmed - REMsleep',
-                      html: `
+                                    if (type === 'unsubscribe') {
+                                        const { data, error } = await resend.emails.send({
+                                            from: 'REMsleep <hello@myremsleep.com>',
+                                            to: [email],
+                                            replyTo: 'hello@myremsleep.com',
+                                            subject: 'Unsubscription Confirmed - REMsleep',
+                                            html: `
                         <!DOCTYPE html>
                         <html lang="en">
                         <head>
@@ -149,26 +149,26 @@ export default defineConfig(({ mode }) => {
                         </body>
                         </html>
                       `,
-                    });
+                                        });
 
-                    if (error) {
-                      console.error('[API] Resend Error:', error);
-                      res.statusCode = 500;
-                      res.setHeader('Content-Type', 'application/json');
-                      res.end(JSON.stringify({ error: error.message }));
-                    } else {
-                      console.log('[API] Success:', data);
-                      res.statusCode = 200;
-                      res.setHeader('Content-Type', 'application/json');
-                      res.end(JSON.stringify({ success: true, data }));
-                    }
-                  } else if (type === 'welcome') {
-                    const { data, error } = await resend.emails.send({
-                      from: 'Kiki from REMsleep <hello@myremsleep.com>',
-                      to: [email],
-                      replyTo: 'hello@myremsleep.com',
-                      subject: 'Welcome to REMsleep',
-                      html: `
+                                        if (error) {
+                                            console.error('[API] Resend Error:', error);
+                                            res.statusCode = 500;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.end(JSON.stringify({ error: error.message }));
+                                        } else {
+                                            console.log('[API] Success:', data);
+                                            res.statusCode = 200;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.end(JSON.stringify({ success: true, data }));
+                                        }
+                                    } else if (type === 'welcome') {
+                                        const { data, error } = await resend.emails.send({
+                                            from: 'Kiki from REMsleep <hello@myremsleep.com>',
+                                            to: [email],
+                                            replyTo: 'hello@myremsleep.com',
+                                            subject: 'Welcome to REMsleep',
+                                            html: `
                         <!DOCTYPE html>
                         <html lang="en">
                         <head>
@@ -177,133 +177,186 @@ export default defineConfig(({ mode }) => {
                             <meta http-equiv="X-UA-Compatible" content="IE=edge">
                             ${fontImport}
                             <style>
-                                body { margin: 0 !important; padding: 0 !important; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; background-color: #F5F1ED; font-family: 'Montserrat', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+                                body { margin: 0 !important; padding: 0 !important; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; background-color: #ffffff; font-family: 'Montserrat', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
                                 table { border-spacing: 0 !important; border-collapse: collapse !important; table-layout: fixed !important; margin: 0 auto !important; }
                                 img { -ms-interpolation-mode: bicubic; display: block; border: 0; }
                             </style>
                         </head>
-                        <body style="margin: 0; padding: 0; background-color: #F5F1ED;">
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#F5F1ED">
-                                <tr>
-                                    <td align="center" style="padding: 25px 20px 15px 20px;">
-                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 520px; text-align: center;">
-                                            <!-- Logo -->
-                                            <tr>
-                                                <td align="center" style="padding-bottom: 20px;">
-                                                    <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" width="140" style="margin: 0 auto; height: auto; opacity: 0.9;" />
-                                                </td>
-                                            </tr>
-                                            <!-- Header -->
-                                            <tr>
-                                                <td align="center" style="font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: #1a1a1a; padding-bottom: 20px; line-height: 1.2; letter-spacing: -0.5px;">
-                                                    Welcome to REMsleep
-                                                </td>
-                                            </tr>
-                                            <!-- Greeting -->
-                                            <tr>
-                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 10px; color: #2D2A26;">
-                                                    Hello ${name || 'there'},
-                                                </td>
-                                            </tr>
-                                            <!-- Body Content -->
-                                            <tr>
-                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 10px; color: #2D2A26; line-height: 1.5;">
-                                                    In a world that rarely slows down, sleep becomes Recovery, Renewal.<br/>
-                                                    A quiet reset where new dreams take shape.
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 10px; color: #2D2A26; line-height: 1.5;">
-                                                    We create calm, considered bedding in grounding tones designed to support your wind-down ritual and elevate every moment you spend in bed.
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td align="center" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; color: #1a1a1a; padding: 5px 0 15px 0;">
-                                                    Rest. Renew. Awaken new dreams.
-                                                </td>
-                                            </tr>
-                                            <!-- Divider -->
-                                            <tr>
-                                                <td align="center" style="padding-bottom: 20px;">
-                                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="40" align="center">
-                                                        <tr><td style="border-top: 1px solid #e8e3dc; height: 1px;"></td></tr>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                            <!-- Prompt -->
-                                            <tr>
-                                                <td align="center" style="padding-bottom: 25px;">
-                                                    <div style="font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; color: #1a1a1a; padding-bottom: 10px;">
-                                                        Before you go, A quick question:
-                                                    </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-style: italic; font-size: 14px; font-weight: 300; padding-bottom: 10px; color: #2D2A26;">
-                                                        Reply with one word:<br/>What do you want your bedroom to feel like this season?
-                                                    </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 10px; color: #1a1a1a; letter-spacing: 2px; text-transform: uppercase; padding-bottom: 8px; font-weight: 600;">
-                                                        Calm &bull; Cosy &bull; Restored &bull; Inspired
-                                                    </div>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; color: #2D2A26;">I read every reply.</div>
-                                                </td>
-                                            </tr>
-                                            <!-- Signature -->
-                                            <tr>
-                                                <td align="center" style="padding-bottom: 25px;">
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; padding-bottom: 5px; color: #2D2A26;">With love,</div>
-                                                    <div style="font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; color: #1a1a1a; padding-bottom: 2px;">Kiki</div>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px;">Founder, REMsleep</div>
-                                                </td>
-                                            </tr>
-                                            <!-- PS -->
-                                            <tr>
-                                                <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 11px; color: #888; font-style: italic; padding-bottom: 25px;">
-                                                    P.S. Add <a href="mailto:hello@myremsleep.com" style="color: #888; text-decoration: underline;">hello@myremsleep.com</a> to your contacts.
-                                                </td>
-                                            </tr>
-                                            <!-- Footer -->
-                                            <tr>
-                                                <td align="center" style="border-top: 1px solid #e8e3dc; padding-top: 15px;">
-                                                    <a href="https://www.instagram.com/myremsleepclub/" style="text-decoration: none; display: inline-block; padding-bottom: 10px;">
-                                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
-                                                            <tr>
-                                                                <td>
-                                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/120px-Instagram_icon.png" width="14" height="14" style="opacity: 0.6;" alt="Instagram" />
-                                                                </td>
-                                                                <td style="font-family: 'Montserrat', sans-serif; font-size: 10px; color: #888; letter-spacing: 1px; padding-left: 6px; text-transform: uppercase;">
-                                                                    @myremsleepclub
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </a>
-                                                    <div style="font-family: 'Montserrat', sans-serif; font-size: 9px; color: #aaa; letter-spacing: 1px; text-transform: uppercase; padding-bottom: 10px; line-height: 1.4;">
-                                                        &copy; 2026 REMSLEEP. ALL RIGHTS RESERVED.
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
+                        <body style="margin: 0; padding: 0; background-color: #ffffff;">
+                            <center>
+                                <div style="width: 100%; max-width: 700px; margin: 0 auto;">
+                                    <!-- SECTION 1: HERO (Pink Background #F5F1ED) -->
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#F5F1ED" align="center" style="width: 700px; max-width: 700px;">
+                                        <!-- Row 1: Content (Logo + Headline) -->
+                                        <tr>
+                                            <td align="center" style="padding: 40px 20px 0 20px;">
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                    <!-- Logo -->
+                                                    <tr>
+                                                        <td align="center" style="padding-bottom: 30px;">
+                                                            <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" width="120" style="margin: 0 auto; height: auto; opacity: 0.9;" />
+                                                        </td>
+                                                    </tr>
+                                                    <!-- Headline -->
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 24px; color: #000000; padding-bottom: 25px; line-height: 1; letter-spacing: -0.04em;">
+                                                            <span style="font-weight: 600;">Rest</span> <span style="font-weight: 400;">is not a routine.</span><br/>
+                                                            <span style="font-weight: 400;">It is a </span><span style="font-weight: 600;">Ritual.</span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <!-- Row 2: Hero Image (Full Width, No Padding) -->
+                                        <tr>
+                                            <td align="center" style="padding: 0;">
+                                                <img src="https://www.myremsleep.com/email.png" alt="REMsleep Bedding" width="700" style="margin: 0 auto; height: auto; display: block; width: 100%; max-width: 700px;" />
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- SECTION 2: CONTENT (White Background #FFFFFF) -->
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#ffffff" align="center" style="width: 700px; max-width: 700px;">
+                                        <tr>
+                                            <td align="center" style="padding: 40px 20px;">
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                    <!-- Welcome Heading -->
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 600; color: #000000; padding-bottom: 20px; line-height: 1; letter-spacing: -0.04em;">
+                                                            Welcome to REMsleep
+                                                        </td>
+                                                    </tr>
+                                                    <!-- Greeting -->
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 15px; color: #000000; line-height: 1;">
+                                                            Hello ${name || 'there'},
+                                                        </td>
+                                                    </tr>
+                                                    <!-- Body Text -->
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 10px; color: #000000; line-height: 1.3;">
+                                                            In a world that rarely slows down, sleep becomes Recovery, Renewal.<br/>
+                                                            A quiet reset where new dreams take shape.
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 20px; color: #000000; line-height: 1.3;">
+                                                            We create calm, considered bedding in grounding tones designed to support your wind-down ritual and elevate every moment you spend in bed.
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 16px; color: #000000; padding: 5px 0 10px 0; line-height: 1; letter-spacing: -0.04em;">
+                                                            Rest. Renew. Awaken new dreams.
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- SECTION 3: QUESTIONNAIRE (Pink Background #FFEDE6) -->
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#FFEDE6" align="center" style="width: 700px; max-width: 700px;">
+                                        <tr>
+                                            <td align="center" style="padding: 40px 20px;">
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 500; font-style: italic; color: #000000; padding-bottom: 15px; line-height: 1; letter-spacing: -0.04em;">
+                                                            Before you go, A quick question:
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 18px; padding-bottom: 10px; color: #000000; line-height: 1; letter-spacing: -0.04em;">
+                                                            Reply with one word:
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; padding-bottom: 15px; color: #000000; line-height: 1; letter-spacing: -0.04em;">
+                                                            What do you want your bedroom<br/>to feel like this season?
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; color: #743E00; letter-spacing: -0.04em; padding-bottom: 20px; font-weight: 500; line-height: 1;">
+                                                            Calm &bull; Cosy &bull; Restored &bull; Inspired
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; color: #000000; line-height: 1; letter-spacing: -0.04em;">I read every reply.</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- SECTION 4: FOOTER (White Background #FFFFFF) -->
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#ffffff" align="center" style="width: 700px; max-width: 700px;">
+                                        <tr>
+                                            <td align="center" style="padding: 40px 20px;">
+                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                    <!-- Signature -->
+                                                    <tr>
+                                                        <td align="center" style="padding-bottom: 30px;">
+                                                            <div style="font-family: 'Montserrat', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: -0.04em; font-size: 16px; padding-bottom: 5px; color: #000000; line-height: 1;">With love,</div>
+                                                            <div style="font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 700; font-style: italic; color: #000000; padding-bottom: 5px; line-height: 1; letter-spacing: -0.04em;">Kiki</div>
+                                                            <div style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; color: #000000; letter-spacing: -0.04em; padding-bottom: 25px; line-height: 1;">Founder, REMsleep</div>
+                                                            
+                                                            <!-- Contact Button -->
+                                                            <a href="mailto:hello@myremsleep.com" style="display: inline-block; padding: 14px 40px; background-color: #000000; color: #ffffff; text-decoration: none; border-radius: 0px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 16px; letter-spacing: 1px; text-transform: none;">Contact us</a>
+                                                        </td>
+                                                    </tr>
+                                                    <!-- Footer Info -->
+                                                    <tr>
+                                                        <td align="center" style="border-top: 1px solid #e8e3dc; padding-top: 25px; padding-bottom: 20px;">
+                                                            <a href="https://www.instagram.com/myremsleepclub/" style="text-decoration: none; display: inline-block; padding-bottom: 15px;">
+                                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
+                                                                    <tr>
+                                                                        <td style="vertical-align: middle;">
+                                                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/120px-Instagram_icon.png" width="16" height="16" style="opacity: 0.6; display: block;" alt="IG" />
+                                                                        </td>
+                                                                        <td style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 400; color: #000000; letter-spacing: -0.04em; padding-left: 8px; vertical-align: middle; line-height: 1;">
+                                                                            @myremsleepclub
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </a>
+                                                            <div style="padding-bottom: 15px;">
+                                                                <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" width="90" style="margin: 0 auto; height: auto; opacity: 1;" />
+                                                            </div>
+                                                            <div style="font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 400; color: #000000; letter-spacing: -0.04em; padding-bottom: 10px; line-height: 1;">
+                                                                REMsleep Headquarters, London, UK<br/>
+                                                                &copy; 2026 REMSLEEP. ALL RIGHTS RESERVED.
+                                                            </div>
+                                                            <div style="font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 400; line-height: 1; letter-spacing: -0.04em;">
+                                                                <a href="https://www.myremsleep.com/unsubscribe" style="color: #000000; text-decoration: underline;">Unsubscribe</a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </center>
                         </body>
                         </html>
                       `,
-                    });
-                    if (error) {
-                      console.error('[API] Resend Error:', error);
-                      res.statusCode = 500;
-                      res.setHeader('Content-Type', 'application/json');
-                      res.end(JSON.stringify({ error: error.message }));
-                    } else {
-                      res.statusCode = 200;
-                      res.setHeader('Content-Type', 'application/json');
-                      res.end(JSON.stringify({ success: true, data }));
-                    }
-                  } else if (type === 'questionnaire') {
-                    const { answers } = payload;
-                    const { data, error } = await resend.emails.send({
-                      from: 'REMsleep <hello@myremsleep.com>',
-                      to: ['hello@myremsleep.com'],
-                      subject: `New Questionnaire Response - ${email}`,
-                      html: `
+                                        });
+                                        if (error) {
+                                            console.error('[API] Resend Error:', error);
+                                            res.statusCode = 500;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.end(JSON.stringify({ error: error.message }));
+                                        } else {
+                                            res.statusCode = 200;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.end(JSON.stringify({ success: true, data }));
+                                        }
+                                    } else if (type === 'questionnaire') {
+                                        const { answers } = payload;
+                                        const { data, error } = await resend.emails.send({
+                                            from: 'REMsleep <hello@myremsleep.com>',
+                                            to: ['hello@myremsleep.com'],
+                                            subject: `New Questionnaire Response - ${email}`,
+                                            html: `
                         <!DOCTYPE html>
                         <html lang="en">
                         <head>
@@ -342,33 +395,33 @@ export default defineConfig(({ mode }) => {
                         </body>
                         </html>
                       `,
-                    });
-                    if (error) {
-                      console.error('[API] Resend Error:', error);
-                      res.statusCode = 500;
-                      res.setHeader('Content-Type', 'application/json');
-                      res.end(JSON.stringify({ error: error.message }));
-                    } else {
-                      res.statusCode = 200;
-                      res.setHeader('Content-Type', 'application/json');
-                      res.end(JSON.stringify({ success: true, data }));
-                    }
-                  } else {
-                    if (!name || !userSubject || !message) {
-                      console.error('[API] Missing required fields for contact form');
-                      res.statusCode = 400;
-                      res.setHeader('Content-Type', 'application/json');
-                      res.end(JSON.stringify({ error: 'Missing required fields for contact form' }));
-                      return;
-                    }
+                                        });
+                                        if (error) {
+                                            console.error('[API] Resend Error:', error);
+                                            res.statusCode = 500;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.end(JSON.stringify({ error: error.message }));
+                                        } else {
+                                            res.statusCode = 200;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.end(JSON.stringify({ success: true, data }));
+                                        }
+                                    } else {
+                                        if (!name || !userSubject || !message) {
+                                            console.error('[API] Missing required fields for contact form');
+                                            res.statusCode = 400;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.end(JSON.stringify({ error: 'Missing required fields for contact form' }));
+                                            return;
+                                        }
 
-                    // 1. Send Admin Notification
-                    const adminEmail = await resend.emails.send({
-                      from: 'REMsleep Contact <noreply@myremsleep.com>',
-                      to: ['hello@myremsleep.com'],
-                      replyTo: email,
-                      subject: `[Contact Form] ${userSubject}`,
-                      html: `
+                                        // 1. Send Admin Notification
+                                        const adminEmail = await resend.emails.send({
+                                            from: 'REMsleep Contact <noreply@myremsleep.com>',
+                                            to: ['hello@myremsleep.com'],
+                                            replyTo: email,
+                                            subject: `[Contact Form] ${userSubject}`,
+                                            html: `
                         <!DOCTYPE html>
                         <html lang="en">
                         <head>
@@ -405,15 +458,15 @@ export default defineConfig(({ mode }) => {
                         </body>
                         </html>
                       `,
-                    });
+                                        });
 
-                    // 2. Send User Auto-Responder
-                    const userEmail = await resend.emails.send({
-                      from: 'REMsleep <hello@myremsleep.com>',
-                      to: [email],
-                      replyTo: 'hello@myremsleep.com',
-                      subject: 'We have received your message - REMsleep',
-                      html: `
+                                        // 2. Send User Auto-Responder
+                                        const userEmail = await resend.emails.send({
+                                            from: 'REMsleep <hello@myremsleep.com>',
+                                            to: [email],
+                                            replyTo: 'hello@myremsleep.com',
+                                            subject: 'We have received your message - REMsleep',
+                                            html: `
                         <!DOCTYPE html>
                         <html lang="en">
                         <head>
@@ -494,42 +547,42 @@ export default defineConfig(({ mode }) => {
                         </body>
                         </html>
                       `,
-                    });
+                                        });
 
-                    if (adminEmail.error) {
-                      console.error('[API] Resend Error:', adminEmail.error);
-                      res.statusCode = 500;
-                      res.setHeader('Content-Type', 'application/json');
-                      res.end(JSON.stringify({ error: adminEmail.error.message }));
-                    } else {
-                      console.log('[API] Success:', adminEmail.data);
-                      res.statusCode = 200;
-                      res.setHeader('Content-Type', 'application/json');
-                      res.end(JSON.stringify({
-                        success: true,
-                        adminData: adminEmail.data,
-                        userData: userEmail.data
-                      }));
-                    }
-                  }
-                } catch (err: any) {
-                  console.error('[API] Server Error:', err);
-                  res.statusCode = 500;
-                  res.setHeader('Content-Type', 'application/json');
-                  res.end(JSON.stringify({ error: `A server error occurred: ${err.message}` }));
-                }
-              });
-            } else {
-              next();
-            }
-          });
+                                        if (adminEmail.error) {
+                                            console.error('[API] Resend Error:', adminEmail.error);
+                                            res.statusCode = 500;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.end(JSON.stringify({ error: adminEmail.error.message }));
+                                        } else {
+                                            console.log('[API] Success:', adminEmail.data);
+                                            res.statusCode = 200;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.end(JSON.stringify({
+                                                success: true,
+                                                adminData: adminEmail.data,
+                                                userData: userEmail.data
+                                            }));
+                                        }
+                                    }
+                                } catch (err: any) {
+                                    console.error('[API] Server Error:', err);
+                                    res.statusCode = 500;
+                                    res.setHeader('Content-Type', 'application/json');
+                                    res.end(JSON.stringify({ error: `A server error occurred: ${err.message}` }));
+                                }
+                            });
+                        } else {
+                            next();
+                        }
+                    });
+                },
+            },
+        ].filter(Boolean),
+        resolve: {
+            alias: {
+                "@": path.resolve(__dirname, "./src"),
+            },
         },
-      },
-    ].filter(Boolean),
-    resolve: {
-      alias: {
-        "@": path.resolve(__dirname, "./src"),
-      },
-    },
-  };
+    };
 });
