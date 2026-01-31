@@ -185,32 +185,34 @@ export default defineConfig(({ mode }) => {
                         <body style="margin: 0; padding: 0; background-color: #ffffff;">
                             <center>
                                 <div style="width: 100%; max-width: 700px; margin: 0 auto;">
-                                    <!-- SECTION 1: HERO (Pink Background #F5F1ED) -->
+                                    <!-- SECTION 1: HERO (Background Overlay) -->
                                     <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#F5F1ED" align="center" style="width: 700px; max-width: 700px;">
-                                        <!-- Row 1: Content (Logo + Headline) -->
                                         <tr>
-                                            <td align="center" style="padding: 50px 20px 0 20px;">
+                                            <td align="center" background="https://www.myremsleep.com/topsection.png" style="background-image: url('https://www.myremsleep.com/topsection.png'); background-position: center bottom; background-size: cover; background-repeat: no-repeat; padding: 60px 20px 320px 20px;">
+                                                <!--[if gte mso 9]>
+                                                <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:700px; height:600px;">
+                                                    <v:fill type="frame" src="https://www.myremsleep.com/topsection.png" color="#F5F1ED" />
+                                                    <v:textbox inset="0,0,0,0">
+                                                <![endif]-->
                                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                     <!-- Logo -->
                                                     <tr>
-                                                        <td align="center" style="padding-bottom: 40px;">
-                                                            <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" width="120" style="margin: 0 auto; height: auto; opacity: 0.9;" />
+                                                        <td align="center" style="padding-bottom: 60px;">
+                                                            <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" width="140" style="margin: 0 auto; height: auto;" />
                                                         </td>
                                                     </tr>
                                                     <!-- Headline -->
                                                     <tr>
-                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 24px; color: #000000; padding-bottom: 10px; line-height: 1.5; letter-spacing: -0.04em;">
-                                                            <span style="font-weight: 600;">Rest</span> <span style="font-weight: 400;">is not a routine.</span><br/>
-                                                            <span style="font-weight: 400;">It is a </span><span style="font-weight: 600;">Ritual.</span>
+                                                        <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 32px; color: #1a1a1a; line-height: 1.3; letter-spacing: -0.04em;">
+                                                            <span style="font-weight: 700;">REST</span> <span style="font-weight: 400;">is not a routine.</span><br/>
+                                                            <span style="font-weight: 400;">It is a </span><span style="font-weight: 700;">RITUAL.</span>
                                                         </td>
                                                     </tr>
                                                 </table>
-                                            </td>
-                                        </tr>
-                                        <!-- Row 2: Hero Image (Full Width, No Padding) -->
-                                        <tr>
-                                            <td align="center" style="padding: 50px 0 0 0;">
-                                                <img src="https://www.myremsleep.com/email.png" alt="REMsleep Bedding" width="700" draggable="false" style="margin: 0 auto; height: auto; display: block; width: 100%; max-width: 700px; pointer-events: none; user-select: none;" />
+                                                <!--[if gte mso 9]>
+                                                    </v:textbox>
+                                                </v:rect>
+                                                <![endif]-->
                                             </td>
                                         </tr>
                                     </table>
