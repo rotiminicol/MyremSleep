@@ -24,11 +24,6 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
     const [_, domain] = email.split('@');
     const domainLower = domain.toLowerCase();
 
-    // Restrict icloud.com
-    if (domainLower === 'icloud.com') {
-      return false;
-    }
-
     // Common email providers and their common typos
     const emailProviders = {
       'gmail.com': [
@@ -142,12 +137,6 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
 
     if (!trimmedEmail) {
       setError('Please enter your email address');
-      return;
-    }
-
-    const [_, domain] = trimmedEmail.split('@');
-    if (domain?.toLowerCase() === 'icloud.com') {
-      setError('iCloud emails are currently not supported for subscription');
       return;
     }
 
