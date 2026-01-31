@@ -199,17 +199,17 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#F5F1ED" align="center" style="width: 700px; max-width: 700px;">
                                     <!-- Row 1: Content (Logo + Headline) -->
                                     <tr>
-                                        <td align="center" style="padding: 40px 20px 0 20px;">
+                                        <td align="center" style="padding: 50px 20px 0 20px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                 <!-- Logo -->
                                                 <tr>
-                                                    <td align="center" style="padding-bottom: 30px;">
+                                                    <td align="center" style="padding-bottom: 40px;">
                                                         <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" width="120" style="margin: 0 auto; height: auto; opacity: 0.9;" />
                                                     </td>
                                                 </tr>
                                                 <!-- Headline -->
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 24px; color: #000000; padding-bottom: 25px; line-height: 1; letter-spacing: -0.04em;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 24px; color: #000000; padding-bottom: 10px; line-height: 1.5; letter-spacing: -0.04em;">
                                                         <span style="font-weight: 600;">Rest</span> <span style="font-weight: 400;">is not a routine.</span><br/>
                                                         <span style="font-weight: 400;">It is a </span><span style="font-weight: 600;">Ritual.</span>
                                                     </td>
@@ -219,8 +219,8 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                     </tr>
                                     <!-- Row 2: Hero Image (Full Width, No Padding) -->
                                     <tr>
-                                        <td align="center" style="padding: 0;">
-                                            <img src="https://www.myremsleep.com/email.png" alt="REMsleep Bedding" width="700" style="margin: 0 auto; height: auto; display: block; width: 100%; max-width: 700px;" />
+                                        <td align="center" style="padding: 50px 0 0 0;">
+                                            <img src="https://www.myremsleep.com/email.png" alt="REMsleep Bedding" width="700" draggable="false" style="margin: 0 auto; height: auto; display: block; width: 100%; max-width: 700px; pointer-events: none; user-select: none;" />
                                         </td>
                                     </tr>
                                 </table>
@@ -228,34 +228,34 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                 <!-- SECTION 2: CONTENT (White Background #FFFFFF) -->
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#ffffff" align="center" style="width: 700px; max-width: 700px;">
                                     <tr>
-                                        <td align="center" style="padding: 40px 20px;">
+                                        <td align="center" style="padding: 60px 40px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                 <!-- Welcome Heading -->
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 600; color: #000000; padding-bottom: 20px; line-height: 1; letter-spacing: -0.04em;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 600; color: #000000; padding-bottom: 30px; line-height: 1.4; letter-spacing: -0.04em;">
                                                         Welcome to REMsleep
                                                     </td>
                                                 </tr>
                                                 <!-- Greeting -->
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 15px; color: #000000; line-height: 1;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 25px; color: #000000; line-height: 1.6;">
                                                         Hello ${name || 'there'},
                                                     </td>
                                                 </tr>
                                                 <!-- Body Text -->
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 10px; color: #000000; line-height: 1.3;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 25px; color: #000000; line-height: 1.6;">
                                                         In a world that rarely slows down, sleep becomes Recovery, Renewal.<br/>
                                                         A quiet reset where new dreams take shape.
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 20px; color: #000000; line-height: 1.3;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 30px; color: #000000; line-height: 1.6;">
                                                         We create calm, considered bedding in grounding tones designed to support your wind-down ritual and elevate every moment you spend in bed.
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 16px; color: #000000; padding: 5px 0 10px 0; line-height: 1; letter-spacing: -0.04em;">
+                                                    <td align="center" style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 16px; color: #000000; padding: 10px 0 20px 0; line-height: 1.4; letter-spacing: -0.04em;">
                                                         Rest. Renew. Awaken new dreams.
                                                     </td>
                                                 </tr>
@@ -267,30 +267,30 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                 <!-- SECTION 3: QUESTIONNAIRE (Pink Background #FFEDE6) -->
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#FFEDE6" align="center" style="width: 700px; max-width: 700px;">
                                     <tr>
-                                        <td align="center" style="padding: 40px 20px;">
+                                        <td align="center" style="padding: 60px 40px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 500; font-style: italic; color: #000000; padding-bottom: 15px; line-height: 1; letter-spacing: -0.04em;">
+                                                    <td align="center" style="font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 500; font-style: italic; color: #000000; padding-bottom: 25px; line-height: 1.4; letter-spacing: -0.04em;">
                                                         Before you go, A quick question:
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 18px; padding-bottom: 10px; color: #000000; line-height: 1; letter-spacing: -0.04em;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 18px; padding-bottom: 15px; color: #000000; line-height: 1.4; letter-spacing: -0.04em;">
                                                         Reply with one word:
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; padding-bottom: 15px; color: #000000; line-height: 1; letter-spacing: -0.04em;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; padding-bottom: 25px; color: #000000; line-height: 1.5; letter-spacing: -0.04em;">
                                                         What do you want your bedroom<br/>to feel like this season?
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; color: #743E00; letter-spacing: -0.04em; padding-bottom: 20px; font-weight: 500; line-height: 1;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 18px; color: #743E00; letter-spacing: -0.04em; padding-bottom: 30px; font-weight: 500; line-height: 1.4;">
                                                         Calm &bull; Cosy &bull; Restored &bull; Inspired
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; color: #000000; line-height: 1; letter-spacing: -0.04em;">I read every reply.</td>
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; color: #000000; line-height: 1.5; letter-spacing: -0.04em;">I read every reply.</td>
                                                 </tr>
                                             </table>
                                         </td>
