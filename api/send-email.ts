@@ -193,9 +193,9 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                     </head>
                     <body style="margin: 0; padding: 0; background-color: #ffffff;">
                         <center>
-                            <div style="width: 100%; max-width: 396px; margin: 0 auto;">
+                            <div style="width: 100%; max-width: 500px; margin: 0 auto;">
                                 <!-- SECTION 1: HERO (Pink Background #FFEDE6) -->
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="396" bgcolor="#FFEDE6" align="center" style="width: 396px; max-width: 396px;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500" bgcolor="#FFEDE6" align="center" style="width: 500px; max-width: 500px;">
                                     <tr>
                                         <td align="center" style="padding: 40px 20px 0 20px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -215,7 +215,7 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                                 <!-- Hero Image -->
                                                 <tr>
                                                     <td align="center" style="padding-bottom: 0;">
-                                                        <img src="https://www.myremsleep.com/email.png" alt="REMsleep Bedding" width="356" style="margin: 0 auto; height: auto; display: block; width: 100%; max-width: 356px;" />
+                                                        <img src="https://www.myremsleep.com/email.png" alt="REMsleep Bedding" width="460" style="margin: 0 auto; height: auto; display: block; width: 100%; max-width: 460px;" />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -224,36 +224,36 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                 </table>
 
                                 <!-- SECTION 2: CONTENT (White Background #FFFFFF) -->
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="396" bgcolor="#ffffff" align="center" style="width: 396px; max-width: 396px;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500" bgcolor="#ffffff" align="center" style="width: 500px; max-width: 500px;">
                                     <tr>
                                         <td align="center" style="padding: 40px 20px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                 <!-- Welcome Heading -->
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 600; color: #1a1a1a; padding-bottom: 20px; line-height: 1.2; letter-spacing: -0.5px;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 600; color: #000000; padding-bottom: 20px; line-height: 1; letter-spacing: -0.04em;">
                                                         Welcome to REMsleep
                                                     </td>
                                                 </tr>
                                                 <!-- Greeting -->
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 15px; color: #2D2A26;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 15px; color: #000000; line-height: 1;">
                                                         Hello ${name || 'there'},
                                                     </td>
                                                 </tr>
                                                 <!-- Body Text -->
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 10px; color: #2D2A26; line-height: 1.6;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 10px; color: #000000; line-height: 1.3;">
                                                         In a world that rarely slows down, sleep becomes Recovery, Renewal.<br/>
                                                         A quiet reset where new dreams take shape.
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; letter-spacing: 0.2px; padding-bottom: 20px; color: #2D2A26; line-height: 1.6;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: -0.04em; padding-bottom: 20px; color: #000000; line-height: 1.3;">
                                                         We create calm, considered bedding in grounding tones designed to support your wind-down ritual and elevate every moment you spend in bed.
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; color: #1a1a1a; padding: 5px 0 10px 0;">
+                                                    <td align="center" style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 14px; color: #000000; padding: 5px 0 10px 0; line-height: 1; letter-spacing: -0.04em;">
                                                         Rest. Renew. Awaken new dreams.
                                                     </td>
                                                 </tr>
@@ -263,32 +263,32 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                 </table>
 
                                 <!-- SECTION 3: QUESTIONNAIRE (Pink Background #FFEDE6) -->
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="396" bgcolor="#FFEDE6" align="center" style="width: 396px; max-width: 396px;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500" bgcolor="#FFEDE6" align="center" style="width: 500px; max-width: 500px;">
                                     <tr>
                                         <td align="center" style="padding: 40px 20px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; color: #1a1a1a; padding-bottom: 15px;">
+                                                    <td align="center" style="font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 500; font-style: italic; color: #000000; padding-bottom: 15px; line-height: 1; letter-spacing: -0.04em;">
                                                         Before you go, A quick question:
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px; padding-bottom: 10px; color: #1a1a1a;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px; padding-bottom: 10px; color: #000000; line-height: 1; letter-spacing: -0.04em;">
                                                         Reply with one word:
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; padding-bottom: 15px; color: #2D2A26; line-height: 1.4;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 400; padding-bottom: 15px; color: #000000; line-height: 1; letter-spacing: -0.04em;">
                                                         What do you want your bedroom<br/>to feel like this season?
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 15px; color: #8c5e2a; letter-spacing: 0.5px; padding-bottom: 20px; font-weight: 600;">
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 16px; color: #743E00; letter-spacing: -0.04em; padding-bottom: 20px; font-weight: 500; line-height: 1;">
                                                         Calm &bull; Cosy &bull; Restored &bull; Inspired
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 300; color: #2D2A26;">I read every reply.</td>
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 400; color: #000000; line-height: 1; letter-spacing: -0.04em;">I read every reply.</td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -296,16 +296,16 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                 </table>
 
                                 <!-- SECTION 4: FOOTER (White Background #FFFFFF) -->
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="396" bgcolor="#ffffff" align="center" style="width: 396px; max-width: 396px;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500" bgcolor="#ffffff" align="center" style="width: 500px; max-width: 500px;">
                                     <tr>
                                         <td align="center" style="padding: 40px 20px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                 <!-- Signature -->
                                                 <tr>
                                                     <td align="center" style="padding-bottom: 30px;">
-                                                        <div style="font-family: 'Montserrat', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; padding-bottom: 5px; color: #2D2A26;">With love,</div>
-                                                        <div style="font-family: 'Playfair Display', serif; font-size: 36px; font-style: italic; color: #1a1a1a; padding-bottom: 5px;">Kiki</div>
-                                                        <div style="font-family: 'Montserrat', sans-serif; font-size: 12px; color: #555; letter-spacing: 0.5px; padding-bottom: 25px;">Founder, REMsleep</div>
+                                                        <div style="font-family: 'Montserrat', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: -0.04em; font-size: 14px; padding-bottom: 5px; color: #000000; line-height: 1;">With love,</div>
+                                                        <div style="font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 700; font-style: italic; color: #000000; padding-bottom: 5px; line-height: 1; letter-spacing: -0.04em;">Kiki</div>
+                                                        <div style="font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 400; color: #000000; letter-spacing: -0.04em; padding-bottom: 25px; line-height: 1;">Founder, REMsleep</div>
                                                         
                                                         <!-- Contact Button -->
                                                         <a href="mailto:hello@myremsleep.com" style="display: inline-block; padding: 14px 40px; background-color: #000000; color: #ffffff; text-decoration: none; border-radius: 0px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 14px; letter-spacing: 1px; text-transform: none;">Contact us</a>
@@ -320,7 +320,7 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                                                     <td style="vertical-align: middle;">
                                                                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/120px-Instagram_icon.png" width="16" height="16" style="opacity: 0.6; display: block;" alt="IG" />
                                                                     </td>
-                                                                    <td style="font-family: 'Montserrat', sans-serif; font-size: 12px; color: #555; letter-spacing: 0px; padding-left: 8px; vertical-align: middle;">
+                                                                    <td style="font-family: 'Montserrat', sans-serif; font-size: 11.55px; font-weight: 400; color: #000000; letter-spacing: -0.04em; padding-left: 8px; vertical-align: middle; line-height: 1;">
                                                                         @myremsleepclub
                                                                     </td>
                                                                 </tr>
@@ -329,12 +329,12 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                                         <div style="padding-bottom: 15px;">
                                                             <img src="https://www.myremsleep.com/logo5.png" alt="REMsleep" width="90" style="margin: 0 auto; height: auto; opacity: 1;" />
                                                         </div>
-                                                        <div style="font-family: 'Montserrat', sans-serif; font-size: 9px; color: #aaa; letter-spacing: 0px; padding-bottom: 10px; line-height: 1.4;">
+                                                        <div style="font-family: 'Montserrat', sans-serif; font-size: 6px; font-weight: 400; color: #000000; letter-spacing: -0.04em; padding-bottom: 10px; line-height: 1;">
                                                             REMsleep Headquarters, London, UK<br/>
                                                             &copy; 2026 REMSLEEP. ALL RIGHTS RESERVED.
                                                         </div>
-                                                        <div style="font-family: 'Montserrat', sans-serif; font-size: 9px;">
-                                                            <a href="https://www.myremsleep.com/unsubscribe" style="color: #aaa; text-decoration: underline;">Unsubscribe</a>
+                                                        <div style="font-family: 'Montserrat', sans-serif; font-size: 6px; font-weight: 400; line-height: 1; letter-spacing: -0.04em;">
+                                                            <a href="https://www.myremsleep.com/unsubscribe" style="color: #000000; text-decoration: underline;">Unsubscribe</a>
                                                         </div>
                                                     </td>
                                                 </tr>
