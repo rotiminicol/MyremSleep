@@ -193,9 +193,11 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                     </head>
                     <body style="margin: 0; padding: 0; background-color: #ffffff;">
                         <center>
-                            <div style="width: 100%; max-width: 500px; margin: 0 auto;">
-                                <!-- SECTION 1: HERO (Pink Background #FFEDE6) -->
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500" bgcolor="#FFEDE6" align="center" style="width: 500px; max-width: 500px;">
+                            <div style="width: 100%; max-width: 700px; margin: 0 auto;">
+                                <!-- SECTION 1: HERO (Pink Background #F5F1ED) -->
+                                <!-- SECTION 1: HERO (Pink Background #F5F1ED) -->
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#F5F1ED" align="center" style="width: 700px; max-width: 700px;">
+                                    <!-- Row 1: Content (Logo + Headline) -->
                                     <tr>
                                         <td align="center" style="padding: 40px 20px 0 20px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -207,24 +209,26 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                                 </tr>
                                                 <!-- Headline -->
                                                 <tr>
-                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 22px; color: #1a1a1a; padding-bottom: 25px; line-height: 1.3; font-weight: 500;">
-                                                        <strong>Rest</strong> is not a routine.<br/>
-                                                        It is a <strong>Ritual.</strong>
-                                                    </td>
-                                                </tr>
-                                                <!-- Hero Image -->
-                                                <tr>
-                                                    <td align="center" style="padding-bottom: 0;">
-                                                        <img src="https://www.myremsleep.com/email.png" alt="REMsleep Bedding" width="460" style="margin: 0 auto; height: auto; display: block; width: 100%; max-width: 460px;" />
+                                                    <td align="center" style="font-family: 'Montserrat', sans-serif; font-size: 24px; color: #000000; padding-bottom: 25px; line-height: 1; letter-spacing: -0.04em;">
+                                                        <span style="font-weight: 600;">Rest</span> <span style="font-weight: 400;">is not a routine.</span><br/>
+                                                        <span style="font-weight: 400;">It is a </span><span style="font-weight: 600;">Ritual.</span>
                                                     </td>
                                                 </tr>
                                             </table>
                                         </td>
                                     </tr>
+                                    <!-- Row 2: Hero Image (Full Width, No Padding) -->
+                                    <tr>
+                                        <td align="center" style="padding: 0;">
+                                            <a href="https://www.myremsleep.com/email.png" target="_blank" style="text-decoration: none; display: block;">
+                                                <img src="https://www.myremsleep.com/email.png" alt="REMsleep Bedding" width="700" style="margin: 0 auto; height: auto; display: block; width: 100%; max-width: 700px;" />
+                                            </a>
+                                        </td>
+                                    </tr>
                                 </table>
 
                                 <!-- SECTION 2: CONTENT (White Background #FFFFFF) -->
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500" bgcolor="#ffffff" align="center" style="width: 500px; max-width: 500px;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#ffffff" align="center" style="width: 700px; max-width: 700px;">
                                     <tr>
                                         <td align="center" style="padding: 40px 20px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -263,7 +267,7 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                 </table>
 
                                 <!-- SECTION 3: QUESTIONNAIRE (Pink Background #FFEDE6) -->
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500" bgcolor="#FFEDE6" align="center" style="width: 500px; max-width: 500px;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#FFEDE6" align="center" style="width: 700px; max-width: 700px;">
                                     <tr>
                                         <td align="center" style="padding: 40px 20px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -296,7 +300,7 @@ To unsubscribe, please visit https://www.myremsleep.com/unsubscribe`,
                                 </table>
 
                                 <!-- SECTION 4: FOOTER (White Background #FFFFFF) -->
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500" bgcolor="#ffffff" align="center" style="width: 500px; max-width: 500px;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="700" bgcolor="#ffffff" align="center" style="width: 700px; max-width: 700px;">
                                     <tr>
                                         <td align="center" style="padding: 40px 20px;">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
