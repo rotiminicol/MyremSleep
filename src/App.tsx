@@ -9,10 +9,18 @@ import TermsPage from "./pages/TermsPage";
 import FaqPage from "./pages/FaqPage";
 import UnsubscribePage from "./pages/UnsubscribePage";
 import PrivacyPage from "./pages/PrivacyPage";
+import StorePage from "./pages/StorePage";
+import ProductPage from "./pages/ProductPage";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
+import { useCartSync } from "./hooks/useCartSync";
 
 const queryClient = new QueryClient();
+
+function CartSyncProvider({ children }: { children: React.ReactNode }) {
+  useCartSync();
+  return <>{children}</>;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -22,15 +30,19 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <GoogleAnalytics />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/faq" element={<FaqPage />} />
-          <Route path="/unsubscribe" element={<UnsubscribePage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <CartSyncProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/store" element={<StorePage />} />
+            <Route path="/product/:handle" element={<ProductPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/faq" element={<FaqPage />} />
+            <Route path="/unsubscribe" element={<UnsubscribePage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </CartSyncProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
