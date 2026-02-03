@@ -103,38 +103,36 @@ export function StoreNavbar() {
           </div>
 
           {/* Mobile Layout */}
-          <div className="md:hidden flex items-center justify-between">
-            {/* Logo */}
-            <Link to="/" className="flex-shrink-0">
-              <img
-                src="/logo5.png"
-                alt="Remsleep"
-                className="h-8 w-auto"
-              />
-            </Link>
+          <div className="md:hidden flex items-center justify-between relative h-12">
+            {/* Left: Mobile Menu Button */}
+            <button
+              className="text-gray-800 p-1"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+
+            {/* Center: Logo */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <Link to="/" className="flex-shrink-0">
+                <img
+                  src="/logo5.png"
+                  alt="Remsleep"
+                  className="h-8 w-auto"
+                />
+              </Link>
+            </div>
 
             {/* Right Actions */}
             <div className="flex items-center gap-4">
-              <button className="text-gray-800 hover:text-gray-600 transition-colors">
+              <button
+                className="text-gray-800 hover:text-gray-600 transition-colors"
+                aria-label="Search"
+              >
                 <Search className="h-5 w-5" />
               </button>
 
-              <button
-                className="text-gray-800 hover:text-gray-600 transition-colors"
-                aria-label="Wishlist"
-              >
-                <Heart className="h-5 w-5" />
-              </button>
-
               <CartDrawer />
-
-              {/* Mobile Menu Button */}
-              <button
-                className="text-gray-800"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
             </div>
           </div>
 

@@ -2,42 +2,36 @@ import { Link } from 'react-router-dom';
 
 export function StoreHero() {
   return (
-    <section className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2">
-        {/* Left Image */}
-        <div className="relative aspect-[4/5] md:aspect-auto md:h-[80vh] overflow-hidden group cursor-pointer">
-          <img
-            src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=1200&auto=format&fit=crop&q=80"
-            alt="Luxury bedding collection"
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors" />
-          <div className="absolute bottom-8 left-8">
-            <Link
-              to="/store?category=bedding"
-              className="inline-block bg-white/90 backdrop-blur-sm text-gray-900 px-6 py-3 text-sm tracking-widest uppercase hover:bg-white transition-colors"
-            >
-              Shop Bedding
-            </Link>
+    <section className="w-full px-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Left Item - Organic Forms */}
+        <div className="group cursor-pointer">
+          <div className="relative aspect-[4/5] overflow-hidden mb-3">
+            <img
+              src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200&auto=format&fit=crop&q=80"
+              alt="Organic Forms"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
           </div>
+          <Link to="/store?collection=organic" className="block text-left">
+            <h3 className="text-sm text-gray-900 font-medium mb-1">Organic Forms</h3>
+            <p className="text-xs text-gray-500 font-sans">Nature-inspired pieces with fluid, sculptural details</p>
+          </Link>
         </div>
 
-        {/* Right Image */}
-        <div className="relative aspect-[4/5] md:aspect-auto md:h-[80vh] overflow-hidden group cursor-pointer">
-          <img
-            src="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?w=1200&auto=format&fit=crop&q=80"
-            alt="Premium fabric collection"
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors" />
-          <div className="absolute bottom-8 left-8">
-            <Link
-              to="/store?category=sleepwear"
-              className="inline-block bg-white/90 backdrop-blur-sm text-gray-900 px-6 py-3 text-sm tracking-widest uppercase hover:bg-white transition-colors"
-            >
-              Shop Sleepwear
-            </Link>
+        {/* Right Item - Chain Collection */}
+        <div className="group cursor-pointer">
+          <div className="relative aspect-[4/5] overflow-hidden mb-3">
+            <img
+              src="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?w=1200&auto=format&fit=crop&q=80"
+              alt="Chain Collection"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
           </div>
+          <Link to="/store?collection=chains" className="block text-left">
+            <h3 className="text-sm text-gray-900 font-medium mb-1">Chain Collection</h3>
+            <p className="text-xs text-gray-500 font-sans">Refined links and connections in precious metals</p>
+          </Link>
         </div>
       </div>
     </section>
