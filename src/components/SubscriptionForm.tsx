@@ -13,9 +13,9 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
   const [error, setError] = useState('');
 
   const validateEmail = (email: string): boolean => {
-    // RFC 5322 compliant email regex - accepts all valid email formats
+    // Simple, permissive email validation - accepts all common formats
     // Including regional domains like hotmail.co.uk, yahoo.co.jp, etc.
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
