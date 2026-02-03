@@ -1,13 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { CartDrawer } from './CartDrawer';
 
+const announcements = [
+  'Subscribe for 10% off',
+  'Free shipping for orders above 1.000 DKK',
+  'Complimentary gift wrapping available at Checkout',
+];
+
 export function StoreNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [announcementVisible, setAnnouncementVisible] = useState(true);
+  const [currentAnnouncement, setCurrentAnnouncement] = useState(0);
   const items = useCartStore((state) => state.items);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  useEffect(() => {
+    if (!announcementVisible) return;
+    const interval = setInterval(() => {
+      setCurrentAnnouncement((prev) => (prev + 1) % announcements.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [announcementVisible]);
 
   const navLinks = [
     { label: 'Shop All', href: '/store' },
@@ -19,11 +35,22 @@ export function StoreNavbar() {
   return (
     <>
       {/* Announcement Bar */}
-      <div className="bg-[#f5f1ed] border-b border-[#e0dbd5] py-2.5 px-4">
-        <p className="text-center text-sm text-gray-700 tracking-wide">
-          Free shipping for orders above £100
-        </p>
-      </div>
+      {announcementVisible && (
+        <div className="bg-[#f5f1ed] border-b border-[#e0dbd5] py-2.5 px-4">
+          <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+            <p className="text-sm text-gray-700 tracking-wide transition-opacity duration-300">
+              {announcements[currentAnnouncement]}
+            </p>
+            <button
+              onClick={() => setAnnouncementVisible(false)}
+              className="text-gray-500 hover:text-gray-700 transition-colors p-1"
+              aria-label="Close announcement"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Navbar */}
       <header className="sticky top-0 z-50 bg-[#f5f1ed] border-b border-[#e0dbd5]">
