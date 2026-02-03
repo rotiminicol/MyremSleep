@@ -6,7 +6,7 @@ import { CartDrawer } from './CartDrawer';
 
 const announcements = [
   'Subscribe for 10% off',
-  'Free shipping for orders above 1.000 DKK',
+  'Free shipping for orders above £100',
   'Complimentary gift wrapping available at Checkout',
 ];
 
