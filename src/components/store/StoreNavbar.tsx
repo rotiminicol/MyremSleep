@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingCart, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, Heart } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { CartDrawer } from './CartDrawer';
 
@@ -14,6 +14,7 @@ export function StoreNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [announcementVisible, setAnnouncementVisible] = useState(true);
   const [currentAnnouncement, setCurrentAnnouncement] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
   const items = useCartStore((state) => state.items);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -26,10 +27,9 @@ export function StoreNavbar() {
   }, [announcementVisible]);
 
   const navLinks = [
-    { label: 'Shop All', href: '/store' },
-    { label: 'Bedding', href: '/store?category=bedding' },
-    { label: 'Sleepwear', href: '/store?category=sleepwear' },
-    { label: 'Accessories', href: '/store?category=accessories' },
+    { label: 'Shop', href: '/store' },
+    { label: 'New in', href: '/store?filter=new' },
+    { label: 'About', href: '/about' },
   ];
 
   return (
@@ -37,7 +37,7 @@ export function StoreNavbar() {
       {/* Announcement Bar */}
       {announcementVisible && (
         <div className="bg-[#f5f1ed] border-b border-[#e0dbd5] py-2.5 px-2 flex items-center justify-between">
-          <p className="text-sm text-gray-700 tracking-wide transition-opacity duration-300">
+          <p className="text-sm text-gray-700 tracking-wide transition-opacity duration-300 font-sans font-medium">
             {announcements[currentAnnouncement]}
           </p>
           <button
@@ -52,41 +52,85 @@ export function StoreNavbar() {
 
       {/* Main Navbar */}
       <header className="sticky top-0 z-50 bg-[#f5f1ed] border-b border-[#e0dbd5]">
-        <nav className="max-w-[1400px] mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <Link to="/" className="flex-shrink-0">
-              <img
-                src="/logo5.png"
-                alt="Remsleep"
-                className="h-8 md:h-10 w-auto"
-              />
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
+        <nav className="w-full px-6 py-4">
+          {/* Desktop Layout - 3 Column Grid */}
+          <div className="hidden md:grid md:grid-cols-3 items-center gap-4">
+            {/* Left: Navigation Links */}
+            <div className="flex items-center gap-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   to={link.href}
-                  className="text-sm text-gray-800 hover:text-gray-600 transition-colors tracking-wide"
+                  className="text-sm text-gray-800 hover:text-gray-600 transition-colors font-sans font-medium"
                 >
                   {link.label}
                 </Link>
               ))}
             </div>
 
-            {/* Right Actions */}
-            <div className="flex items-center gap-4">
-              <button className="hidden md:flex text-gray-800 hover:text-gray-600 transition-colors">
+            {/* Center: Logo */}
+            <div className="flex justify-center">
+              <Link to="/" className="flex-shrink-0">
+                <img
+                  src="/logo5.png"
+                  alt="Remsleep"
+                  className="h-8 w-auto"
+                />
+              </Link>
+            </div>
+
+            {/* Right: Search, Wishlist, Cart */}
+            <div className="flex items-center justify-end gap-6">
+              {/* Search Icon */}
+              <button
+                className="text-gray-800 hover:text-gray-600 transition-colors"
+                aria-label="Search"
+              >
                 <Search className="h-5 w-5" />
               </button>
-              
+
+              {/* Wishlist Heart Icon */}
+              <button
+                className="text-gray-800 hover:text-gray-600 transition-colors"
+                aria-label="Wishlist"
+              >
+                <Heart className="h-5 w-5" />
+              </button>
+
+              {/* Cart */}
+              <CartDrawer />
+            </div>
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="md:hidden flex items-center justify-between">
+            {/* Logo */}
+            <Link to="/" className="flex-shrink-0">
+              <img
+                src="/logo5.png"
+                alt="Remsleep"
+                className="h-8 w-auto"
+              />
+            </Link>
+
+            {/* Right Actions */}
+            <div className="flex items-center gap-4">
+              <button className="text-gray-800 hover:text-gray-600 transition-colors">
+                <Search className="h-5 w-5" />
+              </button>
+
+              <button
+                className="text-gray-800 hover:text-gray-600 transition-colors"
+                aria-label="Wishlist"
+              >
+                <Heart className="h-5 w-5" />
+              </button>
+
               <CartDrawer />
 
               {/* Mobile Menu Button */}
               <button
-                className="md:hidden text-gray-800"
+                className="text-gray-800"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -96,12 +140,12 @@ export function StoreNavbar() {
 
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
-            <div className="md:hidden pt-4 pb-2 border-t border-[#e0dbd5] mt-4">
+            <div className="md:hidden pt-4 pb-2 border-t border-gray-200 mt-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   to={link.href}
-                  className="block py-3 text-sm text-gray-800 hover:text-gray-600 transition-colors tracking-wide"
+                  className="block py-3 text-sm text-gray-800 hover:text-gray-600 transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
