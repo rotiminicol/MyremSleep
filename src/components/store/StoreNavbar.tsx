@@ -36,7 +36,7 @@ export function StoreNavbar() {
     <>
       {/* Announcement Bar */}
       {announcementVisible && (
-        <div className="bg-[#f5f1ed] border-b border-[#e0dbd5] py-2.5 px-4 flex items-center justify-between">
+        <div className="bg-[#f5f1ed] border-b border-[#e0dbd5] py-2.5 px-2 flex items-center justify-between">
           <p className="text-sm text-gray-700 tracking-wide transition-opacity duration-300">
             {announcements[currentAnnouncement]}
           </p>
