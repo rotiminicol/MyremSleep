@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingCart, Menu, X, Heart } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/stores/cartStore';
+import { FavoritesDrawer } from './FavoritesDrawer';
 import { CartDrawer } from './CartDrawer';
 
 const announcements = [
@@ -13,40 +15,52 @@ const announcements = [
 const menuData = {
   'Shop': {
     links: [
-      { label: 'Rings', href: '/store?category=rings' },
-      { label: 'Necklaces', href: '/store?category=necklaces' },
-      { label: 'Earrings', href: '/store?category=earrings' },
-      { label: 'Bracelets', href: '/store?category=bracelets' },
-      { label: 'Watches', href: '/store?category=watches' },
+      { label: 'Silk Pillowcases', href: '/store?category=pillowcases' },
+      { label: 'Linen Bedding', href: '/store?category=linen' },
+      { label: 'Bamboo Sheets', href: '/store?category=bamboo' },
+      { label: 'Sleep Masks', href: '/store?category=masks' },
+      { label: 'Weighted Blankets', href: '/store?category=weighted' },
     ],
     images: [
-      { src: 'https://images.unsplash.com/photo-1605100804763-ebea23ea3138?w=800&auto=format&fit=crop&q=80', label: 'Rings', href: '/store?category=rings' },
-      { src: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&auto=format&fit=crop&q=80', label: 'Earrings', href: '/store?category=earrings' },
+      { src: '/image2.png', label: 'Silk Collection', href: '/store?category=pillowcases' },
+      { src: '/image3.png', label: 'Linen Essentials', href: '/store?category=linen' },
     ]
   },
   'New in': {
     links: [
-      { label: "This Week's Arrivals", href: '/store?filter=new' },
-      { label: 'Spring Collection', href: '/store?collection=spring' },
-      { label: 'Featured Designers', href: '/store?filter=featured' },
+      { label: "Latest Arrivals", href: '/store?filter=new' },
+      { label: 'Seasonal Collection', href: '/store?collection=seasonal' },
+      { label: 'Featured Sets', href: '/store?filter=featured' },
+      { label: 'Best Sellers', href: '/store?filter=bestsellers' },
       { label: 'Limited Edition', href: '/store?filter=limited' },
-      { label: 'Pre-Orders', href: '/store?filter=preorder' },
     ],
     images: [
-      { src: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&auto=format&fit=crop&q=80', label: 'Arcus Bracelet', href: '/store?product=arcus' },
-      { src: 'https://images.unsplash.com/photo-1599643478518-17488fbbcd75?w=800&auto=format&fit=crop&q=80', label: 'Spin Bracelet', href: '/store?product=spin' },
+      { src: '/image4.png', label: 'Summer Sets', href: '/store?collection=summer' },
+      { src: '/image5.png', label: 'Bamboo Blend', href: '/store?collection=bamboo' },
     ]
   },
   'About': {
     links: [
       { label: 'Our Story', href: '/about' },
+      { label: 'Sleep Science', href: '/sleep-science' },
       { label: 'Sustainability', href: '/sustainability' },
-      { label: 'Size Guide', href: '/size-guide' },
-      { label: 'Customer Care', href: '/contact' },
-      { label: 'Store Locator', href: '/stores' },
+      { label: 'Material Guide', href: '/materials' },
+      { label: 'Contact Us', href: '/contact' },
     ],
     images: [
-      { src: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=1200&auto=format&fit=crop&q=80', label: 'Read our story', href: '/about' },
+      { src: '/image7.png', label: 'Our philosophy', href: '/about' },
+    ]
+  },
+  'Blog': {
+    links: [
+      { label: 'Sleep Tips', href: '/blog?category=tips' },
+      { label: 'Bedroom Decor', href: '/blog?category=decor' },
+      { label: 'Wellness Journal', href: '/blog?category=wellness' },
+      { label: 'Product Care', href: '/blog?category=care' },
+      { label: 'Sleep Stories', href: '/blog?category=stories' },
+    ],
+    images: [
+      { src: '/image6.png', label: 'Latest Post: Better Sleep habits', href: '/blog/sleep-habits' },
     ]
   }
 };
@@ -56,6 +70,7 @@ export function StoreNavbar() {
   const [announcementVisible, setAnnouncementVisible] = useState(true);
   const [currentAnnouncement, setCurrentAnnouncement] = useState(0);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const items = useCartStore((state) => state.items);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -67,11 +82,34 @@ export function StoreNavbar() {
     return () => clearInterval(interval);
   }, [announcementVisible]);
 
+  useEffect(() => {
+    if (isSearchOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isSearchOpen]);
+
   const navLinks = [
     { label: 'Shop', href: '/store' },
     { label: 'New in', href: '/store?filter=new' },
     { label: 'About', href: '/about' },
+    { label: 'Blog', href: '/blog' },
   ];
+
+  const popularSearches = [
+    'Silk Pillowcase',
+    'Linen Duvet',
+    'Bamboo Sheets',
+    'Weighted Mask',
+    'Lavender Eye Pillow',
+    'Clay Bedding'
+  ];
+
+  const handleSearchToggle = () => {
+    setHoveredLink(null);
+    setIsSearchOpen(!isSearchOpen);
+  };
 
   return (
     <>
@@ -100,16 +138,17 @@ export function StoreNavbar() {
           {/* Desktop Layout - 3 Column Grid */}
           <div className="hidden md:grid md:grid-cols-3 items-center gap-4">
             {/* Left: Navigation Links */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   to={link.href}
-                  className={`text-sm tracking-wide transition-colors font-sans font-medium py-2 ${hoveredLink === link.label ? 'text-gray-900 border-b border-gray-900' : 'text-gray-800 hover:text-gray-600'
+                  className={`text-sm tracking-wide transition-colors font-sans font-medium py-2 relative group ${hoveredLink === link.label ? 'text-gray-900' : 'text-gray-800 hover:text-gray-600'
                     }`}
                   onMouseEnter={() => setHoveredLink(link.label)}
                 >
                   {link.label}
+                  <span className={`absolute bottom-0 left-0 w-full h-[1px] bg-gray-900 transition-transform duration-300 origin-left ${hoveredLink === link.label ? 'scale-x-100' : 'scale-x-0'}`} />
                 </Link>
               ))}
             </div>
@@ -129,86 +168,126 @@ export function StoreNavbar() {
             <div className="flex items-center justify-end gap-6">
               {/* Search Icon */}
               <button
+                onClick={handleSearchToggle}
                 className="text-gray-800 hover:text-gray-600 transition-colors"
                 aria-label="Search"
               >
                 <Search className="h-5 w-5" />
               </button>
 
-              {/* Wishlist Heart Icon */}
-              <button
-                className="text-gray-800 hover:text-gray-600 transition-colors"
-                aria-label="Wishlist"
-              >
-                <Heart className="h-5 w-5" />
-              </button>
+              {/* Favorites Drawer */}
+              <FavoritesDrawer />
 
-              {/* Cart */}
+              {/* Cart Drawer */}
               <CartDrawer />
             </div>
           </div>
 
-          {/* Mobile Layout */}
-          <div className="md:hidden flex items-center justify-between relative h-12">
-            {/* Left: Mobile Menu Button */}
-            <button
-              className="text-gray-800 p-1"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-
-            {/* Center: Logo */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <Link to="/" className="flex-shrink-0">
-                <img
-                  src="/logo5.png"
-                  alt="Remsleep"
-                  className="h-8 w-auto"
-                />
-              </Link>
-            </div>
-
-            {/* Right Actions */}
-            <div className="flex items-center gap-4">
+          {/* Mobile Layout (Trigger) */}
+          {!mobileMenuOpen && (
+            <div className="md:hidden flex items-center justify-between relative h-12">
               <button
-                className="text-gray-800 hover:text-gray-600 transition-colors"
-                aria-label="Search"
+                className="text-gray-800 p-1"
+                onClick={() => setMobileMenuOpen(true)}
               >
-                <Search className="h-5 w-5" />
+                <Menu className="h-6 w-6" />
               </button>
 
-              <CartDrawer />
-            </div>
-          </div>
-
-          {/* Mobile Navigation */}
-          {mobileMenuOpen && (
-            <div className="md:hidden pt-4 pb-2 border-t border-gray-200 mt-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  className="block py-3 text-sm text-gray-800 hover:text-gray-600 transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.label}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                <Link to="/" className="flex-shrink-0">
+                  <img src="/logo5.png" alt="Remsleep" className="h-8 w-auto" />
                 </Link>
-              ))}
+              </div>
+
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className="text-gray-800 p-1"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
+                <CartDrawer />
+              </div>
             </div>
           )}
+
+          {/* Mobile Navigation Overlay */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, x: '-100%' }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: '-100%' }}
+                transition={{ type: 'spring', damping: 30, stiffness: 300, mass: 0.8 }}
+                className="fixed inset-0 z-[60] bg-[#f5f1ed] md:hidden flex flex-col"
+              >
+                {/* Mobile Header Inside Menu */}
+                <div className="flex items-center justify-between px-6 h-12 border-b border-[#e0dbd5] bg-[#f5f1ed]">
+                  <button onClick={() => setMobileMenuOpen(false)} className="p-1">
+                    <X className="h-6 w-6 text-gray-800" />
+                  </button>
+                  <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                    <img src="/logo5.png" alt="Remsleep" className="h-8 w-auto" />
+                  </Link>
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => {
+                        setIsSearchOpen(true);
+                        setMobileMenuOpen(false);
+                      }}
+                      className="p-1 text-gray-800"
+                    >
+                      <Search className="h-5 w-5" />
+                    </button>
+                    <CartDrawer />
+                  </div>
+                </div>
+
+                {/* Menu Content */}
+                <div className="flex-1 overflow-y-auto px-6 py-10">
+                  <div className="space-y-12">
+                    {navLinks.map((link) => (
+                      <div key={link.label} className="space-y-6">
+                        <Link
+                          to={link.href}
+                          className="text-lg font-medium text-gray-900 block tracking-tight uppercase"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {link.label}
+                        </Link>
+                        {menuData[link.label as keyof typeof menuData] && (
+                          <div className="pl-6 space-y-4">
+                            {menuData[link.label as keyof typeof menuData].links.map((subLink) => (
+                              <Link
+                                key={subLink.label}
+                                to={subLink.href}
+                                className="text-sm text-gray-500 hover:text-gray-900 block transition-colors"
+                                onClick={() => setMobileMenuOpen(false)}
+                              >
+                                {subLink.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </nav>
 
         {/* Mega Menu Overlay */}
         <div
-          className={`absolute top-full left-0 w-full bg-[#f5f1ed] border-b border-[#e0dbd5] overflow-hidden transition-all duration-300 ease-in-out ${hoveredLink ? 'max-h-[600px] opacity-100 shadow-sm' : 'max-h-0 opacity-0'
+          className={`absolute top-full left-0 w-full bg-[#f5f1ed] border-b border-[#e0dbd5] overflow-hidden transition-all duration-300 ease-in-out ${hoveredLink && !isSearchOpen ? 'max-h-[600px] opacity-100 shadow-sm' : 'max-h-0 opacity-0'
             }`}
         >
           {hoveredLink && menuData[hoveredLink as keyof typeof menuData] && (
             <div className="px-6 pb-12 pt-6">
               <div className="grid grid-cols-12 gap-8">
                 {/* Left Links Column */}
-                <div className="col-span-3">
+                <div className="col-span-2">
                   <ul className="space-y-6">
                     {menuData[hoveredLink as keyof typeof menuData].links.map((item) => (
                       <li key={item.label}>
@@ -224,10 +303,10 @@ export function StoreNavbar() {
                 </div>
 
                 {/* Right Images Column */}
-                <div className="col-span-9 flex gap-6 justify-end items-start">
+                <div className="col-span-10 flex gap-10 justify-end items-start">
                   {menuData[hoveredLink as keyof typeof menuData].images.map((image, idx) => (
-                    <Link key={idx} to={image.href} className="group relative block">
-                      <div className={`overflow-hidden relative ${menuData[hoveredLink as keyof typeof menuData].images.length === 1 ? 'h-[220px] w-auto aspect-[16/9]' : 'h-[220px] w-auto aspect-[4/5]'}`}>
+                    <Link key={idx} to={image.href} className="group relative block flex-1 max-w-[450px]">
+                      <div className={`overflow-hidden relative ${menuData[hoveredLink as keyof typeof menuData].images.length === 1 ? 'h-[240px] w-full aspect-[16/9]' : 'h-[240px] w-full aspect-square'}`}>
                         <img
                           src={image.src}
                           alt={image.label}
@@ -235,7 +314,7 @@ export function StoreNavbar() {
                         />
                         <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
                       </div>
-                      <div className="mt-3 flex items-center text-sm font-medium text-gray-900">
+                      <div className="mt-4 flex items-center text-sm font-medium text-gray-900">
                         {image.label} <span className="ml-1 transition-transform duration-300 group-hover:translate-x-1">→</span>
                       </div>
                     </Link>
@@ -245,6 +324,56 @@ export function StoreNavbar() {
             </div>
           )}
         </div>
+
+        {/* Search Overlay */}
+        <AnimatePresence>
+          {isSearchOpen && (
+            <motion.div
+              initial={{ opacity: 0, scaleY: 0 }}
+              animate={{ opacity: 1, scaleY: 1 }}
+              exit={{ opacity: 0, scaleY: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute top-full left-0 w-full z-[45] bg-[#f5f1ed] border-b border-[#e0dbd5] origin-top shadow-xl"
+            >
+              <div className="max-w-[1400px] mx-auto px-6 py-12 flex justify-center text-center">
+                <div className="max-w-3xl w-full">
+                  {/* Search Input */}
+                  <div className="relative mb-12">
+                    <input
+                      autoFocus
+                      type="text"
+                      placeholder="Search for ritual essentials..."
+                      className="w-full bg-transparent border-b border-gray-300 py-5 text-center text-2xl font-light placeholder:text-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                    />
+                    <Search className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                  </div>
+
+                  {/* Popular Searches */}
+                  <div>
+                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-8">
+                      Popular Searches
+                    </h3>
+                    <div className="flex flex-wrap gap-3 justify-center">
+                      {popularSearches.map((tag) => (
+                        <button
+                          key={tag}
+                          className="px-6 py-2.5 rounded-full border border-[#e0dbd5] bg-white/50 text-xs font-medium text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all duration-300"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Backdrop for closing */}
+              <div
+                className="absolute top-full left-0 w-full h-screen bg-black/10 backdrop-blur-[2px]"
+                onClick={() => setIsSearchOpen(false)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
     </>
   );

@@ -8,7 +8,7 @@ export function StoreHero() {
         <div className="group cursor-pointer">
           <div className="relative aspect-[4/5] overflow-hidden mb-3">
             <img
-              src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200&auto=format&fit=crop&q=80"
+              src="/image1.png"
               alt="Organic Forms"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
@@ -20,7 +20,7 @@ export function StoreHero() {
         </div>
 
         {/* Right Item - Chain Collection */}
-        <div className="group cursor-pointer">
+        <div className="group cursor-pointer hidden md:block">
           <div className="relative aspect-[4/5] overflow-hidden mb-3">
             <img
               src="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?w=1200&auto=format&fit=crop&q=80"

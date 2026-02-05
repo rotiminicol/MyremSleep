@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { subscribeToKlaviyo } from '@/services/klaviyo';
 import { trackSubscription } from '@/components/FacebookPixel';
+import { validateEmailForSubscription } from '@/lib/email-validator';
 interface SubscriptionFormProps {
   onSubscribe: (name: string, email: string) => void;
 }
@@ -9,6 +10,7 @@ interface SubscriptionFormProps {
 export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
+  const [website, setWebsite] = useState(''); // Honeypot field
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -32,6 +34,13 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
     const trimmedName = firstName.trim();
     const trimmedEmail = email.trim().toLowerCase();
 
+    // Honeypot check
+    if (website) {
+      console.warn('Bot detected via honeypot');
+      onSubscribe(trimmedName, trimmedEmail); // Silent success for bots
+      return;
+    }
+
     // Validation
     if (!trimmedName) {
       setError('Please enter your full name');
@@ -43,13 +52,9 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
       return;
     }
 
-    if (!trimmedEmail) {
-      setError('Please enter your email address');
-      return;
-    }
-
-    if (!validateEmail(trimmedEmail)) {
-      setError('Please enter a valid email address');
+    const validation = validateEmailForSubscription(trimmedEmail);
+    if (!validation.isValid) {
+      setError(validation.error || 'Please enter a valid email address');
       return;
     }
 
@@ -110,6 +115,15 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
           className="hero-input rounded-lg"
           disabled={isLoading}
         />
+        {/* Honeypot field - hidden from users */}
+        <input
+          type="text"
+          name="website"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+          className="hidden"
+          autoComplete="off"
+        />
         <input
           type="email"
           value={email}
@@ -138,6 +152,15 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
           disabled={isLoading}
         />
         <div className="w-px bg-border/30" />
+        {/* Honeypot field - hidden from users */}
+        <input
+          type="text"
+          name="website"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+          className="hidden"
+          autoComplete="off"
+        />
         <input
           type="email"
           value={email}

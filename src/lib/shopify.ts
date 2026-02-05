@@ -16,6 +16,7 @@ export interface ShopifyProduct {
         currencyCode: string;
       };
     };
+    productType: string;
     images: {
       edges: Array<{
         node: {
@@ -72,7 +73,7 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
   }
 
   const data = await response.json();
-  
+
   if (data.errors) {
     throw new Error(`Error calling Shopify: ${data.errors.map((e: { message: string }) => e.message).join(', ')}`);
   }
@@ -89,6 +90,7 @@ const STOREFRONT_QUERY = `
           title
           description
           handle
+          productType
           priceRange {
             minVariantPrice {
               amount

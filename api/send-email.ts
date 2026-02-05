@@ -27,10 +27,63 @@ export default async function handler(request: Request) {
 
         const resend = new Resend(apiKey);
         const body = await request.json();
-        const { type = 'contact', name, email, subject: userSubject, message } = body;
+        const { type = 'contact', name, email, subject: userSubject, message, website } = body;
+
+        // Honeypot check (same as frontend)
+        if (website) {
+            console.warn('[Spam Detected] Honeypot triggered');
+            return new Response(JSON.stringify({ success: true, message: 'Subcategory processed' }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
 
         if (!email) {
             return new Response(JSON.stringify({ error: 'Missing email' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
+        // Server-side validation
+        const DISPOSABLE_DOMAINS = [
+            'mailinator.com', 'temp-mail.org', 'guerrillamail.com', '10minutemail.com',
+            'throwawaymail.com', 'trashmail.com', 'yopmail.com', 'disposable-mail.com',
+            'tempmail.net', 'mail7.io', 'sharklasers.com', 'guerrillamailblock.com',
+            'guerrillamail.net', 'guerrillamail.biz', 'guerrillamail.org', 'grr.la',
+            'pokemail.net', 'spam4.me', 'dispostable.com', 'getairmail.com',
+            'maildrop.cc', 'mailforyou.com', 'temp-mail.com', 'burnemail.com'
+        ];
+
+        // A standard, robust email regex
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+        const trimmedEmail = email.trim().toLowerCase();
+
+        if (!emailRegex.test(trimmedEmail)) {
+            return new Response(JSON.stringify({ error: 'Please enter a valid email address' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
+        const parts = trimmedEmail.split('@');
+        const localPart = parts[0];
+        const domain = parts[1];
+
+        // Strict "Proper Email" rules
+        const KNOWN_SHORT_DOMAIN_LABELS = ['me', 'io', 'ai', 'co', 'uk', 'us', 'tv', 'ly'];
+        const domainParts = domain.split('.');
+        const mainLabel = domainParts[0];
+
+        if (localPart.length < 3 || (mainLabel.length < 3 && !KNOWN_SHORT_DOMAIN_LABELS.includes(mainLabel)) || mainLabel.length < 2) {
+            return new Response(JSON.stringify({ error: 'Please enter a proper email address (e.g., name@gmail.com)' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
+        if (DISPOSABLE_DOMAINS.includes(domain)) {
+            return new Response(JSON.stringify({ error: 'Disposable email addresses are not allowed' }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' },
             });
