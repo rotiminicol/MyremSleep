@@ -1,5 +1,12 @@
+
 import { motion } from 'framer-motion';
-import { Truck, ShieldCheck, RefreshCw, Clock } from 'lucide-react';
+import { Truck, ShieldCheck, RefreshCw, Clock, Star, Leaf } from 'lucide-react';
+import Autoplay from 'embla-carousel-autoplay';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+} from "@/components/ui/carousel";
 
 const features = [
     {
@@ -21,6 +28,16 @@ const features = [
         icon: Clock,
         title: 'Fast Support',
         description: 'Our dedicated team is ready to assist you 24/7',
+    },
+    {
+        icon: Star,
+        title: 'Premium Quality',
+        description: 'Hand-picked materials ensuring the best sleep experience',
+    },
+    {
+        icon: Leaf,
+        title: 'Eco-Friendly',
+        description: 'Sustainably sourced and environmentally conscious production',
     },
 ];
 
@@ -48,27 +65,45 @@ export function StoreFeatures() {
                 </motion.p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                {features.slice(0, 3).map((feature, index) => (
-                    <motion.div
-                        key={feature.title}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
-                        viewport={{ once: true }}
-                        className="flex flex-col items-center text-center group"
-                    >
-                        <div className="mb-6 p-6 rounded-full bg-white/50 backdrop-blur-sm group-hover:bg-white transition-colors duration-300">
-                            <feature.icon className="w-8 h-8 text-zinc-800" strokeWidth={1.5} />
-                        </div>
-                        <h3 className="text-[13px] font-semibold tracking-[0.1em] uppercase text-zinc-900 mb-3">
-                            {feature.title}
-                        </h3>
-                        <p className="text-sm text-zinc-500 font-sans leading-relaxed max-w-[240px]">
-                            {feature.description}
-                        </p>
-                    </motion.div>
-                ))}
+            <div className="w-full">
+                <Carousel
+                    opts={{
+                        align: "start",
+                        loop: true,
+                    }}
+                    plugins={[
+                        Autoplay({
+                            delay: 2000,
+                        }),
+                    ]}
+                    className="w-full"
+                >
+                    <CarouselContent className="-ml-4">
+                        {features.map((feature, index) => (
+                            <CarouselItem key={index} className="pl-4 basis-1/3 md:basis-1/2 lg:basis-1/3">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
+                                    viewport={{ once: true }}
+                                    className="h-full"
+                                >
+                                    <div className="flex flex-col items-start text-left group h-full p-4 mx-auto max-w-[280px]">
+                                        <div className="mb-4">
+                                            <feature.icon className="w-12 h-12 text-zinc-900" strokeWidth={1} />
+                                        </div>
+                                        <h3 className="text-[13px] font-semibold tracking-[0.1em] uppercase text-zinc-900 mb-3">
+                                            {feature.title}
+                                        </h3>
+                                        <p className="text-sm text-zinc-500 font-sans leading-relaxed max-w-[240px] hidden md:block">
+                                            {feature.description}
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                </Carousel>
             </div>
         </section>
     );
