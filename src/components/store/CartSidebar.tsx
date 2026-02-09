@@ -38,7 +38,13 @@ const RECOMMENDED_PRODUCTS = [
     }
 ];
 
-export function CartSidebar() {
+export type SidebarMode = 'cart' | 'favorite';
+
+interface CartSidebarProps {
+    mode?: SidebarMode;
+}
+
+export function CartSidebar({ mode = 'cart' }: CartSidebarProps) {
     const { addItem } = useCartStore();
 
     return (
@@ -53,14 +59,18 @@ export function CartSidebar() {
             {/* Main Container for products - fills available space and distributes items */}
             <div className="flex-1 flex flex-col min-h-0">
                 {RECOMMENDED_PRODUCTS.slice(0, 3).map((product) => (
-                    <RecommendedProductCard key={product.id} product={product} />
+                    <RecommendedProductCard
+                        key={product.id}
+                        product={product}
+                        mode={mode}
+                    />
                 ))}
             </div>
         </div>
     );
 }
 
-function RecommendedProductCard({ product }: { product: any }) {
+function RecommendedProductCard({ product, mode }: { product: any, mode: SidebarMode }) {
     const [selectedColor, setSelectedColor] = useState(product.colors[0]);
     const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
     const [quantity, setQuantity] = useState(1);
@@ -69,7 +79,7 @@ function RecommendedProductCard({ product }: { product: any }) {
     const handleAddToCart = async () => {
         setIsAdding(true);
         setTimeout(() => {
-            console.log(`Added ${product.title} - ${selectedColor} - ${selectedSize} x ${quantity}`);
+            console.log(`Action: ${mode === 'cart' ? 'Add to Bag' : 'Favorite'} - ${product.title} - ${selectedColor} - ${selectedSize} x ${quantity}`);
             setIsAdding(false);
         }, 500);
     };
@@ -153,7 +163,7 @@ function RecommendedProductCard({ product }: { product: any }) {
                             className="w-full h-7 md:h-9 text-[9px] md:text-xs bg-white text-black hover:bg-gray-200 font-bold uppercase tracking-tight md:tracking-widest"
                             disabled={isAdding}
                         >
-                            {isAdding ? '...' : 'Add to Bag'}
+                            {isAdding ? '...' : (mode === 'cart' ? 'Add to Bag' : 'Favorite')}
                         </Button>
                     </div>
                 </div>

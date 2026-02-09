@@ -61,7 +61,7 @@ export function CartDrawer() {
       >
 
         {/* Left Sidebar - Recommendations */}
-        <CartSidebar />
+        <CartSidebar mode="cart" />
 
         {/* Right Side - Cart Content */}
         <div className="flex flex-col w-[55%] md:flex-1 h-full min-w-0 overflow-hidden">
