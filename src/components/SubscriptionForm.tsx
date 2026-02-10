@@ -5,9 +5,10 @@ import { trackSubscription } from '@/components/FacebookPixel';
 import { validateEmailForSubscription } from '@/lib/email-validator';
 interface SubscriptionFormProps {
   onSubscribe: (name: string, email: string) => void;
+  buttonText?: string;
 }
 
-export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
+export function SubscriptionForm({ onSubscribe, buttonText }: SubscriptionFormProps) {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState(''); // Honeypot field
@@ -137,7 +138,7 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
           disabled={isLoading}
           className="btn-hero rounded-lg font-body"
         >
-          {isLoading ? 'Subscribing...' : 'Subscribe'}
+          {isLoading ? 'Subscribing...' : (buttonText || 'Subscribe')}
         </button>
       </div>
 
@@ -174,7 +175,7 @@ export function SubscriptionForm({ onSubscribe }: SubscriptionFormProps) {
           disabled={isLoading}
           className="btn-hero font-body"
         >
-          {isLoading ? 'Subscribing...' : 'Subscribe'}
+          {isLoading ? 'Subscribing...' : (buttonText || 'Subscribe')}
         </button>
       </div>
 

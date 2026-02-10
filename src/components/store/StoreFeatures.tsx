@@ -43,8 +43,8 @@ const features = [
 
 export function StoreFeatures() {
     return (
-        <section className="py-20 px-6 bg-[#f5f1ed]">
-            <div className="flex flex-col items-center text-center mb-16">
+        <section className="pt-6 pb-20 md:py-20 px-6 bg-[#f5f1ed]">
+            <div className="hidden md:flex flex-col items-center text-center mb-16">
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}

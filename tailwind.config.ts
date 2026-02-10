@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ['Montserrat', 'sans-serif'],
         display: ['Montserrat', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
         body: ['Montserrat', 'sans-serif'],
         default: ['Montserrat', 'sans-serif'],
       },

@@ -99,18 +99,19 @@ export function ProductGrid() {
         </Link>
       </motion.div>
 
-      {/* Color Swatches */}
+      {/* Color Swatches Section */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
         viewport={{ once: true }}
-        className="mt-8 flex flex-col items-start"
+        className="mt-12 flex flex-col items-center text-center"
       >
-        <span className="text-[10px] text-zinc-400 uppercase tracking-[0.2em] font-medium mb-4">
-          Color: {activeColor.name}
-        </span>
-        <div className="flex flex-wrap gap-2.5">
+        <h3 className="text-sm sm:text-lg md:text-2xl font-serif text-gray-900 mb-6 whitespace-nowrap">
+          Seven seasonless colours. One calm aesthetic.
+        </h3>
+
+        <div className="flex flex-wrap justify-center gap-2 mb-4 max-w-2xl">
           {COLOR_VARIANTS.map((color) => (
             <button
               key={color.name}
@@ -119,15 +120,19 @@ export function ProductGrid() {
                 e.stopPropagation();
                 setActiveColor(color);
               }}
-              className={`w-5 h-5 rounded-full border-2 transition-all duration-300 ${activeColor.name === color.name
-                ? 'border-zinc-800 scale-110'
-                : 'border-transparent hover:border-zinc-300 hover:scale-105'
+              className={`w-10 h-10 md:w-12 md:h-12 border transition-all duration-300 ${activeColor.name === color.name
+                ? 'border-gray-900 scale-105 shadow-sm'
+                : 'border-transparent hover:border-gray-300'
                 }`}
               title={color.name}
               style={{ backgroundColor: color.hex }}
             />
           ))}
         </div>
+
+        <span className="text-[11px] text-gray-900 font-sans uppercase tracking-[0.1em] font-medium min-h-[1.5em]">
+          {activeColor.name}
+        </span>
       </motion.div>
     </section>
   );
