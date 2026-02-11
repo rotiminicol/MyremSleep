@@ -58,7 +58,7 @@ export function ProductGrid() {
   const price = product.node.priceRange.minVariantPrice;
 
   return (
-    <section className="pb-16 md:pb-32 px-6 bg-[#f5f1ed]">
+    <section className="pb-16 md:pb-32 md:px-6 bg-[#f5f1ed]">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -67,7 +67,7 @@ export function ProductGrid() {
         className="group"
       >
         <Link to={`/product/${product.node.handle}`} className="block">
-          <div className="relative aspect-[4/5] md:aspect-[21/9] bg-[#EBE7E0] overflow-hidden rounded-sm shadow-sm group-hover:shadow-md transition-shadow duration-700">
+          <div className="relative aspect-[3/4] md:aspect-[21/9] bg-[#EBE7E0] overflow-hidden md:rounded-sm shadow-sm group-hover:shadow-md transition-shadow duration-700">
             <AnimatePresence mode="wait">
               <motion.img
                 key={activeColor.name}
@@ -105,13 +105,13 @@ export function ProductGrid() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
         viewport={{ once: true }}
-        className="mt-12 flex flex-col items-center text-center"
+        className="mt-2 md:mt-12 flex flex-col items-center text-center px-6"
       >
-        <h3 className="text-sm sm:text-lg md:text-2xl font-serif text-gray-900 mb-6 whitespace-nowrap">
+        <h3 className="text-[11px] min-[375px]:text-[13px] min-[425px]:text-sm sm:text-lg md:text-2xl font-serif text-gray-900 mb-2 md:mb-6 whitespace-nowrap">
           Seven seasonless colours. One calm aesthetic.
         </h3>
 
-        <div className="flex flex-wrap justify-center gap-2 mb-4 max-w-2xl">
+        <div className="flex flex-nowrap justify-center gap-1.5 sm:gap-2 mb-2 md:mb-4 w-full max-w-full overflow-x-auto px-4 no-scrollbar">
           {COLOR_VARIANTS.map((color) => (
             <button
               key={color.name}
@@ -120,7 +120,7 @@ export function ProductGrid() {
                 e.stopPropagation();
                 setActiveColor(color);
               }}
-              className={`w-10 h-10 md:w-12 md:h-12 border transition-all duration-300 ${activeColor.name === color.name
+              className={`flex-shrink-0 w-8 h-8 min-[375px]:w-9 min-[375px]:h-9 min-[425px]:w-10 min-[425px]:h-10 md:w-12 md:h-12 border transition-all duration-300 ${activeColor.name === color.name
                 ? 'border-gray-900 scale-105 shadow-sm'
                 : 'border-transparent hover:border-gray-300'
                 }`}

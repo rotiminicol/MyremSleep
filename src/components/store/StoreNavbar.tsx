@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingCart, Menu, X, Heart } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, Heart, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/stores/cartStore';
 import { FavoritesDrawer } from './FavoritesDrawer';
 import { CartDrawer } from './CartDrawer';
+import { AccountDrawer } from './AccountDrawer';
 
 const announcements = [
   'Subscribe for 10% off',
   'Free shipping for orders above £100',
-  'Complimentary gift wrapping available at Checkout',
 ];
 
 const menuData = {
@@ -65,9 +65,11 @@ const menuData = {
   }
 };
 
-export function StoreNavbar() {
+export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [announcementVisible, setAnnouncementVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [currentAnnouncement, setCurrentAnnouncement] = useState(0);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -89,6 +91,27 @@ export function StoreNavbar() {
       document.body.style.overflow = 'unset';
     }
   }, [isSearchOpen]);
+
+  useEffect(() => {
+    if (!hideOnScroll) return;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < 10) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hideOnScroll, lastScrollY]);
 
   const navLinks = [
     { label: 'Shop', href: '/store' },
@@ -130,7 +153,10 @@ export function StoreNavbar() {
       )}
 
       {/* Main Navbar */}
-      <header
+      <motion.header
+        initial={{ y: 0 }}
+        animate={{ y: isVisible ? 0 : -100 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
         className="sticky top-0 z-50 bg-[#f5f1ed] border-b border-[#e0dbd5]"
         onMouseLeave={() => setHoveredLink(null)}
       >
@@ -180,18 +206,29 @@ export function StoreNavbar() {
 
               {/* Cart Drawer */}
               <CartDrawer />
+
+              {/* Account Drawer */}
+              <AccountDrawer />
             </div>
           </div>
 
           {/* Mobile Layout (Trigger) */}
           {!mobileMenuOpen && (
             <div className="md:hidden flex items-center justify-between relative h-12">
-              <button
-                className="text-gray-800 p-1"
-                onClick={() => setMobileMenuOpen(true)}
-              >
-                <Menu className="h-6 w-6" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  className="text-gray-800 p-2"
+                  onClick={() => setMobileMenuOpen(true)}
+                >
+                  <Menu className="h-6 w-6" />
+                </button>
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className="text-gray-800 p-2"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
+              </div>
 
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <Link to="/" className="flex-shrink-0">
@@ -199,14 +236,9 @@ export function StoreNavbar() {
                 </Link>
               </div>
 
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setIsSearchOpen(true)}
-                  className="text-gray-800 p-1"
-                >
-                  <Search className="h-5 w-5" />
-                </button>
+              <div className="flex items-center gap-1">
                 <CartDrawer />
+                <AccountDrawer />
               </div>
             </div>
           )}
@@ -222,24 +254,31 @@ export function StoreNavbar() {
                 className="fixed inset-0 z-[60] bg-[#f5f1ed] md:hidden flex flex-col"
               >
                 {/* Mobile Header Inside Menu */}
-                <div className="flex items-center justify-between px-6 h-12 border-b border-[#e0dbd5] bg-[#f5f1ed]">
-                  <button onClick={() => setMobileMenuOpen(false)} className="p-1">
-                    <X className="h-6 w-6 text-gray-800" />
-                  </button>
-                  <Link to="/" onClick={() => setMobileMenuOpen(false)}>
-                    <img src="/logo5.png" alt="Remsleep" className="h-8 w-auto" />
-                  </Link>
-                  <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between px-6 h-12 border-b border-[#e0dbd5] bg-[#f5f1ed] relative">
+                  <div className="flex items-center gap-1 -ml-4">
+                    <button onClick={() => setMobileMenuOpen(false)} className="p-2">
+                      <X className="h-6 w-6 text-gray-800" />
+                    </button>
                     <button
                       onClick={() => {
                         setIsSearchOpen(true);
                         setMobileMenuOpen(false);
                       }}
-                      className="p-1 text-gray-800"
+                      className="p-2 text-gray-800"
                     >
                       <Search className="h-5 w-5" />
                     </button>
+                  </div>
+
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                      <img src="/logo5.png" alt="Remsleep" className="h-8 w-auto" />
+                    </Link>
+                  </div>
+
+                  <div className="flex items-center gap-1 -mr-4">
                     <CartDrawer />
+                    <AccountDrawer />
                   </div>
                 </div>
 
@@ -374,7 +413,7 @@ export function StoreNavbar() {
             </motion.div>
           )}
         </AnimatePresence>
-      </header>
+      </motion.header>
     </>
   );
 }

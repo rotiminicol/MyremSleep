@@ -151,7 +151,7 @@ export function StoreOfferPopup() {
 
                                     <h2 className="text-3xl font-serif text-gray-900 mb-4">
                                         Welcome to the <br />
-                                        <span className="italic">Myrem Ritual</span>
+                                        <span className="italic">REMsleep Ritual</span>
                                     </h2>
                                     <p className="text-gray-600 font-sans text-[15px] mb-10 max-w-[300px] leading-relaxed">
                                         You're on the list. Keep an eye on your inbox for your exclusive code.

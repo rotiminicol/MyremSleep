@@ -28,31 +28,70 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
                 edges: [
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/1-double',
-                            title: 'Double',
+                            id: 'gid://shopify/ProductVariant/1-double-white',
+                            title: 'Double / White',
                             price: {
                                 amount: '45.00',
                                 currencyCode: 'GBP',
                             },
                             availableForSale: true,
-                            selectedOptions: [{ name: 'Size', value: 'Double' }],
+                            selectedOptions: [
+                                { name: 'Size', value: 'Double' },
+                                { name: 'Color', value: 'White' }
+                            ],
                         },
                     },
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/1-king',
-                            title: 'King',
+                            id: 'gid://shopify/ProductVariant/1-double-navy',
+                            title: 'Double / Navy',
+                            price: {
+                                amount: '45.00',
+                                currencyCode: 'GBP',
+                            },
+                            availableForSale: true,
+                            selectedOptions: [
+                                { name: 'Size', value: 'Double' },
+                                { name: 'Color', value: 'Winter Cloud' }
+                            ],
+                        },
+                    },
+                    {
+                        node: {
+                            id: 'gid://shopify/ProductVariant/1-double-desert',
+                            title: 'Double / Desert Whisperer',
+                            price: {
+                                amount: '45.00',
+                                currencyCode: 'GBP',
+                            },
+                            availableForSale: true,
+                            selectedOptions: [
+                                { name: 'Size', value: 'Double' },
+                                { name: 'Color', value: 'Desert Whisperer' }
+                            ],
+                        },
+                    },
+                    {
+                        node: {
+                            id: 'gid://shopify/ProductVariant/1-king-buttermilk',
+                            title: 'King / Buttermilk',
                             price: {
                                 amount: '55.00',
                                 currencyCode: 'GBP',
                             },
                             availableForSale: true,
-                            selectedOptions: [{ name: 'Size', value: 'King' }],
+                            selectedOptions: [
+                                { name: 'Size', value: 'King' },
+                                { name: 'Color', value: 'Buttermilk' }
+                            ],
                         },
                     },
                 ],
             },
-            options: [{ name: 'Size', values: ['Double', 'King'] }],
+            options: [
+                { name: 'Size', values: ['Double', 'King'] },
+                { name: 'Color', values: ['Winter Cloud', 'Desert Whisperer', 'Buttermilk', 'Sandstone Drift', 'Clay Blush', 'Pebble Haze', 'Desert Sand', 'Cinnamon Bark'] }
+            ],
         },
     },
     {
