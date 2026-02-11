@@ -53,14 +53,14 @@ const menuData = {
   },
   'Blog': {
     links: [
-      { label: 'Sleep Tips', href: '/blog?category=tips' },
-      { label: 'Bedroom Decor', href: '/blog?category=decor' },
-      { label: 'Wellness Journal', href: '/blog?category=wellness' },
-      { label: 'Product Care', href: '/blog?category=care' },
-      { label: 'Sleep Stories', href: '/blog?category=stories' },
+      { label: 'Sleep Tips', href: '/blog' },
+      { label: 'Bedroom Decor', href: '/blog' },
+      { label: 'Wellness Journal', href: '/blog' },
+      { label: 'Product Care', href: '/blog' },
+      { label: 'Sleep Stories', href: '/blog' },
     ],
     images: [
-      { src: '/image6.png', label: 'Latest Post: Better Sleep habits', href: '/blog/sleep-habits' },
+      { src: '/image6.png', label: 'Latest Post: Better Sleep habits', href: '/blog' },
     ]
   }
 };

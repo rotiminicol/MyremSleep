@@ -128,7 +128,7 @@ export function StoreFooter() {
         {/* Copyright */}
         <div className="pt-8 border-t border-[#e0dbd5]">
           <p className="text-xs text-gray-500">
-            © 2026 Remsleep. All rights reserved.
+            © 2026 Remsleep. <Link to="/blog" className="hover:underline">Blog</Link> • All rights reserved.
           </p>
         </div>
       </div>

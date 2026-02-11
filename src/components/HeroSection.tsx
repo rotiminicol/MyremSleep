@@ -137,7 +137,7 @@ export function HeroSection() {
           className="py-6 px-6 text-center"
         >
           <p className="text-black text-xs font-medium">
-            &copy; 2026 Remsleep. <Link to="/terms" className="hover:underline text-black">Terms</Link> • <Link to="/privacy" className="hover:underline text-black">Privacy Policy</Link> • <Link to="/faq" className="hover:underline text-black">FAQ</Link>
+            &copy; 2026 Remsleep. <Link to="/blog" className="hover:underline text-black">Blog</Link> • <Link to="/terms" className="hover:underline text-black">Terms</Link> • <Link to="/privacy" className="hover:underline text-black">Privacy Policy</Link> • <Link to="/faq" className="hover:underline text-black">FAQ</Link>
           </p>
         </motion.footer>
       </div>
