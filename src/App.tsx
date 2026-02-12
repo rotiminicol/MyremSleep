@@ -12,6 +12,7 @@ import PrivacyPage from "./pages/PrivacyPage";
 import StorePage from "./pages/StorePage";
 import ProductPage from "./pages/ProductPage";
 import BlogPage from "./pages/BlogPage";
+import AllPostsPage from "./pages/AllPostsPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/store" element={<StorePage />} />
             <Route path="/product/:handle" element={<ProductPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/all" element={<AllPostsPage />} />
             <Route path="/blog/:slug" element={<BlogDetailPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/faq" element={<FaqPage />} />
