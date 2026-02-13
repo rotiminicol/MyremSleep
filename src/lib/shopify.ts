@@ -4,6 +4,29 @@ const SHOPIFY_STORE_PERMANENT_DOMAIN = 'zr4ktm-7m.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '7c93b616232464ab54268c555d84f141';
 
+export interface MoneyV2 {
+  amount: string;
+  currencyCode: string;
+}
+
+export interface ShopifyArticle {
+  id: string;
+  title: string;
+  handle: string;
+  excerpt: string;
+  content: string;
+  contentHtml: string;
+  publishedAt: string;
+  image: {
+    url: string;
+    altText: string | null;
+  } | null;
+  blog: {
+    handle: string;
+  };
+  tags: string[];
+}
+
 export interface ShopifyProduct {
   node: {
     id: string;
@@ -135,4 +158,65 @@ const STOREFRONT_QUERY = `
 export async function fetchProducts(first: number = 10): Promise<ShopifyProduct[]> {
   const data = await storefrontApiRequest(STOREFRONT_QUERY, { first });
   return data?.data?.products?.edges || [];
+}
+
+// Blog Articles Query
+const BLOG_ARTICLES_QUERY = `
+  query GetBlogArticles($first: Int!) {
+    articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
+      edges {
+        node {
+          id
+          title
+          handle
+          excerpt
+          content
+          contentHtml
+          publishedAt
+          image {
+            url
+            altText
+          }
+          blog {
+            handle
+          }
+          tags
+        }
+      }
+    }
+  }
+`;
+
+const BLOG_ARTICLE_BY_HANDLE_QUERY = `
+  query GetArticleByHandle($blogHandle: String!, $articleHandle: String!) {
+    blog(handle: $blogHandle) {
+      articleByHandle(handle: $articleHandle) {
+        id
+        title
+        handle
+        excerpt
+        content
+        contentHtml
+        publishedAt
+        image {
+          url
+          altText
+        }
+        blog {
+          handle
+        }
+        tags
+      }
+    }
+  }
+`;
+
+export async function fetchBlogArticles(first: number = 20): Promise<ShopifyArticle[]> {
+  const data = await storefrontApiRequest(BLOG_ARTICLES_QUERY, { first });
+  return data?.data?.articles?.edges?.map((edge: { node: ShopifyArticle }) => edge.node) || [];
+}
+
+export async function fetchArticleByHandle(blogHandle: string, articleHandle: string): Promise<ShopifyArticle | null> {
+  const data = await storefrontApiRequest(BLOG_ARTICLE_BY_HANDLE_QUERY, { blogHandle, articleHandle });
+  return data?.data?.blog?.articleByHandle || null;
 }
