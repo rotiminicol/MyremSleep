@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, X } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -16,9 +16,8 @@ import { Button } from '@/components/ui/button';
 import { CartSidebar } from '@/components/store/CartSidebar';
 
 export function CartDrawer() {
-  const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } =
+  const { items, isLoading, isSyncing, isCartOpen, updateQuantity, removeItem, getCheckoutUrl, syncCart, setCartOpen } =
     useCartStore();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -27,21 +26,43 @@ export function CartDrawer() {
     0
   );
 
+  // Debug logging
+  useEffect(() => {
+    console.log('[CartDrawer] State updated:', {
+      itemCount: items.length,
+      totalItems,
+      isCartOpen,
+      items
+    });
+  }, [items, isCartOpen, totalItems]);
+
   // Sync cart with Shopify when drawer opens
   useEffect(() => {
-    if (isOpen) syncCart();
-  }, [isOpen, syncCart]);
+    if (isCartOpen) syncCart();
+  }, [isCartOpen, syncCart]);
 
   const handleCheckout = () => {
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
       window.open(checkoutUrl, '_blank');
-      setIsOpen(false);
+      setCartOpen(false);
     }
   };
 
+  // Helper function to get currency symbol
+  const getCurrencySymbol = (code: string) => {
+    const symbols: Record<string, string> = {
+      'GBP': '£',
+      'USD': '$',
+      'EUR': '€',
+      'CAD': 'CA$',
+      'AUD': 'A$',
+    };
+    return symbols[code] || code;
+  };
+
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={isCartOpen} onOpenChange={setCartOpen}>
       <SheetTrigger asChild>
         <button className="relative text-gray-800 hover:text-gray-600 transition-colors">
           <ShoppingCart className="h-5 w-5" />
@@ -69,7 +90,7 @@ export function CartDrawer() {
             <div className="flex items-center justify-between gap-2">
               <SheetTitle className="text-[15px] md:text-[22px] font-medium tracking-tight text-gray-900 whitespace-nowrap">Shopping Bag</SheetTitle>
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => setCartOpen(false)}
                 className="p-1.5 md:p-2 hover:bg-gray-200/50 rounded-full transition-colors text-gray-500 hover:text-gray-900 flex-shrink-0"
                 aria-label="Close cart"
               >
@@ -141,7 +162,7 @@ export function CartDrawer() {
                         {/* Price & Remove */}
                         <div className="flex flex-col items-end gap-1">
                           <span className="text-[14px] font-medium text-gray-900">
-                            {item.price.currencyCode} {parseFloat(item.price.amount).toFixed(2)}
+                            {getCurrencySymbol(item.price.currencyCode)}{parseFloat(item.price.amount).toFixed(2)}
                           </span>
                           <button
                             onClick={() => removeItem(item.variantId)}
@@ -157,15 +178,12 @@ export function CartDrawer() {
 
                 {/* Footer */}
                 <div className="sticky bottom-0 z-20 flex-shrink-0 px-8 py-8 border-t border-[#e0dbd5] bg-[#f5f1ed]/95 backdrop-blur-md">
-                  <div className="flex justify-between items-center mb-6">
+                  <div className="flex justify-between items-center mb-8">
                     <span className="text-sm font-semibold text-gray-700 tracking-wide uppercase">Subtotal</span>
                     <span className="text-lg font-bold text-gray-900 tracking-tight">
-                      {items[0]?.price.currencyCode || 'GBP'} {totalPrice.toFixed(2)}
+                      {getCurrencySymbol(items[0]?.price.currencyCode || 'GBP')}{totalPrice.toFixed(2)}
                     </span>
                   </div>
-                  <p className="text-center text-[11px] text-gray-500 italic mb-8">
-                    Shipping and taxes calculated at checkout
-                  </p>
 
                   <div className="space-y-3">
                     <button
@@ -180,7 +198,7 @@ export function CartDrawer() {
                       )}
                     </button>
                     <button
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => setCartOpen(false)}
                       className="w-full bg-white border border-gray-200 text-gray-900 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-gray-50 transition-all transform active:scale-[0.99]"
                     >
                       Continue Shopping

@@ -18,12 +18,14 @@ interface CartStore {
   checkoutUrl: string | null;
   isLoading: boolean;
   isSyncing: boolean;
+  isCartOpen: boolean;
   addItem: (item: Omit<CartItem, 'lineId'>) => Promise<void>;
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
+  setCartOpen: (open: boolean) => void;
 }
 
 const CART_QUERY = `
@@ -104,6 +106,12 @@ async function createShopifyCart(
 
   if (data?.data?.cartCreate?.userErrors?.length > 0) {
     console.error('Cart creation failed:', data.data.cartCreate.userErrors);
+    console.error('Full error details:', JSON.stringify(data.data.cartCreate.userErrors, null, 2));
+    console.error('Attempted to add item:', {
+      quantity: item.quantity,
+      merchandiseId: item.variantId,
+      variantTitle: item.variantTitle
+    });
     return null;
   }
 
@@ -185,23 +193,62 @@ export const useCartStore = create<CartStore>()(
       checkoutUrl: null,
       isLoading: false,
       isSyncing: false,
+      isCartOpen: false,
 
       addItem: async (item) => {
         const { items, cartId, clearCart } = get();
         const existingItem = items.find((i) => i.variantId === item.variantId);
 
+        console.log('[Cart] Adding item:', item);
+        console.log('[Cart] Current cart state:', { items, cartId });
+
+        // Check if this is a mock product (variant IDs with hyphens like "1-double-white")
+        const isMockProduct = item.variantId.match(/^gid:\/\/shopify\/ProductVariant\/\d+-/);
+
+        if (isMockProduct) {
+          console.log('[Cart] Mock product detected - using local-only cart mode');
+
+          // Local-only cart for mock products (no Shopify API calls)
+          if (existingItem) {
+            const newQuantity = existingItem.quantity + item.quantity;
+            console.log('[Cart] Updating existing mock item quantity');
+            set({
+              items: items.map((i) =>
+                i.variantId === item.variantId ? { ...i, quantity: newQuantity } : i
+              ),
+              isCartOpen: true,
+            });
+          } else {
+            console.log('[Cart] Adding new mock item to local cart');
+            set({
+              items: [...items, { ...item, lineId: null }],
+              cartId: 'local-mock-cart', // Use a fake cart ID for mock products
+              checkoutUrl: null, // No checkout for mock products
+              isCartOpen: true,
+            });
+          }
+          return;
+        }
+
+        // Real Shopify products - use API
         set({ isLoading: true });
         try {
           if (!cartId) {
+            console.log('[Cart] Creating new cart...');
             const result = await createShopifyCart({ ...item, lineId: null });
             if (result) {
+              console.log('[Cart] Cart created successfully:', result);
               set({
                 cartId: result.cartId,
                 checkoutUrl: result.checkoutUrl,
                 items: [{ ...item, lineId: result.lineId }],
+                isCartOpen: true, // Auto-open on success
               });
+            } else {
+              console.error('[Cart] Failed to create cart');
             }
           } else if (existingItem) {
+            console.log('[Cart] Updating existing item quantity...');
             const newQuantity = existingItem.quantity + item.quantity;
             if (!existingItem.lineId) {
               console.error('Cannot update quantity for item without lineId:', existingItem);
@@ -210,20 +257,29 @@ export const useCartStore = create<CartStore>()(
             const result = await updateShopifyCartLine(cartId, existingItem.lineId, newQuantity);
             if (result.success) {
               const currentItems = get().items;
+              console.log('[Cart] Item quantity updated successfully');
               set({
                 items: currentItems.map((i) =>
                   i.variantId === item.variantId ? { ...i, quantity: newQuantity } : i
                 ),
+                isCartOpen: true, // Auto-open on success
               });
             } else if (result.cartNotFound) {
+              console.error('[Cart] Cart not found, clearing...');
               clearCart();
             }
           } else {
+            console.log('[Cart] Adding new item to existing cart...');
             const result = await addLineToShopifyCart(cartId, { ...item, lineId: null });
             if (result.success) {
               const currentItems = get().items;
-              set({ items: [...currentItems, { ...item, lineId: result.lineId ?? null }] });
+              console.log('[Cart] Item added successfully');
+              set({
+                items: [...currentItems, { ...item, lineId: result.lineId ?? null }],
+                isCartOpen: true, // Auto-open on success
+              });
             } else if (result.cartNotFound) {
+              console.error('[Cart] Cart not found, clearing...');
               clearCart();
             }
           }
@@ -242,7 +298,23 @@ export const useCartStore = create<CartStore>()(
 
         const { items, cartId, clearCart } = get();
         const item = items.find((i) => i.variantId === variantId);
-        if (!item?.lineId || !cartId) return;
+        if (!item) return;
+
+        // Check if this is a mock product or local cart
+        const isMockProduct = cartId === 'local-mock-cart' || variantId.match(/^gid:\/\/shopify\/ProductVariant\/\d+-/);
+
+        if (isMockProduct) {
+          console.log('[Cart] Updating mock product quantity locally');
+          set({
+            items: items.map((i) =>
+              i.variantId === variantId ? { ...i, quantity } : i
+            ),
+          });
+          return;
+        }
+
+        // Real Shopify products
+        if (!item.lineId || !cartId) return;
 
         set({ isLoading: true });
         try {
@@ -267,7 +339,24 @@ export const useCartStore = create<CartStore>()(
       removeItem: async (variantId) => {
         const { items, cartId, clearCart } = get();
         const item = items.find((i) => i.variantId === variantId);
-        if (!item?.lineId || !cartId) return;
+        if (!item) return;
+
+        // Check if this is a mock product or local cart
+        const isMockProduct = cartId === 'local-mock-cart' || variantId.match(/^gid:\/\/shopify\/ProductVariant\/\d+-/);
+
+        if (isMockProduct) {
+          console.log('[Cart] Removing mock product locally');
+          const newItems = items.filter((i) => i.variantId !== variantId);
+          if (newItems.length === 0) {
+            clearCart();
+          } else {
+            set({ items: newItems });
+          }
+          return;
+        }
+
+        // Real Shopify products
+        if (!item.lineId || !cartId) return;
 
         set({ isLoading: true });
         try {
@@ -288,6 +377,7 @@ export const useCartStore = create<CartStore>()(
 
       clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
       getCheckoutUrl: () => get().checkoutUrl,
+      setCartOpen: (open: boolean) => set({ isCartOpen: open }),
 
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();

@@ -5,6 +5,7 @@ import { MOCK_PRODUCTS } from '@/lib/mock-products';
 import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { StoreFooter } from '@/components/store/StoreFooter';
 import { useCartStore } from '@/stores/cartStore';
+import { useFavoritesStore } from '@/stores/favoritesStore';
 import {
   Loader2,
   ChevronLeft,
@@ -115,8 +116,8 @@ export default function ProductPage() {
   const [customColorImage, setCustomColorImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
 
-  const addItem = useCartStore((state) => state.addItem);
-  const isCartLoading = useCartStore((state) => state.isLoading);
+  const { addItem, isLoading: isCartLoading } = useCartStore();
+  const { addFavorite, removeFavorite, isFavorited } = useFavoritesStore();
 
   useEffect(() => {
     async function loadProduct() {
@@ -255,6 +256,37 @@ export default function ProductPage() {
       description: `${product.title} × ${quantity}`,
       position: 'top-center',
     });
+  };
+
+  const handleToggleFavorite = () => {
+    if (!product || !selectedVariant) return;
+
+    const productWrapper: ShopifyProduct = {
+      node: product,
+    };
+
+    const isCurrentlyFavorited = isFavorited(product.id);
+
+    if (isCurrentlyFavorited) {
+      removeFavorite(product.id);
+      toast.success('Removed from favorites', {
+        position: 'top-center',
+      });
+    } else {
+      addFavorite({
+        productId: product.id,
+        product: productWrapper,
+        selectedVariant: {
+          id: selectedVariant.id,
+          title: selectedVariant.title,
+          price: selectedVariant.price,
+        },
+      });
+      toast.success('Added to favorites', {
+        description: product.title,
+        position: 'top-center',
+      });
+    }
   };
 
   if (loading) {
@@ -432,10 +464,19 @@ export default function ProductPage() {
                 {isCartLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (!selectedVariant?.availableForSale ? 'Out of Stock' : 'Add to Cart')}
               </Button>
               <Button
+                onClick={handleToggleFavorite}
                 variant="outline"
                 className="h-16 w-16 bg-white border border-[#e0dbd5] hover:bg-[#F8F5F2] rounded-none transition-all flex items-center justify-center group"
               >
-                <Heart className="h-5 w-5 text-gray-400 group-hover:text-red-400 transition-colors" strokeWidth={1.5} />
+                <Heart
+                  className={cn(
+                    "h-5 w-5 transition-all",
+                    product && isFavorited(product.id)
+                      ? "fill-red-500 text-red-500"
+                      : "text-gray-400 group-hover:text-red-400"
+                  )}
+                  strokeWidth={1.5}
+                />
               </Button>
             </div>
 
