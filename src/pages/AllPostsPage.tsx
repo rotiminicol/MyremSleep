@@ -42,14 +42,33 @@ export default function AllPostsPage() {
             {/* Content */}
             <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
                 {isLoading ? (
-                    <div className="flex items-center justify-center h-40">
-                        <div className="animate-pulse text-gray-400 text-sm tracking-widest uppercase">Loading articles...</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-12 sm:gap-y-16">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="space-y-6">
+                                <div className="aspect-[4/5] rounded-[2rem] bg-gray-100 animate-pulse" />
+                                <div className="space-y-3 px-2">
+                                    <div className="h-3 w-24 bg-gray-100 rounded animate-pulse" />
+                                    <div className="h-6 w-3/4 bg-gray-100 rounded animate-pulse" />
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 ) : posts.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-40 gap-3">
-                        <p className="text-gray-500 text-lg">No blog posts yet.</p>
-                        <p className="text-gray-400 text-sm">Add articles in your Shopify admin to see them here.</p>
-                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col items-center justify-center py-24 sm:py-32 text-center"
+                    >
+                        <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-8">
+                            <svg className="w-10 h-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                            </svg>
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl font-serif text-gray-900 mb-3">Stories are on their way</h2>
+                        <p className="text-sm sm:text-base text-gray-400 max-w-sm leading-relaxed">
+                            We're working on thoughtful articles about sleep, wellness, and sustainable living. Check back soon.
+                        </p>
+                    </motion.div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-12 sm:gap-y-16 lg:gap-y-24">
                         {posts.map((post, idx) => (

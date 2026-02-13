@@ -18,8 +18,19 @@ export default function BlogPage() {
         return (
             <div className="min-h-screen bg-[#FAF7F5]">
                 <StoreNavbar />
-                <div className="flex items-center justify-center h-[60vh]">
-                    <div className="animate-pulse text-gray-400 text-sm tracking-widest uppercase">Loading articles...</div>
+                <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-8 sm:pt-4 lg:pt-12 pb-6 sm:pb-4 mb-6 sm:mb-8">
+                    <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black italic font-sans text-gray-900 tracking-tighter">
+                        Best of the week
+                    </h1>
+                </div>
+                <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
+                        <div className="sm:col-span-8 rounded-[2rem] lg:rounded-[2.5rem] bg-gray-100 aspect-[3/4] sm:aspect-auto sm:h-[600px] lg:h-[750px] animate-pulse" />
+                        <div className="sm:col-span-4 flex flex-col gap-4 sm:gap-6 lg:gap-8">
+                            <div className="rounded-[2rem] bg-gray-100 aspect-[4/3] sm:aspect-auto sm:h-[300px] lg:h-[360px] animate-pulse" />
+                            <div className="rounded-[2rem] bg-gray-100 aspect-[4/3] sm:aspect-auto sm:h-[300px] lg:h-[360px] animate-pulse" />
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -29,10 +40,57 @@ export default function BlogPage() {
         return (
             <div className="min-h-screen bg-[#FAF7F5]">
                 <StoreNavbar />
-                <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-                    <p className="text-gray-500 text-lg">No blog posts yet.</p>
-                    <p className="text-gray-400 text-sm">Add articles in your Shopify admin to see them here.</p>
+                <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-8 sm:pt-4 lg:pt-12 pb-6 sm:pb-4 mb-6 sm:mb-8">
+                    <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black italic font-sans text-gray-900 tracking-tighter">
+                        Best of the week
+                    </h1>
                 </div>
+                <main className="max-w-[1600px] mx-auto px-4 sm:px-6 pb-16 sm:pb-20 lg:pb-32">
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
+                        {/* Featured placeholder */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="sm:col-span-8 relative rounded-[2rem] lg:rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 aspect-[3/4] sm:aspect-auto sm:h-[600px] lg:h-[750px] flex flex-col items-center justify-center text-center p-8 sm:p-12"
+                        >
+                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-200/60 flex items-center justify-center mb-6 sm:mb-8">
+                                <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                </svg>
+                            </div>
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-gray-900 mb-3 sm:mb-4">
+                                Stories are coming soon
+                            </h2>
+                            <p className="text-sm sm:text-base text-gray-400 max-w-md leading-relaxed">
+                                We're crafting thoughtful articles about sleep, wellness, and sustainable living. Check back soon for fresh reads.
+                            </p>
+                        </motion.div>
+
+                        {/* Side placeholders */}
+                        <div className="sm:col-span-4 flex flex-col gap-4 sm:gap-6 lg:gap-8">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.1 }}
+                                className="rounded-[2rem] bg-gradient-to-br from-[#d5e3e4] to-[#b8d0d1] aspect-[4/3] sm:aspect-auto sm:h-[300px] lg:h-[360px] flex items-end p-6 sm:p-8"
+                            >
+                                <span className="px-3 py-1.5 sm:px-4 sm:py-1.5 bg-white/30 border border-white/20 rounded-full text-[9px] sm:text-[10px] font-bold text-gray-700 uppercase tracking-widest">
+                                    Coming soon
+                                </span>
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.2 }}
+                                className="rounded-[2rem] bg-gradient-to-br from-gray-200 to-gray-100 aspect-[4/3] sm:aspect-auto sm:h-[300px] lg:h-[360px] flex items-end p-6 sm:p-8"
+                            >
+                                <span className="px-3 py-1.5 sm:px-4 sm:py-1.5 bg-white/40 border border-white/30 rounded-full text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                                    Stay tuned
+                                </span>
+                            </motion.div>
+                        </div>
+                    </div>
+                </main>
             </div>
         );
     }
