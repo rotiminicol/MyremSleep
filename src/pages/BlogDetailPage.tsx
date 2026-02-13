@@ -1,16 +1,17 @@
 import { useRef, useEffect, useState } from 'react';
-
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { BLOG_POSTS } from './BlogPage';
+import { motion, useScroll } from 'framer-motion';
+import { useBlogArticle, useBlogArticles } from '@/hooks/useBlogArticles';
 import NotFound from './NotFound';
 
 export default function BlogDetailPage() {
-    const { slug } = useParams<{ slug: string }>();
+    const { blogHandle = 'news', articleHandle = '' } = useParams<{ blogHandle: string; articleHandle: string }>();
     const navigate = useNavigate();
-    const post = BLOG_POSTS.find((p) => p.slug === slug);
     const contentRef = useRef<HTMLDivElement>(null);
     const [readingProgress, setReadingProgress] = useState(0);
+
+    const { data: post, isLoading, isError } = useBlogArticle(blogHandle, articleHandle);
+    const { data: allPosts = [] } = useBlogArticles(10);
 
     const { scrollYProgress } = useScroll({
         target: contentRef,
@@ -24,13 +25,23 @@ export default function BlogDetailPage() {
         return () => unsubscribe();
     }, [scrollYProgress]);
 
-    if (!post) {
+    if (isLoading) {
+        return (
+            <div className="h-screen flex items-center justify-center bg-[#FAF7F5]">
+                <div className="animate-pulse text-gray-400 text-sm tracking-widest uppercase">Loading article...</div>
+            </div>
+        );
+    }
+
+    if (!post || isError) {
         return <NotFound />;
     }
 
+    const recommendedPosts = allPosts.filter(p => p.id !== post.id).slice(0, 2);
+
     return (
         <div className="h-screen overflow-hidden flex flex-col lg:flex-row bg-[#FAF7F5]">
-            {/* Immersive Top Controls (Fixed on screen) */}
+            {/* Top Controls */}
             <div className="fixed top-0 left-0 right-0 p-4 sm:p-6 lg:p-10 flex items-center justify-between z-50 pointer-events-none">
                 <motion.button
                     initial={{ opacity: 0, x: -20 }}
@@ -44,8 +55,7 @@ export default function BlogDetailPage() {
                 </motion.button>
             </div>
 
-
-            {/* Left Side: Hero Image (Fixed/Cover) */}
+            {/* Left Side: Hero Image */}
             <div className="w-full lg:w-1/2 h-[50vh] lg:h-full relative overflow-hidden shrink-0">
                 <motion.img
                     initial={{ scale: 1.2 }}
@@ -58,12 +68,11 @@ export default function BlogDetailPage() {
                 <div className="absolute inset-0 bg-black/20" />
             </div>
 
-            {/* Right Side: Content Area (Scrollable) */}
+            {/* Right Side: Content Area */}
             <main
                 ref={contentRef}
                 className="w-full lg:w-1/2 h-full overflow-y-auto relative scroll-smooth bg-[#FAF7F5]"
             >
-                {/* Reading Progress Bar (attached to right column) */}
                 <motion.div
                     className="absolute top-0 left-0 right-0 h-1 bg-gray-900/10 z-[60] origin-left"
                     style={{ scaleX: scrollYProgress }}
@@ -96,7 +105,7 @@ export default function BlogDetailPage() {
                         </div>
                     </motion.div>
 
-                    {/* Article Content */}
+                    {/* Article Content - render HTML from Shopify */}
                     <motion.article
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -107,13 +116,8 @@ export default function BlogDetailPage() {
                             lineHeight: '1.8',
                             color: '#374151'
                         }}
-                    >
-                        {post.content.split('\n\n').map((paragraph, idx) => (
-                            <p key={idx} className="mb-6 sm:mb-8 text-[15px] sm:text-base leading-relaxed">
-                                {paragraph}
-                            </p>
-                        ))}
-                    </motion.article>
+                        dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+                    />
 
                     {/* Article Footer */}
                     <div className="mt-12 sm:mt-16 pt-8 sm:pt-12 border-t border-gray-200 flex justify-end">
@@ -126,52 +130,54 @@ export default function BlogDetailPage() {
                         </Link>
                     </div>
 
-                    {/* Next Reads - Elevated Design */}
-                    <div className="mt-20 sm:mt-32">
-                        <h3 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-8 sm:mb-12">
-                            Continue Reading
-                        </h3>
-                        <div className="grid grid-cols-1 gap-6 sm:gap-8">
-                            {BLOG_POSTS.filter(p => p.id !== post.id).slice(0, 2).map((recommended, idx) => (
-                                <motion.div
-                                    key={recommended.id}
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: idx * 0.1 }}
-                                >
-                                    <Link
-                                        to={`/blog/${recommended.slug}`}
-                                        className="group block relative overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] bg-gray-50 hover:shadow-2xl transition-all duration-500"
+                    {/* Next Reads */}
+                    {recommendedPosts.length > 0 && (
+                        <div className="mt-20 sm:mt-32">
+                            <h3 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-8 sm:mb-12">
+                                Continue Reading
+                            </h3>
+                            <div className="grid grid-cols-1 gap-6 sm:gap-8">
+                                {recommendedPosts.map((recommended, idx) => (
+                                    <motion.div
+                                        key={recommended.id}
+                                        initial={{ opacity: 0, y: 30 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: idx * 0.1 }}
                                     >
-                                        <div className="aspect-[16/9] overflow-hidden">
-                                            <img
-                                                src={recommended.image}
-                                                alt={recommended.title}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                            />
-                                        </div>
-                                        <div className="p-6 sm:p-8">
-                                            <div className="flex items-center gap-3 mb-3 sm:mb-4 flex-wrap">
-                                                <span className="px-3 py-1 bg-gray-900 text-[9px] sm:text-[10px] font-bold text-white rounded-full uppercase tracking-wider sm:tracking-widest">
-                                                    {recommended.category}
-                                                </span>
-                                                <span className="text-[10px] sm:text-[11px] text-gray-400 font-medium">
-                                                    {recommended.readTime}
-                                                </span>
+                                        <Link
+                                            to={`/blog/${recommended.slug}`}
+                                            className="group block relative overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] bg-gray-50 hover:shadow-2xl transition-all duration-500"
+                                        >
+                                            <div className="aspect-[16/9] overflow-hidden">
+                                                <img
+                                                    src={recommended.image}
+                                                    alt={recommended.title}
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                />
                                             </div>
-                                            <h4 className="text-lg sm:text-xl lg:text-2xl font-bold font-serif text-gray-900 leading-tight group-hover:text-gray-600 transition-colors mb-2 sm:mb-3">
-                                                {recommended.title}
-                                            </h4>
-                                            <p className="text-sm sm:text-base text-gray-500 line-clamp-2">
-                                                {recommended.excerpt}
-                                            </p>
-                                        </div>
-                                    </Link>
-                                </motion.div>
-                            ))}
+                                            <div className="p-6 sm:p-8">
+                                                <div className="flex items-center gap-3 mb-3 sm:mb-4 flex-wrap">
+                                                    <span className="px-3 py-1 bg-gray-900 text-[9px] sm:text-[10px] font-bold text-white rounded-full uppercase tracking-wider sm:tracking-widest">
+                                                        {recommended.category}
+                                                    </span>
+                                                    <span className="text-[10px] sm:text-[11px] text-gray-400 font-medium">
+                                                        {recommended.readTime}
+                                                    </span>
+                                                </div>
+                                                <h4 className="text-lg sm:text-xl lg:text-2xl font-bold font-serif text-gray-900 leading-tight group-hover:text-gray-600 transition-colors mb-2 sm:mb-3">
+                                                    {recommended.title}
+                                                </h4>
+                                                <p className="text-sm sm:text-base text-gray-500 line-clamp-2">
+                                                    {recommended.excerpt}
+                                                </p>
+                                            </div>
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Vertical Scroll Progress Indicator */}

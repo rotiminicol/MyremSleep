@@ -40,7 +40,7 @@ const App = () => (
             <Route path="/product/:handle" element={<ProductPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/all" element={<AllPostsPage />} />
-            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+            <Route path="/blog/:blogHandle/:articleHandle" element={<BlogDetailPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />

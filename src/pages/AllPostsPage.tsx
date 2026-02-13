@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { BLOG_POSTS } from './BlogPage';
+import { useBlogArticles } from '@/hooks/useBlogArticles';
 
 export default function AllPostsPage() {
     const navigate = useNavigate();
+    const { data: posts = [], isLoading } = useBlogArticles(50);
 
     return (
         <div className="min-h-screen bg-[#FAF7F5] pb-16 sm:pb-24">
@@ -19,8 +20,7 @@ export default function AllPostsPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </motion.button>
-
-                <div className="w-12 h-12" /> {/* Spacer */}
+                <div className="w-12 h-12" />
             </div>
 
             {/* Header Content */}
@@ -39,45 +39,55 @@ export default function AllPostsPage() {
                 </motion.div>
             </header>
 
-            {/* Big 3x Grid */}
+            {/* Content */}
             <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-12 sm:gap-y-16 lg:gap-y-24">
-                    {BLOG_POSTS.map((post, idx) => (
-                        <motion.div
-                            key={post.id}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: (idx % 3) * 0.1 }}
-                        >
-                            <Link to={`/blog/${post.slug}`} className="group block space-y-6 sm:space-y-8">
-                                <div className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-gray-100 shadow-xl sm:shadow-2xl transition-transform duration-700 group-hover:scale-[0.98] relative">
-                                    <img
-                                        src={post.image}
-                                        alt={post.title}
-                                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                                    />
-                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
-                                </div>
-
-                                <div className="space-y-3 sm:space-y-4 px-1 sm:px-2">
-                                    <div className="flex items-center gap-3 sm:gap-4">
-                                        <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-wider sm:tracking-widest">
-                                            {post.category}
-                                        </span>
-                                        <span className="w-1 h-1 rounded-full bg-gray-300" />
-                                        <span className="text-[10px] sm:text-[11px] font-medium text-gray-400">
-                                            {post.readTime}
-                                        </span>
+                {isLoading ? (
+                    <div className="flex items-center justify-center h-40">
+                        <div className="animate-pulse text-gray-400 text-sm tracking-widest uppercase">Loading articles...</div>
+                    </div>
+                ) : posts.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-40 gap-3">
+                        <p className="text-gray-500 text-lg">No blog posts yet.</p>
+                        <p className="text-gray-400 text-sm">Add articles in your Shopify admin to see them here.</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-12 sm:gap-y-16 lg:gap-y-24">
+                        {posts.map((post, idx) => (
+                            <motion.div
+                                key={post.id}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: (idx % 3) * 0.1 }}
+                            >
+                                <Link to={`/blog/${post.slug}`} className="group block space-y-6 sm:space-y-8">
+                                    <div className="aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-gray-100 shadow-xl sm:shadow-2xl transition-transform duration-700 group-hover:scale-[0.98] relative">
+                                        <img
+                                            src={post.image}
+                                            alt={post.title}
+                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
                                     </div>
-                                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold font-serif text-gray-900 leading-tight group-hover:text-gray-600 transition-colors">
-                                        {post.title}
-                                    </h2>
-                                </div>
-                            </Link>
-                        </motion.div>
-                    ))}
-                </div>
+                                    <div className="space-y-3 sm:space-y-4 px-1 sm:px-2">
+                                        <div className="flex items-center gap-3 sm:gap-4">
+                                            <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-wider sm:tracking-widest">
+                                                {post.category}
+                                            </span>
+                                            <span className="w-1 h-1 rounded-full bg-gray-300" />
+                                            <span className="text-[10px] sm:text-[11px] font-medium text-gray-400">
+                                                {post.readTime}
+                                            </span>
+                                        </div>
+                                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold font-serif text-gray-900 leading-tight group-hover:text-gray-600 transition-colors">
+                                            {post.title}
+                                        </h2>
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))}
+                    </div>
+                )}
             </main>
         </div>
     );
