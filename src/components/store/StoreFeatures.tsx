@@ -10,32 +10,32 @@ import {
 
 const features = [
     {
-        icon: Truck,
+        icon: '/free-shipping.png',
         title: 'Free Shipping',
         description: 'On all orders over £150 with premium tracking',
     },
     {
-        icon: ShieldCheck,
+        icon: '/cybersecurity.png',
         title: 'Secure Checkout',
         description: 'Fully encrypted payment processing for your peace of mind',
     },
     {
-        icon: RefreshCw,
+        icon: '/return.png',
         title: 'Easy Returns',
         description: '30-day return policy for a stress-free shopping experience',
     },
     {
-        icon: Clock,
+        icon: '/customer-service.png',
         title: 'Fast Support',
         description: 'Our dedicated team is ready to assist you 24/7',
     },
     {
-        icon: Star,
+        icon: '/star.png',
         title: 'Premium Quality',
         description: 'Hand-picked materials ensuring the best sleep experience',
     },
     {
-        icon: Leaf,
+        icon: '/recycle-box.png',
         title: 'Eco-Friendly',
         description: 'Sustainably sourced and environmentally conscious production',
     },
@@ -90,8 +90,12 @@ export function StoreFeatures() {
                                     className="h-full"
                                 >
                                     <div className="flex flex-col items-center text-center group h-full p-2 md:p-4 mx-auto max-w-[280px]">
-                                        <div className="mb-2 md:mb-4">
-                                            <feature.icon className="w-10 h-10 md:w-12 md:h-12 text-zinc-900" strokeWidth={1} />
+                                        <div className="mb-3 md:mb-5 relative w-12 h-12 md:w-14 md:h-14">
+                                            <img
+                                                src={feature.icon}
+                                                alt={feature.title}
+                                                className="w-full h-full object-contain"
+                                            />
                                         </div>
                                         <h3 className="text-[10px] md:text-[13px] font-semibold tracking-[0.1em] uppercase text-zinc-900 mb-1 md:mb-3">
                                             {feature.title}

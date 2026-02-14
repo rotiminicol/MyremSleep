@@ -15,28 +15,28 @@ const announcements = [
 const menuData = {
   'Shop': {
     links: [
-      { label: 'Silk Pillowcases', href: '/store?category=pillowcases' },
-      { label: 'Linen Bedding', href: '/store?category=linen' },
-      { label: 'Bamboo Sheets', href: '/store?category=bamboo' },
-      { label: 'Sleep Masks', href: '/store?category=masks' },
-      { label: 'Weighted Blankets', href: '/store?category=weighted' },
+      { label: 'Midnight Silk Pillowcase', href: '/product/midnight-silk-pillowcase' },
+      { label: 'Linen Duvet Set - Grounding Clay', href: '/product/linen-duvet-set-clay' },
+      { label: 'Bamboo Sheet Set - Pebble Grey', href: '/product/bamboo-sheet-set-grey' },
+      { label: 'Weighted Sleep Mask', href: '/product/weighted-sleep-mask-indigo' },
+      { label: 'Cotton Quilt - Sandstone', href: '/product/cotton-quilt-sandstone' },
     ],
     images: [
-      { src: '/image2.png', label: 'Silk Collection', href: '/store?category=pillowcases' },
-      { src: '/image3.png', label: 'Linen Essentials', href: '/store?category=linen' },
+      { src: '/image2.png', label: 'Midnight Silk Pillowcase', href: '/product/midnight-silk-pillowcase' },
+      { src: '/image3.png', label: 'Linen Duvet Set', href: '/product/linen-duvet-set-clay' },
     ]
   },
   'New in': {
     links: [
-      { label: "Latest Arrivals", href: '/store?filter=new' },
-      { label: 'Seasonal Collection', href: '/store?collection=seasonal' },
-      { label: 'Featured Sets', href: '/store?filter=featured' },
-      { label: 'Best Sellers', href: '/store?filter=bestsellers' },
-      { label: 'Limited Edition', href: '/store?filter=limited' },
+      { label: "Latest Arrivals", href: '/new-in#latest-arrivals' },
+      { label: 'Seasonal Collection', href: '/new-in#seasonal-collection' },
+      { label: 'Featured Sets', href: '/new-in#featured-sets' },
+      { label: 'Best Sellers', href: '/new-in#best-sellers' },
+      { label: 'Limited Edition', href: '/new-in#limited-edition' },
     ],
     images: [
-      { src: '/image4.png', label: 'Summer Sets', href: '/store?collection=summer' },
-      { src: '/image5.png', label: 'Bamboo Blend', href: '/store?collection=bamboo' },
+      { src: '/image4.png', label: 'Summer Sets', href: '/new-in#seasonal-collection' },
+      { src: '/image5.png', label: 'Bamboo Blend', href: '/shop' },
     ]
   },
   'About': {
@@ -114,8 +114,8 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   }, [hideOnScroll, lastScrollY]);
 
   const navLinks = [
-    { label: 'Shop', href: '/store' },
-    { label: 'New in', href: '/store?filter=new' },
+    { label: 'Shop', href: '/shop' },
+    { label: 'New in', href: '/new-in' },
     { label: 'About', href: '/about' },
     { label: 'Blog', href: '/blog' },
   ];
@@ -147,7 +147,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
             className="text-gray-500 hover:text-gray-700 transition-colors p-1"
             aria-label="Close announcement"
           >
-            <X className="h-4 w-4" />
+            <img src="/cancel.png" alt="Close" className="h-4 w-4 object-contain" />
           </button>
         </div>
       )}
@@ -191,14 +191,14 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
             </div>
 
             {/* Right: Search, Wishlist, Cart */}
-            <div className="flex items-center justify-end gap-6">
+            <div className="flex items-center justify-end gap-5">
               {/* Search Icon */}
               <button
                 onClick={handleSearchToggle}
                 className="text-gray-800 hover:text-gray-600 transition-colors"
                 aria-label="Search"
               >
-                <Search className="h-5 w-5" />
+                <img src="/search.png" alt="Search" className="h-5 w-5 object-contain" />
               </button>
 
               {/* Favorites Drawer */}
@@ -215,18 +215,18 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
           {/* Mobile Layout (Trigger) */}
           {!mobileMenuOpen && (
             <div className="md:hidden flex items-center justify-between relative h-12">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-3">
                 <button
                   className="text-gray-800 p-2"
                   onClick={() => setMobileMenuOpen(true)}
                 >
-                  <Menu className="h-6 w-6" />
+                  <img src="/menu-button.png" alt="Menu" className="h-5 w-5 object-contain" />
                 </button>
                 <button
                   onClick={() => setIsSearchOpen(true)}
                   className="text-gray-800 p-2"
                 >
-                  <Search className="h-5 w-5" />
+                  <img src="/search.png" alt="Search" className="h-5 w-5 object-contain" />
                 </button>
               </div>
 
@@ -236,7 +236,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                 </Link>
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-3">
                 <CartDrawer />
                 <AccountDrawer />
               </div>
@@ -257,7 +257,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                 <div className="flex items-center justify-between px-6 h-12 border-b border-[#e0dbd5] bg-[#f5f1ed] relative">
                   <div className="flex items-center gap-1 -ml-4">
                     <button onClick={() => setMobileMenuOpen(false)} className="p-2">
-                      <X className="h-6 w-6 text-gray-800" />
+                      <img src="/cancel.png" alt="Close" className="h-6 w-6 object-contain" />
                     </button>
                     <button
                       onClick={() => {
@@ -266,7 +266,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                       }}
                       className="p-2 text-gray-800"
                     >
-                      <Search className="h-5 w-5" />
+                      <img src="/search.png" alt="Search" className="h-6 w-6 object-contain" />
                     </button>
                   </div>
 
@@ -324,15 +324,15 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
         >
           {hoveredLink && menuData[hoveredLink as keyof typeof menuData] && (
             <div className="px-6 pb-12 pt-6">
-              <div className="grid grid-cols-12 gap-8">
+              <div className="grid grid-cols-12 gap-8 items-center">
                 {/* Left Links Column */}
-                <div className="col-span-2">
-                  <ul className="space-y-6">
+                <div className="col-span-4">
+                  <ul className="space-y-4">
                     {menuData[hoveredLink as keyof typeof menuData].links.map((item) => (
                       <li key={item.label}>
                         <Link
                           to={item.href}
-                          className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-sans"
+                          className="text-lg text-gray-600 hover:text-gray-900 transition-colors font-sans whitespace-nowrap"
                         >
                           {item.label}
                         </Link>
@@ -342,10 +342,10 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                 </div>
 
                 {/* Right Images Column */}
-                <div className="col-span-10 flex gap-10 justify-end items-start">
+                <div className="col-span-8 flex gap-10 justify-end items-start">
                   {menuData[hoveredLink as keyof typeof menuData].images.map((image, idx) => (
                     <Link key={idx} to={image.href} className="group relative block flex-1 max-w-[450px]">
-                      <div className={`overflow-hidden relative ${menuData[hoveredLink as keyof typeof menuData].images.length === 1 ? 'h-[240px] w-full aspect-[16/9]' : 'h-[240px] w-full aspect-square'}`}>
+                      <div className={`overflow-hidden relative ${menuData[hoveredLink as keyof typeof menuData].images.length === 1 ? 'h-[200px] w-full aspect-[16/9]' : 'h-[200px] w-full aspect-square'}`}>
                         <img
                           src={image.src}
                           alt={image.label}

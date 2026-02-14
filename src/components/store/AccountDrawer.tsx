@@ -36,10 +36,10 @@ export function AccountDrawer() {
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
                 <button
-                    className="text-gray-800 hover:text-gray-600 transition-colors p-2"
+                    className="text-gray-800 hover:text-gray-600 transition-colors"
                     aria-label="Account"
                 >
-                    <User className="h-5 w-5" />
+                    <img src="/people (1).png" alt="Account" className="h-5 w-5 object-contain" />
                 </button>
             </SheetTrigger>
             <SheetContent
@@ -68,7 +68,7 @@ export function AccountDrawer() {
                             onClick={() => setIsOpen(false)}
                             className="p-1 text-gray-400 hover:text-gray-900 transition-colors"
                         >
-                            <X className="h-5 w-5" strokeWidth={1.5} />
+                            <img src="/cancel.png" alt="Close" className="h-5 w-5 object-contain" />
                         </button>
                     </div>
                 </SheetHeader>

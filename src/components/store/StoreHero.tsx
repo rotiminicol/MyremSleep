@@ -2,43 +2,41 @@ import { Link } from 'react-router-dom';
 
 export function StoreHero() {
   return (
-    <section className="w-full mb-6 md:mb-12">
+    <section className="w-full md:mb-12">
       {/* Mobile Design (< md) */}
-      <div className="md:hidden relative w-full h-[80vh] min-h-[500px] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
+      <div className="md:hidden w-full flex flex-col h-[calc(100svh-60px)] min-h-[500px] max-h-[700px]">
+        {/* Image Section - ~65% height */}
+        <div className="w-full relative flex-[1.85] overflow-hidden">
           <img
             src="/image1.png"
-            alt="Organic Forms"
+            alt="Rest is a ritual"
             className="w-full h-full object-cover object-center"
           />
-          {/* Stronger light overlay to wash out the image for text clarity */}
-          <div className="absolute inset-0 bg-white/40" />
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 container mx-auto px-6 text-center pt-10">
-          <h1 className="text-[26px] min-[375px]:text-[30px] min-[425px]:text-[34px] md:text-5xl text-black leading-[1.2] mb-6 px-2">
+        {/* Content Section - ~35% height */}
+        <div className="w-full bg-primary px-5 py-6 flex flex-col justify-center text-left flex-1 md:basis-auto">
+          <h1 className="text-2xl min-[375px]:text-3xl font-display text-white mb-3 leading-tight">
             <span className="block">
-              <span className="font-serif font-bold uppercase">REST</span>
-              <span className="font-sans font-normal text-[#1a1a1a]"> is not a routine.</span>
+              <span className="font-bold uppercase">REST</span>
+              <span className="font-sans font-normal"> is not a routine.</span>
             </span>
             <span className="block">
-              <span className="font-sans font-normal text-[#1a1a1a]">It is a </span>
-              <span className="font-serif font-bold uppercase">ritual.</span>
+              <span className="font-sans font-normal">It is a </span>
+              <span className="font-bold uppercase">ritual.</span>
             </span>
           </h1>
 
-          <p className="text-[15px] text-[#333333] font-sans max-w-[280px] mx-auto mb-10 leading-[1.6]">
+          <p className="text-white/90 font-sans text-xs min-[375px]:text-sm leading-relaxed mb-4 max-w-[95%]">
             300 thread count Egyptian cotton sateen bedding bundles in modern, seasonless neutrals.
           </p>
 
-          <div className="flex flex-row items-center justify-center">
+          <div className="w-full">
             <Link
               to="/store?category=bundles"
-              className="px-10 py-5 bg-gray-900 text-white font-sans text-xs font-bold tracking-[0.2em] uppercase hover:bg-black transition-all duration-300"
+              className="inline-block bg-white text-gray-900 px-8 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase rounded-sm hover:bg-gray-100 transition-all duration-300"
             >
-              Shop Bundles
+              Shop Bedding
             </Link>
           </div>
         </div>

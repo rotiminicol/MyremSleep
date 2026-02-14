@@ -65,7 +65,7 @@ export function CartDrawer() {
     <Sheet open={isCartOpen} onOpenChange={setCartOpen}>
       <SheetTrigger asChild>
         <button className="relative text-gray-800 hover:text-gray-600 transition-colors">
-          <ShoppingCart className="h-5 w-5" />
+          <img src="/shopping-bag (1).png" alt="Cart" className="h-5 w-5 object-contain" />
           {totalItems > 0 && (
             <Badge className="absolute -top-2 -right-2 h-4 w-4 rounded-full p-0 flex items-center justify-center text-[10px] bg-gray-900 text-white">
               {totalItems}
@@ -94,7 +94,7 @@ export function CartDrawer() {
                 className="p-1.5 md:p-2 hover:bg-gray-200/50 rounded-full transition-colors text-gray-500 hover:text-gray-900 flex-shrink-0"
                 aria-label="Close cart"
               >
-                <X className="h-4 w-4 md:h-5 md:w-5" />
+                <img src="/cancel.png" alt="Remove" className="h-4 w-4 md:h-5 md:w-5 object-contain" />
               </button>
             </div>
           </SheetHeader>

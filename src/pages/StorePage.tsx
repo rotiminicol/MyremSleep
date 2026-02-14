@@ -11,8 +11,14 @@ export default function StorePage() {
       <StoreOfferPopup />
       <StoreNavbar />
       <StoreHero />
-      <StoreFeatures />
-      <ProductGrid />
+      <div className="flex flex-col">
+        <div className="order-2 md:order-1">
+          <StoreFeatures />
+        </div>
+        <div className="order-1 md:order-2">
+          <ProductGrid />
+        </div>
+      </div>
       <StoreFooter />
     </div>
   );

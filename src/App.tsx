@@ -14,6 +14,9 @@ import ProductPage from "./pages/ProductPage";
 import BlogPage from "./pages/BlogPage";
 import AllPostsPage from "./pages/AllPostsPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
+import ShopPage from "./pages/ShopPage";
+import NewInPage from "./pages/NewInPage";
+import AboutPage from "./pages/AboutPage";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import { useCartSync } from "./hooks/useCartSync";
@@ -41,6 +44,9 @@ const App = () => (
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/all" element={<AllPostsPage />} />
             <Route path="/blog/:blogHandle/:articleHandle" element={<BlogDetailPage />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/new-in" element={<NewInPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />
