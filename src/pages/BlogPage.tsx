@@ -1,6 +1,6 @@
 // BlogPage.tsx - Elevated "Best of the Week" Design
 import { motion, useScroll } from 'framer-motion';
-import { StoreNavbar } from '@/components/store/StoreNavbar';
+import { SimpleBackButton } from '@/components/SimpleBackButton';
 import { Link } from 'react-router-dom';
 import { useRef } from 'react';
 import { useBlogArticles } from '@/hooks/useBlogArticles';
@@ -16,9 +16,9 @@ export default function BlogPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-[#FAF7F5]">
-                <StoreNavbar />
-                <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-8 sm:pt-4 lg:pt-12 pb-6 sm:pb-4 mb-6 sm:mb-8">
+            <div className="min-h-screen bg-[#f5f1ed]">
+                <SimpleBackButton />
+                <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-4 sm:pt-2 lg:pt-4 pb-6 sm:pb-4 mb-6 sm:mb-8">
                     <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black italic font-sans text-gray-900 tracking-tighter">
                         Best of the week
                     </h1>
@@ -38,9 +38,9 @@ export default function BlogPage() {
 
     if (posts.length === 0) {
         return (
-            <div className="min-h-screen bg-[#FAF7F5]">
-                <StoreNavbar />
-                <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-8 sm:pt-4 lg:pt-12 pb-6 sm:pb-4 mb-6 sm:mb-8">
+            <div className="min-h-screen bg-[#f5f1ed]">
+                <SimpleBackButton />
+                <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-4 sm:pt-2 lg:pt-4 pb-6 sm:pb-4 mb-6 sm:mb-8">
                     <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black italic font-sans text-gray-900 tracking-tighter">
                         Best of the week
                     </h1>
@@ -96,11 +96,11 @@ export default function BlogPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#FAF7F5]" ref={containerRef}>
-            <StoreNavbar />
+        <div className="min-h-screen bg-[#f5f1ed]" ref={containerRef}>
+            <SimpleBackButton />
 
             {/* Refined "Best of the Week" Header */}
-            <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-8 sm:pt-4 lg:pt-12 pb-6 sm:pb-4 flex flex-col sm:flex-row items-start sm:items-baseline justify-between gap-3 sm:gap-0 mb-6 sm:mb-8">
+            <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-4 sm:pt-2 lg:pt-4 pb-6 sm:pb-4 flex flex-col sm:flex-row items-start sm:items-baseline justify-between gap-3 sm:gap-0 mb-6 sm:mb-8">
                 <div className="flex items-baseline gap-3 sm:gap-6">
                     <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black italic font-sans text-gray-900 tracking-tighter">
                         Best of the week

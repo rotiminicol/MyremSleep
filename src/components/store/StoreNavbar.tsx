@@ -1,44 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingCart, Menu, X, Heart, User } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, Heart, User, ChevronLeft, ChevronRight, Phone, ShoppingBag, Globe, Check, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/stores/cartStore';
+import { useFavoritesStore } from '@/stores/favoritesStore';
 import { FavoritesDrawer } from './FavoritesDrawer';
 import { CartDrawer } from './CartDrawer';
 import { AccountDrawer } from './AccountDrawer';
 
 const announcements = [
-  'Subscribe for 10% off',
+  '10% OFF? DREAMY. SIGN UP TO OUR NEWSLETTER',
   'Free shipping for orders above £100',
 ];
 
 const menuData = {
-  'Shop': {
-    links: [
-      { label: 'Midnight Silk Pillowcase', href: '/product/midnight-silk-pillowcase' },
-      { label: 'Linen Duvet Set - Grounding Clay', href: '/product/linen-duvet-set-clay' },
-      { label: 'Bamboo Sheet Set - Pebble Grey', href: '/product/bamboo-sheet-set-grey' },
-      { label: 'Weighted Sleep Mask', href: '/product/weighted-sleep-mask-indigo' },
-      { label: 'Cotton Quilt - Sandstone', href: '/product/cotton-quilt-sandstone' },
-    ],
-    images: [
-      { src: '/image2.png', label: 'Midnight Silk Pillowcase', href: '/product/midnight-silk-pillowcase' },
-      { src: '/image3.png', label: 'Linen Duvet Set', href: '/product/linen-duvet-set-clay' },
-    ]
-  },
-  'New in': {
-    links: [
-      { label: "Latest Arrivals", href: '/new-in#latest-arrivals' },
-      { label: 'Seasonal Collection', href: '/new-in#seasonal-collection' },
-      { label: 'Featured Sets', href: '/new-in#featured-sets' },
-      { label: 'Best Sellers', href: '/new-in#best-sellers' },
-      { label: 'Limited Edition', href: '/new-in#limited-edition' },
-    ],
-    images: [
-      { src: '/image4.png', label: 'Summer Sets', href: '/new-in#seasonal-collection' },
-      { src: '/image5.png', label: 'Bamboo Blend', href: '/shop' },
-    ]
-  },
   'About': {
     links: [
       { label: 'Our Story', href: '/about' },
@@ -73,8 +48,71 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   const [currentAnnouncement, setCurrentAnnouncement] = useState(0);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState({
+    code: 'NGN',
+    symbol: '₦',
+    flag: 'https://flagcdn.com/w20/ng.png',
+    name: 'Nigerian Naira'
+  });
+  
+  // Define currencies array inside the component
+  const currencies = [
+    { code: 'USD', symbol: '$', flag: 'https://flagcdn.com/w20/us.png', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', flag: 'https://flagcdn.com/w20/eu.png', name: 'Euro' },
+    { code: 'GBP', symbol: '£', flag: 'https://flagcdn.com/w20/gb.png', name: 'British Pound' },
+    { code: 'JPY', symbol: '¥', flag: 'https://flagcdn.com/w20/jp.png', name: 'Japanese Yen' },
+    { code: 'CNY', symbol: '¥', flag: 'https://flagcdn.com/w20/cn.png', name: 'Chinese Yuan' },
+    { code: 'AUD', symbol: 'A$', flag: 'https://flagcdn.com/w20/au.png', name: 'Australian Dollar' },
+    { code: 'CAD', symbol: 'C$', flag: 'https://flagcdn.com/w20/ca.png', name: 'Canadian Dollar' },
+    { code: 'CHF', symbol: 'Fr', flag: 'https://flagcdn.com/w20/ch.png', name: 'Swiss Franc' },
+    { code: 'INR', symbol: '₹', flag: 'https://flagcdn.com/w20/in.png', name: 'Indian Rupee' },
+    { code: 'BRL', symbol: 'R$', flag: 'https://flagcdn.com/w20/br.png', name: 'Brazilian Real' },
+    { code: 'RUB', symbol: '₽', flag: 'https://flagcdn.com/w20/ru.png', name: 'Russian Ruble' },
+    { code: 'KRW', symbol: '₩', flag: 'https://flagcdn.com/w20/kr.png', name: 'South Korean Won' },
+    { code: 'MXN', symbol: '$', flag: 'https://flagcdn.com/w20/mx.png', name: 'Mexican Peso' },
+    { code: 'SGD', symbol: 'S$', flag: 'https://flagcdn.com/w20/sg.png', name: 'Singapore Dollar' },
+    { code: 'HKD', symbol: 'HK$', flag: 'https://flagcdn.com/w20/hk.png', name: 'Hong Kong Dollar' },
+    { code: 'NOK', symbol: 'kr', flag: 'https://flagcdn.com/w20/no.png', name: 'Norwegian Krone' },
+    { code: 'NZD', symbol: 'NZ$', flag: 'https://flagcdn.com/w20/nz.png', name: 'New Zealand Dollar' },
+    { code: 'ZAR', symbol: 'R', flag: 'https://flagcdn.com/w20/za.png', name: 'South African Rand' },
+    { code: 'TRY', symbol: '₺', flag: 'https://flagcdn.com/w20/tr.png', name: 'Turkish Lira' },
+    { code: 'SEK', symbol: 'kr', flag: 'https://flagcdn.com/w20/se.png', name: 'Swedish Krona' },
+    { code: 'DKK', symbol: 'kr', flag: 'https://flagcdn.com/w20/dk.png', name: 'Danish Krone' },
+    { code: 'PLN', symbol: 'zł', flag: 'https://flagcdn.com/w20/pl.png', name: 'Polish Zloty' },
+    { code: 'THB', symbol: '฿', flag: 'https://flagcdn.com/w20/th.png', name: 'Thai Baht' },
+    { code: 'IDR', symbol: 'Rp', flag: 'https://flagcdn.com/w20/id.png', name: 'Indonesian Rupiah' },
+    { code: 'HUF', symbol: 'Ft', flag: 'https://flagcdn.com/w20/hu.png', name: 'Hungarian Forint' },
+    { code: 'CZK', symbol: 'Kč', flag: 'https://flagcdn.com/w20/cz.png', name: 'Czech Koruna' },
+    { code: 'ILS', symbol: '₪', flag: 'https://flagcdn.com/w20/il.png', name: 'Israeli Shekel' },
+    { code: 'CLP', symbol: '$', flag: 'https://flagcdn.com/w20/cl.png', name: 'Chilean Peso' },
+    { code: 'PHP', symbol: '₱', flag: 'https://flagcdn.com/w20/ph.png', name: 'Philippine Peso' },
+    { code: 'AED', symbol: 'د.إ', flag: 'https://flagcdn.com/w20/ae.png', name: 'UAE Dirham' },
+    { code: 'COP', symbol: '$', flag: 'https://flagcdn.com/w20/co.png', name: 'Colombian Peso' },
+    { code: 'SAR', symbol: '﷼', flag: 'https://flagcdn.com/w20/sa.png', name: 'Saudi Riyal' },
+    { code: 'MYR', symbol: 'RM', flag: 'https://flagcdn.com/w20/my.png', name: 'Malaysian Ringgit' },
+    { code: 'RON', symbol: 'lei', flag: 'https://flagcdn.com/w20/ro.png', name: 'Romanian Leu' },
+    { code: 'NGN', symbol: '₦', flag: 'https://flagcdn.com/w20/ng.png', name: 'Nigerian Naira' }
+  ];
+
   const items = useCartStore((state) => state.items);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const { items: favoriteItems, setFavoritesOpen } = useFavoritesStore();
+
+  // Filter currencies based on search
+  const filteredCurrencies = currencies.filter(currency => 
+    currency.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    currency.code.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Group currencies by region for better organization
+  const currencyGroups = {
+    'Americas': currencies.filter(c => ['USD', 'CAD', 'MXN', 'BRL', 'ARS', 'CLP', 'COP', 'PEN'].includes(c.code)),
+    'Europe': currencies.filter(c => ['EUR', 'GBP', 'CHF', 'NOK', 'SEK', 'DKK', 'PLN', 'HUF', 'CZK', 'RON', 'RUB', 'TRY'].includes(c.code)),
+    'Asia Pacific': currencies.filter(c => ['JPY', 'CNY', 'AUD', 'NZD', 'KRW', 'SGD', 'HKD', 'INR', 'IDR', 'MYR', 'THB', 'PHP'].includes(c.code)),
+    'Middle East & Africa': currencies.filter(c => ['AED', 'SAR', 'ILS', 'ZAR', 'NGN'].includes(c.code)),
+  };
 
   useEffect(() => {
     if (!announcementVisible) return;
@@ -114,10 +152,19 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   }, [hideOnScroll, lastScrollY]);
 
   const navLinks = [
-    { label: 'Shop', href: '/shop' },
-    { label: 'New in', href: '/new-in' },
     { label: 'About', href: '/about' },
     { label: 'Blog', href: '/blog' },
+    { label: 'Contact', href: '/contact' },
+  ];
+
+  const mobileNavLinks = [
+    { label: 'Shop Bundle', href: '/product/midnight-silk-pillowcase' },
+    { label: 'Favorites', href: '#', isFavorite: true },
+    { label: 'About', href: '/about' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Privacy Policies', href: '/privacy' },
+    { label: 'Terms and Condition', href: '/terms' },
   ];
 
   const popularSearches = [
@@ -134,21 +181,48 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
     setIsSearchOpen(!isSearchOpen);
   };
 
+  const nextAnnouncement = () => {
+    setCurrentAnnouncement((prev) => (prev + 1) % announcements.length);
+  };
+
+  const prevAnnouncement = () => {
+    setCurrentAnnouncement((prev) => (prev - 1 + announcements.length) % announcements.length);
+  };
+
   return (
     <>
       {/* Announcement Bar */}
       {announcementVisible && (
-        <div className="bg-[#f5f1ed] border-b border-[#e0dbd5] py-2.5 px-2 flex items-center justify-between">
-          <p className="text-sm text-gray-700 tracking-wide transition-opacity duration-300 font-sans font-medium">
-            {announcements[currentAnnouncement]}
-          </p>
-          <button
-            onClick={() => setAnnouncementVisible(false)}
-            className="text-gray-500 hover:text-gray-700 transition-colors p-1"
-            aria-label="Close announcement"
-          >
-            <img src="/cancel.png" alt="Close" className="h-4 w-4 object-contain" />
-          </button>
+        <div className="bg-[#7c7f70] text-white py-2 px-4 flex items-center justify-between text-[11px] font-medium tracking-[0.15em] uppercase">
+          {/* Left: Empty for centering or carousel controls */}
+          <div className="hidden md:flex flex-1"></div>
+
+          {/* Center: Announcement Carousel */}
+          <div className="flex items-center justify-between md:justify-center w-full md:w-auto md:gap-32 flex-1 md:flex-initial">
+            <button onClick={prevAnnouncement} className="hover:opacity-70 transition-opacity">
+              <ChevronLeft className="h-4 w-4 stroke-[1.5]" />
+            </button>
+            <div className="overflow-hidden min-w-[200px] text-center">
+              <motion.p
+                key={currentAnnouncement}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="whitespace-nowrap underline underline-offset-4"
+              >
+                {announcements[currentAnnouncement]}
+              </motion.p>
+            </div>
+            <button onClick={nextAnnouncement} className="hover:opacity-70 transition-opacity">
+              <ChevronRight className="h-4 w-4 stroke-[1.5]" />
+            </button>
+          </div>
+
+          {/* Right: Help Info */}
+          <div className="hidden md:flex items-center justify-end gap-2 flex-1 lowercase text-[11px]">
+            <Phone className="h-3 w-3" />
+            <span>Here to help +44 1242 339 161</span>
+          </div>
         </div>
       )}
 
@@ -158,87 +232,236 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
         animate={{ y: isVisible ? 0 : -100 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className="sticky top-0 z-50 bg-[#f5f1ed] border-b border-[#e0dbd5]"
-        onMouseLeave={() => setHoveredLink(null)}
+        onMouseLeave={() => { }}
       >
-        <nav className="w-full px-6 py-4">
+        <nav className="w-full px-6 py-6 bg-[#f5f1ed]">
           {/* Desktop Layout - 3 Column Grid */}
-          <div className="hidden md:grid md:grid-cols-3 items-center gap-4">
-            {/* Left: Navigation Links */}
-            <div className="flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  className={`text-sm tracking-wide transition-colors font-sans font-medium py-2 relative group ${hoveredLink === link.label ? 'text-gray-900' : 'text-gray-800 hover:text-gray-600'
-                    }`}
-                  onMouseEnter={() => setHoveredLink(link.label)}
-                >
-                  {link.label}
-                  <span className={`absolute bottom-0 left-0 w-full h-[1px] bg-gray-900 transition-transform duration-300 origin-left ${hoveredLink === link.label ? 'scale-x-100' : 'scale-x-0'}`} />
-                </Link>
-              ))}
-            </div>
+          <div className="hidden md:grid md:grid-cols-3 items-center">
+            {/* Left Column: Empty or Search */}
+            <div></div>
 
-            {/* Center: Logo */}
+            {/* Center Column: Logo */}
             <div className="flex justify-center">
-              <Link to="/" className="flex-shrink-0">
+              <Link to="/store" className="flex-shrink-0">
                 <img
                   src="/logo5.png"
                   alt="Remsleep"
-                  className="h-8 w-auto"
+                  className="h-10 w-auto"
                 />
               </Link>
             </div>
 
-            {/* Right: Search, Wishlist, Cart */}
-            <div className="flex items-center justify-end gap-5">
-              {/* Search Icon */}
+            {/* Right Column: Icons */}
+            <div className="flex items-center justify-end gap-6">
+              {/* Currency Selector - Enhanced */}
+              <div className="relative">
+                <motion.button
+                  onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
+                  className="flex items-center gap-2 cursor-pointer group relative px-2 py-1.5 rounded-lg hover:bg-[#e8e3dc] transition-all duration-200"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <img
+                    src={selectedCurrency.flag}
+                    alt={selectedCurrency.name}
+                    className="w-5 h-auto object-contain rounded-sm shadow-sm"
+                  />
+                  <span className="text-[11px] font-medium tracking-wider text-gray-600 group-hover:text-gray-900">
+                    {selectedCurrency.code} {selectedCurrency.symbol}
+                  </span>
+                  <motion.div
+                    animate={{ rotate: isCurrencyOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="h-3 w-3 text-gray-400 group-hover:text-gray-600" />
+                  </motion.div>
+                </motion.button>
+                
+                {/* Currency Dropdown - Enhanced with Search */}
+                <AnimatePresence>
+                  {isCurrencyOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full right-0 mt-2 w-96 bg-[#f5f1ed] border border-[#d8d1c8] rounded-2xl shadow-2xl overflow-hidden z-50 backdrop-blur-sm"
+                    >
+                      {/* Header with Search */}
+                      <div className="p-4 border-b border-[#d8d1c8]">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-sm font-serif text-gray-900">Select Currency</h3>
+                          <button 
+                            onClick={() => setIsCurrencyOpen(false)}
+                            className="p-1 hover:bg-[#e8e3dc] rounded-full transition-colors"
+                          >
+                            <X className="h-4 w-4 text-gray-500" />
+                          </button>
+                        </div>
+                        
+                        {/* Search Input */}
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="Search currency or country..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-9 pr-4 py-2.5 bg-[#e8e3dc] border border-[#d8d1c8] rounded-xl text-sm placeholder:text-gray-500 focus:outline-none focus:border-gray-400 transition-colors"
+                            autoFocus
+                          />
+                        </div>
+                      </div>
+
+                      {/* Currency List with Groups - Hidden Scrollbar */}
+                      <div className="max-h-96 overflow-y-auto p-2 scrollbar-hide">
+                        {searchQuery ? (
+                          // Search results
+                          <div className="space-y-1">
+                            {filteredCurrencies.map((currency) => (
+                              <motion.button
+                                key={currency.code}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                onClick={() => {
+                                  setSelectedCurrency(currency);
+                                  setIsCurrencyOpen(false);
+                                  setSearchQuery('');
+                                }}
+                                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
+                                  selectedCurrency.code === currency.code 
+                                    ? 'bg-[#e8e3dc] shadow-sm' 
+                                    : 'hover:bg-[#e8e3dc]'
+                                }`}
+                              >
+                                <img
+                                  src={currency.flag}
+                                  alt={currency.name}
+                                  className="w-6 h-auto object-contain rounded-sm"
+                                />
+                                <div className="flex-1 text-left">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-medium text-gray-900">{currency.code}</span>
+                                    <span className="text-xs text-gray-500">{currency.symbol}</span>
+                                  </div>
+                                  <div className="text-xs text-gray-500">{currency.name}</div>
+                                </div>
+                                {selectedCurrency.code === currency.code && (
+                                  <Check className="h-4 w-4 text-gray-700" />
+                                )}
+                              </motion.button>
+                            ))}
+                            {filteredCurrencies.length === 0 && (
+                              <div className="text-center py-8">
+                                <Globe className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                                <p className="text-sm text-gray-500">No currencies found</p>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          // Grouped by region
+                          Object.entries(currencyGroups).map(([region, regionCurrencies]) => (
+                            regionCurrencies.length > 0 && (
+                              <div key={region} className="mb-4">
+                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">
+                                  {region}
+                                </h4>
+                                <div className="space-y-1">
+                                  {regionCurrencies.map((currency) => (
+                                    <motion.button
+                                      key={currency.code}
+                                      whileHover={{ x: 2 }}
+                                      onClick={() => {
+                                        setSelectedCurrency(currency);
+                                        setIsCurrencyOpen(false);
+                                      }}
+                                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 ${
+                                        selectedCurrency.code === currency.code 
+                                          ? 'bg-[#e8e3dc] shadow-sm' 
+                                          : 'hover:bg-[#e8e3dc]'
+                                      }`}
+                                    >
+                                      <img
+                                        src={currency.flag}
+                                        alt={currency.name}
+                                        className="w-6 h-auto object-contain rounded-sm"
+                                      />
+                                      <div className="flex-1 text-left">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-sm font-medium text-gray-900">{currency.code}</span>
+                                          <span className="text-xs text-gray-500">{currency.symbol}</span>
+                                        </div>
+                                        <div className="text-xs text-gray-500">{currency.name}</div>
+                                      </div>
+                                      {selectedCurrency.code === currency.code && (
+                                        <Check className="h-4 w-4 text-gray-700" />
+                                      )}
+                                    </motion.button>
+                                  ))}
+                                </div>
+                              </div>
+                            )
+                          ))
+                        )}
+                      </div>
+
+                      {/* Footer with stats */}
+                      <div className="p-3 border-t border-[#d8d1c8] bg-[#e8e3dc]">
+                        <div className="flex items-center justify-between text-xs text-gray-600">
+                          <span>{currencies.length} currencies available</span>
+                          <span className="px-2 py-1 bg-[#f5f1ed] rounded-lg">Live exchange rates</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
               <button
                 onClick={handleSearchToggle}
-                className="text-gray-800 hover:text-gray-600 transition-colors"
-                aria-label="Search"
+                className="hover:opacity-70 transition-opacity"
               >
-                <img src="/search.png" alt="Search" className="h-5 w-5 object-contain" />
+                <Search className="h-5 w-5 stroke-[1.5]" />
               </button>
 
-              {/* Favorites Drawer */}
-              <FavoritesDrawer />
-
-              {/* Cart Drawer */}
               <CartDrawer />
-
-              {/* Account Drawer */}
               <AccountDrawer />
             </div>
           </div>
 
+          {/* Navigation Links - Centered Row below logo */}
+          <div className="hidden md:flex justify-center mt-8 space-x-10">
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                to={link.href}
+                className="text-[11px] font-medium tracking-[0.2em] text-[#1c1c1c] hover:opacity-60 transition-opacity uppercase"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
           {/* Mobile Layout (Trigger) */}
           {!mobileMenuOpen && (
-            <div className="md:hidden flex items-center justify-between relative h-12">
-              <div className="flex items-center gap-3">
-                <button
-                  className="text-gray-800 p-2"
-                  onClick={() => setMobileMenuOpen(true)}
-                >
-                  <img src="/menu-button.png" alt="Menu" className="h-5 w-5 object-contain" />
-                </button>
-                <button
-                  onClick={() => setIsSearchOpen(true)}
-                  className="text-gray-800 p-2"
-                >
-                  <img src="/search.png" alt="Search" className="h-5 w-5 object-contain" />
-                </button>
-              </div>
-
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                <Link to="/" className="flex-shrink-0">
+            <div className="md:hidden flex items-center justify-between h-8 px-1">
+              {/* Left: Logo */}
+              <div className="flex items-center -ml-6">
+                <Link to="/store" className="flex-shrink-0">
                   <img src="/logo5.png" alt="Remsleep" className="h-8 w-auto" />
                 </Link>
               </div>
 
-              <div className="flex items-center gap-3">
-                <CartDrawer />
+              {/* Right: Icons */}
+              <div className="flex items-center gap-5">
                 <AccountDrawer />
+                <CartDrawer />
+                <button
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="hover:opacity-70 transition-opacity"
+                >
+                  <Menu className="h-6 w-6 stroke-[1.5]" />
+                </button>
               </div>
             </div>
           )}
@@ -247,122 +470,150 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div
-                initial={{ opacity: 0, x: '-100%' }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: '-100%' }}
-                transition={{ type: 'spring', damping: 30, stiffness: 300, mass: 0.8 }}
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 className="fixed inset-0 z-[60] bg-[#f5f1ed] md:hidden flex flex-col"
               >
                 {/* Mobile Header Inside Menu */}
-                <div className="flex items-center justify-between px-6 h-12 border-b border-[#e0dbd5] bg-[#f5f1ed] relative">
-                  <div className="flex items-center gap-1 -ml-4">
-                    <button onClick={() => setMobileMenuOpen(false)} className="p-2">
-                      <img src="/cancel.png" alt="Close" className="h-6 w-6 object-contain" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsSearchOpen(true);
-                        setMobileMenuOpen(false);
-                      }}
-                      className="p-2 text-gray-800"
-                    >
-                      <img src="/search.png" alt="Search" className="h-6 w-6 object-contain" />
-                    </button>
-                  </div>
-
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <Link to="/" onClick={() => setMobileMenuOpen(false)}>
-                      <img src="/logo5.png" alt="Remsleep" className="h-8 w-auto" />
-                    </Link>
-                  </div>
-
-                  <div className="flex items-center gap-1 -mr-4">
-                    <CartDrawer />
-                    <AccountDrawer />
-                  </div>
+                <div className="flex items-center px-6 h-16 border-b border-[#e0dbd5]">
+                  <button onClick={() => setMobileMenuOpen(false)} className="p-2 -ml-2">
+                    <X className="h-6 w-6 stroke-[1.5]" />
+                  </button>
                 </div>
 
                 {/* Menu Content */}
-                <div className="flex-1 overflow-y-auto px-6 py-10">
-                  <div className="space-y-12">
-                    {navLinks.map((link) => (
-                      <div key={link.label} className="space-y-6">
-                        <Link
-                          to={link.href}
-                          className="text-lg font-medium text-gray-900 block tracking-tight uppercase"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          {link.label}
-                        </Link>
-                        {menuData[link.label as keyof typeof menuData] && (
-                          <div className="pl-6 space-y-4">
-                            {menuData[link.label as keyof typeof menuData].links.map((subLink) => (
-                              <Link
-                                key={subLink.label}
-                                to={subLink.href}
-                                className="text-sm text-gray-500 hover:text-gray-900 block transition-colors"
-                                onClick={() => setMobileMenuOpen(false)}
-                              >
-                                {subLink.label}
-                              </Link>
-                            ))}
-                          </div>
+                <div className="flex-1 overflow-y-auto pt-4 pb-20 no-scrollbar">
+                  <div className="flex flex-col">
+                    {mobileNavLinks.map((link) => (
+                      <div key={link.label}>
+                        {link.isFavorite ? (
+                          <button
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setFavoritesOpen(true);
+                            }}
+                            className="w-full flex items-center justify-between px-8 py-6 text-[13px] font-medium tracking-[0.15em] text-[#1c1c1c] uppercase"
+                          >
+                            <span>{link.label}</span>
+                            {favoriteItems.length > 0 && (
+                              <span className="bg-[#2D2D2D] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center">
+                                {favoriteItems.length}
+                              </span>
+                            )}
+                          </button>
+                        ) : (
+                          <Link
+                            to={link.href}
+                            className="flex items-center px-8 py-6 text-[13px] font-medium tracking-[0.15em] text-[#1c1c1c] uppercase"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {link.label}
+                          </Link>
                         )}
+                        <div className="mx-8 border-b border-[#e0dbd5]" />
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                {/* Sticky Footer */}
+                <div className="mt-auto border-t border-[#e0dbd5] bg-[#f5f1ed] p-8 pb-10">
+                  <div className="flex items-center justify-between">
+                    {/* Currency Selector - Mobile Enhanced */}
+                    <div className="relative">
+                      <button
+                        onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
+                        className="flex items-center gap-3 cursor-pointer group"
+                      >
+                        <img
+                          src={selectedCurrency.flag}
+                          alt={selectedCurrency.name}
+                          className="w-5 h-auto object-contain"
+                        />
+                        <span className="text-[12px] font-medium tracking-wider text-[#1c1c1c]">
+                          {selectedCurrency.code} {selectedCurrency.symbol}
+                        </span>
+                        <ChevronDown className={`h-3 w-3 text-[#1c1c1c] transition-transform ${isCurrencyOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      
+                      {/* Mobile Currency Dropdown - Enhanced */}
+                      <AnimatePresence>
+                        {isCurrencyOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute bottom-full left-0 mb-2 w-[320px] bg-[#f5f1ed] border border-[#d8d1c8] rounded-2xl shadow-2xl overflow-hidden z-50"
+                          >
+                            {/* Header with Search */}
+                            <div className="p-4 border-b border-[#d8d1c8]">
+                              <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                <input
+                                  type="text"
+                                  placeholder="Search currencies..."
+                                  value={searchQuery}
+                                  onChange={(e) => setSearchQuery(e.target.value)}
+                                  className="w-full pl-9 pr-4 py-3 bg-[#e8e3dc] border border-[#d8d1c8] rounded-xl text-sm placeholder:text-gray-500 focus:outline-none focus:border-gray-400 transition-colors"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Currency List - Hidden Scrollbar */}
+                            <div className="max-h-80 overflow-y-auto p-2 scrollbar-hide">
+                              {filteredCurrencies.map((currency) => (
+                                <button
+                                  key={currency.code}
+                                  onClick={() => {
+                                    setSelectedCurrency(currency);
+                                    setIsCurrencyOpen(false);
+                                    setSearchQuery('');
+                                  }}
+                                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${
+                                    selectedCurrency.code === currency.code ? 'bg-[#e8e3dc]' : 'hover:bg-[#e8e3dc]'
+                                  }`}
+                                >
+                                  <img
+                                    src={currency.flag}
+                                    alt={currency.name}
+                                    className="w-6 h-auto object-contain"
+                                  />
+                                  <div className="flex-1 text-left">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm font-medium text-gray-900">{currency.code}</span>
+                                      <span className="text-xs text-gray-500">{currency.symbol}</span>
+                                    </div>
+                                    <div className="text-xs text-gray-500">{currency.name}</div>
+                                  </div>
+                                  {selectedCurrency.code === currency.code && (
+                                    <Check className="h-4 w-4 text-gray-700" />
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Sign In */}
+                    <Link
+                      to="/account/login"
+                      className="flex items-center gap-2 group"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <User className="h-5 w-5 text-[#1c1c1c] stroke-[1.5]" />
+                      <span className="text-[12px] font-medium tracking-wider text-[#1c1c1c] uppercase">Sign In</span>
+                    </Link>
                   </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </nav>
-
-        {/* Mega Menu Overlay */}
-        <div
-          className={`absolute top-full left-0 w-full bg-[#f5f1ed] border-b border-[#e0dbd5] overflow-hidden transition-all duration-300 ease-in-out ${hoveredLink && !isSearchOpen ? 'max-h-[600px] opacity-100 shadow-sm' : 'max-h-0 opacity-0'
-            }`}
-        >
-          {hoveredLink && menuData[hoveredLink as keyof typeof menuData] && (
-            <div className="px-6 pb-12 pt-6">
-              <div className="grid grid-cols-12 gap-8 items-center">
-                {/* Left Links Column */}
-                <div className="col-span-4">
-                  <ul className="space-y-4">
-                    {menuData[hoveredLink as keyof typeof menuData].links.map((item) => (
-                      <li key={item.label}>
-                        <Link
-                          to={item.href}
-                          className="text-lg text-gray-600 hover:text-gray-900 transition-colors font-sans whitespace-nowrap"
-                        >
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Right Images Column */}
-                <div className="col-span-8 flex gap-10 justify-end items-start">
-                  {menuData[hoveredLink as keyof typeof menuData].images.map((image, idx) => (
-                    <Link key={idx} to={image.href} className="group relative block flex-1 max-w-[450px]">
-                      <div className={`overflow-hidden relative ${menuData[hoveredLink as keyof typeof menuData].images.length === 1 ? 'h-[200px] w-full aspect-[16/9]' : 'h-[200px] w-full aspect-square'}`}>
-                        <img
-                          src={image.src}
-                          alt={image.label}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
-                      </div>
-                      <div className="mt-4 flex items-center text-sm font-medium text-gray-900">
-                        {image.label} <span className="ml-1 transition-transform duration-300 group-hover:translate-x-1">→</span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
 
         {/* Search Overlay */}
         <AnimatePresence>
@@ -396,7 +647,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                       {popularSearches.map((tag) => (
                         <button
                           key={tag}
-                          className="px-6 py-2.5 rounded-full border border-[#e0dbd5] bg-white/50 text-xs font-medium text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all duration-300"
+                          className="px-6 py-2.5 rounded-full border border-[#e0dbd5] bg-[#e8e3dc] text-xs font-medium text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all duration-300"
                         >
                           {tag}
                         </button>

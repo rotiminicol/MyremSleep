@@ -58,7 +58,7 @@ export function ProductGrid() {
   const price = product.node.priceRange.minVariantPrice;
 
   return (
-    <section className="pb-16 md:pb-32 md:px-6 bg-[#f5f1ed]">
+    <section className="pb-8 md:pb-12 md:px-6 bg-[#f5f1ed]">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

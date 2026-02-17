@@ -6,26 +6,24 @@ import {
     DialogContent,
 } from "@/components/ui/dialog";
 import { SubscriptionForm } from '../SubscriptionForm';
-import { QuestionnaireModal } from '../QuestionnaireModal';
 
 type PopupStep = 'offer' | 'form' | 'success';
 
 export function StoreOfferPopup() {
     const [isOpen, setIsOpen] = useState(false);
     const [step, setStep] = useState<PopupStep>('offer');
-    const [userEmail, setUserEmail] = useState('');
-    const [userName, setUserName] = useState('');
 
     useEffect(() => {
-        const hasSeenPopup = sessionStorage.getItem('store_popup_seen');
+        // Temporarily disabled for verification
+        // const hasSeenPopup = sessionStorage.getItem('store_popup_seen');
 
-        if (!hasSeenPopup) {
-            const timer = setTimeout(() => {
-                setIsOpen(true);
-            }, 3000);
+        // if (!hasSeenPopup) {
+        const timer = setTimeout(() => {
+            setIsOpen(true);
+        }, 1000); // Reduced delay to 1s
 
-            return () => clearTimeout(timer);
-        }
+        return () => clearTimeout(timer);
+        // }
     }, []);
 
     const handleClose = () => {
@@ -53,184 +51,216 @@ export function StoreOfferPopup() {
             <Dialog open={isOpen} onOpenChange={(open) => {
                 if (!open) handleClose();
             }}>
-                <DialogContent className="w-[92vw] sm:w-full sm:max-w-[500px] p-0 overflow-hidden bg-white border-none shadow-2xl rounded-none ring-1 ring-black/5">
-                    <div className="relative min-h-[450px] flex flex-col justify-center bg-[#fdfdfd] perspective-1000">
-                        <AnimatePresence mode="wait">
-                            {step === 'offer' && (
-                                <motion.div
-                                    key="offer"
-                                    initial={{ opacity: 0, rotateY: -15, z: -100 }}
-                                    animate={{ opacity: 1, rotateY: 0, z: 0 }}
-                                    exit={{ opacity: 0, rotateY: 15, z: -100 }}
-                                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                                    className="flex flex-col items-center text-center p-10 md:p-14"
-                                >
+                <DialogContent className="w-[80vw] max-w-[340px] sm:max-w-[400px] md:max-w-[1000px] p-0 overflow-hidden bg-white border-none shadow-3xl rounded-none ring-1 ring-black/5">
+                    <div className="relative min-h-[420px] md:min-h-[600px] flex flex-col md:flex-row bg-white">
+                        {/* Image Section - Left (Desktop Only) */}
+                        <div className="hidden md:block md:w-[50%] relative overflow-hidden">
+                            <img
+                                src="/image5.png"
+                                alt="Relaxing bedding"
+                                className="absolute inset-0 w-full h-full object-cover"
+                            />
+                        </div>
+
+                        {/* Content Section - Right */}
+                        <div className="w-full md:w-[50%] flex flex-col justify-center items-center md:items-start px-5 py-8 md:px-14 md:py-16 relative h-[420px] md:h-[600px]">
+                            {/* Close Button */}
+                            <button
+                                onClick={handleClose}
+                                className="absolute top-4 right-4 text-gray-400 hover:text-black transition-colors"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+
+                            <AnimatePresence mode="wait">
+                                {step === 'offer' && (
                                     <motion.div
+                                        key="offer"
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.2 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="flex flex-col items-center text-center w-full"
                                     >
-                                        <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-sans mb-4 block font-medium">
-                                            Limited Time Offer
-                                        </span>
-                                        <h2 className="text-4xl md:text-5xl font-serif text-gray-900 mb-12 leading-tight">
+                                        <h2 className="text-[28px] md:text-5xl font-serif text-gray-900 mb-6 md:mb-12 leading-tight tracking-tight">
                                             You've got a <br />
-                                            <span className="italic font-normal">special offer</span>
+                                            special offer
                                         </h2>
+
+                                        <button
+                                            onClick={handleClaimOffer}
+                                            className="mx-auto block px-2 md:px-16 py-5 md:py-6 bg-[#1a1a1a] text-white text-[9px] md:text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all duration-300"
+                                        >
+                                            Claim Offer
+                                        </button>
                                     </motion.div>
+                                )}
 
-                                    <motion.button
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        onClick={handleClaimOffer}
-                                        className="w-full px-12 py-5 bg-[#1a1a1a] text-white font-sans text-xs font-bold tracking-[0.25em] uppercase hover:bg-black transition-all duration-500 shadow-lg shadow-black/10"
-                                    >
-                                        Claim Offer
-                                    </motion.button>
-                                </motion.div>
-                            )}
-
-                            {step === 'form' && (
-                                <motion.div
-                                    key="form"
-                                    initial={{ opacity: 0, rotateY: 30, z: -200 }}
-                                    animate={{ opacity: 1, rotateY: 0, z: 0 }}
-                                    exit={{ opacity: 0, rotateY: -30, z: -200 }}
-                                    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                                    className="flex flex-col items-center text-center p-10 md:p-14 w-full"
-                                >
-                                    <h2 className="text-3xl font-serif text-gray-900 mb-8 leading-tight">
-                                        Almost there...
-                                    </h2>
-
-                                    <div className="w-full">
-                                        <SubscriptionFormWrapper onSubscribe={handleSubscribe} />
-                                    </div>
-
-                                    <p className="mt-6 text-[11px] text-gray-400 font-sans max-w-[240px] leading-relaxed">
-                                        Enter your details to reveal the discount. By signing up you agree to our Terms & Privacy Policy.
-                                    </p>
-                                </motion.div>
-                            )}
-
-                            {step === 'success' && (
-                                <motion.div
-                                    key="success"
-                                    initial={{ opacity: 0, scale: 0.9, z: -50 }}
-                                    animate={{ opacity: 1, scale: 1, z: 0 }}
-                                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                                    className="flex flex-col items-center text-center p-10 md:p-14"
-                                >
+                                {step === 'form' && (
                                     <motion.div
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        transition={{ delay: 0.2, duration: 0.8 }}
-                                        className="relative mb-10"
+                                        key="form"
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        className="flex flex-col items-center text-center md:items-start md:text-left w-full"
                                     >
-                                        {/* Decorative elements for a 'classic' sleep theme */}
-                                        <div className="absolute -top-4 -left-4 w-12 h-12 bg-[#f5f1ed] rounded-full -z-10 animate-pulse" />
-                                        <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#ebe7e0] rounded-full -z-10" />
+                                        <h2 className="text-2xl md:text-4xl font-serif text-gray-900 mb-6 md:mb-8 leading-tight tracking-tight">
+                                            Almost there...
+                                        </h2>
 
-                                        <div className="w-24 h-24 bg-white border border-gray-100 rounded-2xl flex items-center justify-center shadow-xl shadow-black/5 rotate-3 hover:rotate-0 transition-transform duration-700">
-                                            <svg
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="1"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="w-12 h-12 text-gray-900"
-                                            >
-                                                <path d="M2 4v16" />
-                                                <path d="M2 8h18a2 2 0 0 1 2 2v10" />
-                                                <path d="M2 17h20" />
-                                                <path d="M6 8v9" />
-                                            </svg>
+                                        <p className="text-gray-500 text-xs md:text-sm mb-6 md:mb-8 font-sans">
+                                            Please enter your details to receive your exclusive offer.
+                                        </p>
+
+                                        <div className="w-full store-popup-form">
+                                            <SubscriptionForm onSubscribe={handleSubscribe} buttonText="SUBMIT" />
                                         </div>
+
+                                        <p className="mt-6 md:mt-8 text-[11px] md:text-[12px] text-gray-400 font-sans leading-relaxed">
+                                            By signing up, you agree to our <a href="/privacy" className="underline hover:text-gray-600 transition-colors">privacy policy.</a>
+                                        </p>
                                     </motion.div>
+                                )}
 
-                                    <h2 className="text-3xl font-serif text-gray-900 mb-4">
-                                        Welcome to the <br />
-                                        <span className="italic">REMsleep Ritual</span>
-                                    </h2>
-                                    <p className="text-gray-600 font-sans text-[15px] mb-10 max-w-[300px] leading-relaxed">
-                                        You're on the list. Keep an eye on your inbox for your exclusive code.
-                                    </p>
-
-                                    <div className="w-1/2 h-px bg-gray-200 mb-10" />
-
-                                    <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-bold">
-                                        Enjoy your shopping
-                                    </span>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                {step === 'success' && (
+                                    <motion.div
+                                        key="success"
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="flex flex-col items-center text-center py-6 px-4 md:py-8 md:px-6 relative w-full"
+                                    >
+                                        <div className="flex justify-center mb-4 w-full">
+                                            <img
+                                                src="/checkout.png"
+                                                alt="Success"
+                                                className="w-28 h-28 md:w-56 md:h-56 object-contain"
+                                            />
+                                        </div>
+                                        <h2 className="text-2xl md:text-3xl font-serif text-gray-900 mb-3 md:mb-4 leading-tight">
+                                            Welcome to <br />
+                                            <span className="italic">REMsleep</span>
+                                        </h2>
+                                        <p className="text-gray-600 font-sans text-sm max-w-[260px] md:max-w-[280px] leading-relaxed">
+                                            You're on the list. Keep an eye on your inbox for your exclusive code.
+                                        </p>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
 
             <style>{`
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-      `}</style>
+                /* General Form Overrides */
+                .store-popup-form form {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: stretch !important;
+                    max-width: none !important;
+                    margin: 0 !important;
+                }
+
+                /* Show only the stacked version and hide the inline desktop version */
+                .store-popup-form .hidden.sm\\:flex {
+                    display: none !important;
+                }
+                .store-popup-form .flex-col.sm\\:hidden {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    gap: 1.25rem !important;
+                    background: transparent !important;
+                    box-shadow: none !important;
+                    border-radius: 0 !important;
+                    padding: 0 !important;
+                    overflow: visible !important;
+                }
+
+                .store-popup-form .hero-input {
+                    border-top: none !important;
+                    border-left: none !important;
+                    border-right: none !important;
+                    border-bottom: 1.5px solid #1a1a1a !important;
+                    background: transparent !important;
+                    margin-bottom: 0 !important;
+                    border-radius: 0px !important;
+                    width: 100% !important;
+                    padding: 0.75rem 0 !important;
+                    font-size: 16px !important;
+                    color: #1a1a1a !important;
+                    font-family: 'Inter', sans-serif !important;
+                    text-align: center !important;
+                    transition: all 0.3s ease;
+                }
+                .store-popup-form .hero-input::placeholder {
+                    color: #9CA3AF !important;
+                    opacity: 1;
+                    text-align: center !important;
+                }
+                .store-popup-form .hero-input:focus {
+                    border-bottom-color: #1a1a1a !important;
+                    outline: none !important;
+                }
+                .store-popup-form .btn-hero {
+                    width: 100% !important;
+                    background-color: #1a1a1a !important;
+                    color: white !important;
+                    border-radius: 0px !important;
+                    text-transform: uppercase;
+                    font-size: 13px !important;
+                    font-weight: 700 !important;
+                    letter-spacing: 0.1em !important;
+                    padding: 1.25rem !important;
+                    height: auto !important;
+                    margin-top: 1.5rem !important;
+                    margin-left: 0 !important;
+                    text-align: center !important;
+                    display: flex !important;
+                    justify-content: center !important;
+                    align-items: center !important;
+                    transition: all 0.3s ease !important;
+                }
+                .store-popup-form .btn-hero:hover {
+                    background-color: #000 !important;
+                }
+                .text-destructive {
+                    margin-top: 8px !important;
+                    text-align: center !important;
+                    color: #DC2626 !important;
+                    font-size: 13px !important;
+                }
+                /* Force centering for headings and buttons in content area on mobile */
+                @media (max-width: 767px) {
+                    .flex.flex-col.justify-center.items-center {
+                        justify-content: center !important;
+                        align-items: center !important;
+                        text-align: center !important;
+                    }
+                    .flex.flex-col.justify-center.items-center h2,
+                    .flex.flex-col.justify-center.items-center p,
+                    .flex.flex-col.justify-center.items-center button:not([class*="absolute"]) {
+                        text-align: center !important;
+                        margin-left: auto !important;
+                        margin-right: auto !important;
+                        display: block !important;
+                        width: 100% !important;
+                    }
+                    /* Special case for claim offer button which shouldn't be 100% width maybe? */
+                    #offer-btn,
+                    .flex.flex-col.justify-center.items-center button[class*="Claim Offer"] {
+                        width: auto !important;
+                        min-width: 160px !important;
+                        margin-top: 1rem !important;
+                    }
+                }
+
+                /* Hide default Dialog close button */
+                [data-state="open"] button[class*="DialogClose"],
+                [data-state="open"] button[class*="absolute right-4 top-4"] {
+                    display: none !important;
+                }
+            `}</style>
         </>
     );
 }
 
-function SubscriptionFormWrapper({ onSubscribe }: { onSubscribe: (name: string, email: string) => void }) {
-    return (
-        <div className="store-popup-form w-full">
-            <SubscriptionForm onSubscribe={onSubscribe} buttonText="GET MY OFFER" />
-
-            <style>{`
-        .store-popup-form .hero-input {
-          border-top: none !important;
-          border-left: none !important;
-          border-right: none !important;
-          border-bottom: 1px solid #e5e7eb !important;
-          background: transparent !important;
-          margin-bottom: 15px !important;
-          border-radius: 0px !important;
-          width: 100% !important;
-          text-align: center;
-          padding: 1rem !important;
-          font-size: 15px !important;
-          color: #1a1a1a !important;
-          transition: all 0.3s ease;
-        }
-        .store-popup-form .hero-input:focus {
-          border-bottom-color: #1a1a1a !important;
-          outline: none !important;
-        }
-        .store-popup-form .btn-hero {
-           width: 100% !important;
-           margin-top: 20px !important;
-           background-color: #1a1a1a !important;
-           color: white !important;
-           border-radius: 0px !important;
-           text-transform: uppercase;
-           font-size: 11px !important;
-           font-weight: 700 !important;
-           letter-spacing: 0.25em !important;
-           padding: 1.25rem !important;
-           height: auto !important;
-           transition: all 0.5s ease !important;
-           box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;
-        }
-        .store-popup-form .btn-hero:hover {
-          background-color: #000 !important;
-          transform: translateY(-2px) !important;
-        }
-        .store-popup-form .sm\\:flex {
-           display: none !important;
-        }
-        .store-popup-form .sm\\:hidden {
-           display: flex !important;
-           flex-direction: column !important;
-           gap: 10px !important;
-        }
-      `}</style>
-        </div>
-    );
-}
+export default StoreOfferPopup;

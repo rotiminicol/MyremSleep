@@ -327,6 +327,17 @@ export default function ProductPage() {
     <div className="min-h-screen bg-[#f5f1ed]">
       <StoreNavbar hideOnScroll />
 
+      {/* Back Button */}
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 pt-4">
+        <Link
+          to="/store"
+          className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors mb-4"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Back to store
+        </Link>
+      </div>
+
       <main className="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 pt-4 pb-12">
         {/* Top Content: Gallery and Info */}
         <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-8 lg:gap-16 items-start">

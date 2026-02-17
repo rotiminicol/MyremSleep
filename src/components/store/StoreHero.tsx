@@ -1,8 +1,86 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+
+const reviews = [
+  {
+    name: "Amara Okafor",
+    review: "The quality is absolutely incredible. I've never slept better!"
+  },
+  {
+    name: "James Chen",
+    review: "Worth every penny. The fabric feels like luxury hotel bedding."
+  },
+  {
+    name: "Nia Johnson",
+    review: "My sleep has improved dramatically since switching to Remsleep."
+  },
+  {
+    name: "Kwame Asante",
+    review: "The attention to detail is amazing. Best bedding purchase I've made."
+  },
+  {
+    name: "Olivia Williams",
+    review: "Silky smooth and so comfortable. I look forward to bedtime now!"
+  },
+  {
+    name: "Zara Patel",
+    review: "Exceptional quality and fast shipping. Highly recommend!"
+  },
+  {
+    name: "Thabo Mbeki",
+    review: "Transformed my bedroom into a luxury retreat. Love it!"
+  },
+  {
+    name: "Ryan Foster",
+    review: "The perfect investment for better sleep. Absolutely thrilled!"
+  }
+];
+
+function ReviewSlider() {
+  const [duplicatedReviews, setDuplicatedReviews] = useState(reviews);
+
+  useEffect(() => {
+    // Duplicate reviews for seamless infinite scroll
+    setDuplicatedReviews([...reviews, ...reviews]);
+  }, []);
+
+  return (
+    <div className="w-full bg-[#f5f1ed] py-4 overflow-hidden">
+      <div className="relative">
+        <motion.div
+          className="flex gap-6 px-4"
+          animate={{
+            x: [0, -40 * 16] // 40px per review * 8 reviews
+          }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 25,
+              ease: "linear"
+            }
+          }}
+        >
+          {duplicatedReviews.map((review, index) => (
+            <div
+              key={index}
+              className="flex-shrink-0"
+            >
+              <p className="text-gray-700 text-sm font-sans italic">
+                "{review.review}" — <span className="font-semibold not-italic">{review.name}</span>
+              </p>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
 
 export function StoreHero() {
   return (
-    <section className="w-full md:mb-12">
+    <section className="w-full md:mb-4">
       {/* Mobile Design (< md) */}
       <div className="md:hidden w-full flex flex-col h-[calc(100svh-60px)] min-h-[500px] max-h-[700px]">
         {/* Image Section - ~65% height */}
@@ -33,10 +111,10 @@ export function StoreHero() {
 
           <div className="w-full">
             <Link
-              to="/store?category=bundles"
+              to="/product/midnight-silk-pillowcase"
               className="inline-block bg-white text-gray-900 px-8 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase rounded-sm hover:bg-gray-100 transition-all duration-300"
             >
-              Shop Bedding
+              Shop Bundle
             </Link>
           </div>
         </div>
@@ -68,6 +146,9 @@ export function StoreHero() {
 
         </div>
       </div>
+
+      {/* Review Slider Section */}
+      <ReviewSlider />
     </section>
   );
 }

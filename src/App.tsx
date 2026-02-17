@@ -17,8 +17,11 @@ import BlogDetailPage from "./pages/BlogDetailPage";
 import ShopPage from "./pages/ShopPage";
 import NewInPage from "./pages/NewInPage";
 import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
+import { CookieConsent } from "./components/CookieConsent";
+import { StoreOfferPopup } from "./components/store/StoreOfferPopup";
 import { useCartSync } from "./hooks/useCartSync";
 
 const queryClient = new QueryClient();
@@ -35,6 +38,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <CookieConsent />
+        <StoreOfferPopup />
         <GoogleAnalytics />
         <CartSyncProvider>
           <Routes>
@@ -47,6 +52,7 @@ const App = () => (
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/new-in" element={<NewInPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />
