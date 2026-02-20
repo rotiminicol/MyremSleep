@@ -12,7 +12,6 @@ export function StoreFooter() {
 
     setIsSubmitting(true);
     try {
-      // Add to newsletter (you can integrate with Klaviyo here)
       await new Promise((resolve) => setTimeout(resolve, 500));
       toast.success('Thanks for subscribing!', {
         position: 'top-center',
@@ -58,6 +57,42 @@ export function StoreFooter() {
         { label: 'Privacy Policy', href: '/privacy' },
         { label: 'Terms & Conditions', href: '/terms' },
       ],
+    },
+  ];
+
+  // Real payment method logos using official SVG assets from trusted CDN (svgrepo / official brand kits)
+  const paymentMethods = [
+    {
+      name: 'Visa',
+      src: 'https://cdn.svgporn.com/logos/visa.svg',
+    },
+    {
+      name: 'Mastercard',
+      src: 'https://cdn.svgporn.com/logos/mastercard.svg',
+    },
+    {
+      name: 'PayPal',
+      src: 'https://cdn.svgporn.com/logos/paypal.svg',
+    },
+    {
+      name: 'Stripe',
+      src: 'https://cdn.svgporn.com/logos/stripe.svg',
+    },
+    {
+      name: 'Apple Pay',
+      src: 'https://cdn.svgporn.com/logos/apple-pay.svg',
+    },
+    {
+      name: 'Google Pay',
+      src: 'https://cdn.svgporn.com/logos/google-pay.svg',
+    },
+    {
+      name: 'American Express',
+      src: 'https://cdn.svgporn.com/logos/amex.svg',
+    },
+    {
+      name: 'Shop Pay',
+      src: 'https://cdn.svgporn.com/logos/shopify.svg',
     },
   ];
 
@@ -125,11 +160,33 @@ export function StoreFooter() {
           ))}
         </div>
 
-        {/* Copyright */}
-        <div className="pt-8 border-t border-[#e0dbd5]">
+        {/* Copyright and Payment Methods */}
+        <div className="pt-8 border-t border-[#e0dbd5] flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs text-gray-500">
-            © 2026 Remsleep. <Link to="/blog" className="hover:underline">Blog</Link> • All rights reserved.
+            © 2026 Remsleep.{' '}
+            <Link to="/blog" className="hover:underline">
+              Blog
+            </Link>{' '}
+            • All rights reserved.
           </p>
+
+          {/* Real Payment Logos */}
+          <div className="flex flex-wrap justify-center items-center gap-3">
+            {paymentMethods.map((method) => (
+              <div
+                key={method.name}
+                className="bg-white border border-gray-200 rounded px-2 py-1 h-8 flex items-center justify-center shadow-sm"
+                title={method.name}
+              >
+                <img
+                  src={method.src}
+                  alt={method.name}
+                  className="h-5 w-auto object-contain"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

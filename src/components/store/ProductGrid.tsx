@@ -9,7 +9,7 @@ const COLOR_VARIANTS = [
   { name: 'Winter Cloud', hex: '#F5F5F7', image: '/products/midnight-silk.png' },
   { name: 'Desert Whisperer', hex: '#E5DACE', image: '/products/linen-duvet-clay.png' },
   { name: 'Buttermilk', hex: '#FFF4D2', image: '/products/cotton-quilt-sandstone.png' },
-  { name: 'Sandstone Drift', hex: '#D2C4B5', image: '/products/bamboo-sheets-grey.png' },
+  { name: 'Clay', hex: '#D2C4B5', image: '/products/bamboo-sheets-grey.png' },
   { name: 'Clay Blush', hex: '#D9A891', image: '/products/lavender-eye-pillow.png' },
   { name: 'Pebble Haze', hex: '#A3A3A3', image: '/products/sleep-mask-indigo.png' },
   { name: 'Desert Sand', hex: '#E2CA9D', image: '/products/midnight-silk.png' },
@@ -19,7 +19,7 @@ const COLOR_VARIANTS = [
 export function ProductGrid() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeColor, setActiveColor] = useState(COLOR_VARIANTS[0]);
+  const [activeColor, setActiveColor] = useState<typeof COLOR_VARIANTS[0] | null>(null);
 
   useEffect(() => {
     async function loadProducts() {
@@ -66,13 +66,45 @@ export function ProductGrid() {
         viewport={{ once: true }}
         className="group"
       >
-        <Link to={`/product/${product.node.handle}`} className="block">
-          <div className="relative aspect-[3/4] md:aspect-[21/9] bg-[#EBE7E0] overflow-hidden md:rounded-sm shadow-sm group-hover:shadow-md transition-shadow duration-700">
+        {activeColor ? (
+          <Link to={`/product/${product.node.handle}?color=${encodeURIComponent(activeColor.name)}`} className="block">
+            <div className="relative aspect-[3/4] md:aspect-[21/9] bg-[#EBE7E0] overflow-hidden md:rounded-sm shadow-sm group-hover:shadow-md transition-shadow duration-700">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeColor?.name || 'default'}
+                  src={activeColor?.image || image?.url}
+                  alt={`${product.node.title} in ${activeColor?.name || 'default'}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                />
+              </AnimatePresence>
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700" />
+
+              {/* Centered Content Overlay for wide card */}
+              <div className="absolute inset-x-0 bottom-0 p-8 md:p-16 flex flex-col items-center text-center bg-gradient-to-t from-black/20 to-transparent">
+                <div className="w-full max-w-xs transition-all duration-300">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="w-full bg-white text-gray-900 py-4 text-[10px] font-semibold tracking-[0.2em] uppercase rounded-sm hover:bg-black hover:text-white transition-all transform active:scale-[0.98] flex items-center justify-center cursor-pointer"
+                  >
+                    Shop Now
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ) : (
+          <div className="relative aspect-[3/4] md:aspect-[21/9] bg-[#EBE7E0] overflow-hidden md:rounded-sm shadow-sm">
             <AnimatePresence mode="wait">
               <motion.img
-                key={activeColor.name}
-                src={activeColor.image}
-                alt={`${product.node.title} in ${activeColor.name}`}
+                key="default"
+                src={image?.url}
+                alt={product.node.title}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -89,14 +121,14 @@ export function ProductGrid() {
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="w-full bg-white text-gray-900 py-4 text-[10px] font-semibold tracking-[0.2em] uppercase rounded-sm hover:bg-black hover:text-white transition-all transform active:scale-[0.98] flex items-center justify-center cursor-pointer"
+                  className="w-full bg-gray-200 text-gray-500 py-4 text-[10px] font-semibold tracking-[0.2em] uppercase rounded-sm cursor-not-allowed flex items-center justify-center"
                 >
-                  Shop Now
+                  Please select a color
                 </motion.div>
               </div>
             </div>
           </div>
-        </Link>
+        )}
       </motion.div>
 
       {/* Color Swatches Section */}
@@ -108,7 +140,7 @@ export function ProductGrid() {
         className="mt-2 md:mt-12 flex flex-col items-center text-center px-6"
       >
         <h3 className="text-[11px] min-[375px]:text-[13px] min-[425px]:text-sm sm:text-lg md:text-2xl font-serif text-gray-900 mb-2 md:mb-6 whitespace-nowrap">
-          Seven seasonless colours. One calm aesthetic.
+          One set. Eight seasonless colourways. Effortless calm
         </h3>
 
         <div className="flex flex-nowrap justify-center gap-1.5 sm:gap-2 mb-2 md:mb-4 w-full max-w-full overflow-x-auto px-4 no-scrollbar">
@@ -120,7 +152,7 @@ export function ProductGrid() {
                 e.stopPropagation();
                 setActiveColor(color);
               }}
-              className={`flex-shrink-0 w-8 h-8 min-[375px]:w-9 min-[375px]:h-9 min-[425px]:w-10 min-[425px]:h-10 md:w-12 md:h-12 border transition-all duration-300 ${activeColor.name === color.name
+              className={`flex-shrink-0 w-8 h-8 min-[375px]:w-9 min-[375px]:h-9 min-[425px]:w-10 min-[425px]:h-10 md:w-12 md:h-12 border transition-all duration-300 ${activeColor?.name === color.name
                 ? 'border-gray-900 scale-105 shadow-sm'
                 : 'border-transparent hover:border-gray-300'
                 }`}
@@ -131,7 +163,7 @@ export function ProductGrid() {
         </div>
 
         <span className="text-[11px] text-gray-900 font-sans uppercase tracking-[0.1em] font-medium min-h-[1.5em]">
-          {activeColor.name}
+          {activeColor?.name || 'Select a color'}
         </span>
       </motion.div>
     </section>

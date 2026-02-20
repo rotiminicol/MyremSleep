@@ -5,7 +5,6 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
         node: {
             id: 'gid://shopify/Product/1',
             title: 'Midnight Silk Pillowcase',
-            description: 'Experience the ultimate recovery with our 22-momme pure mulberry silk pillowcase. Designed to reduce friction and maintain hydration while you dream.',
             handle: 'midnight-silk-pillowcase',
             productType: 'Bedding',
             priceRange: {
@@ -90,8 +89,9 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
             },
             options: [
                 { name: 'Size', values: ['Double', 'King'] },
-                { name: 'Color', values: ['Winter Cloud', 'Desert Whisperer', 'Buttermilk', 'Sandstone Drift', 'Clay Blush', 'Pebble Haze', 'Desert Sand', 'Cinnamon Bark'] }
+                { name: 'Color', values: ['Winter Cloud', 'Desert Whisperer', 'Buttermilk', 'Clay', 'Clay Blush', 'Pebble Haze', 'Desert Sand', 'Cinnamon Bark'] }
             ],
+            description: ''
         },
     },
     {

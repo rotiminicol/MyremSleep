@@ -9,8 +9,10 @@ import { CartDrawer } from './CartDrawer';
 import { AccountDrawer } from './AccountDrawer';
 
 const announcements = [
-  '10% OFF? DREAMY. SIGN UP TO OUR NEWSLETTER',
-  'Free shipping for orders above £100',
+  'Sign up for 10% and new letter',
+  'Free Shipping over £99',
+  'Launch Bundles: duvet cover + fitted sheet + 4 pillowcases.',
+  '300 thread count Egyptian cotton sateen bundles.'
 ];
 
 const menuData = {
@@ -636,23 +638,6 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                       className="w-full bg-transparent border-b border-gray-300 py-5 text-center text-2xl font-light placeholder:text-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
                     />
                     <Search className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                  </div>
-
-                  {/* Popular Searches */}
-                  <div>
-                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-8">
-                      Popular Searches
-                    </h3>
-                    <div className="flex flex-wrap gap-3 justify-center">
-                      {popularSearches.map((tag) => (
-                        <button
-                          key={tag}
-                          className="px-6 py-2.5 rounded-full border border-[#e0dbd5] bg-[#e8e3dc] text-xs font-medium text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all duration-300"
-                        >
-                          {tag}
-                        </button>
-                      ))}
-                    </div>
                   </div>
                 </div>
               </div>
