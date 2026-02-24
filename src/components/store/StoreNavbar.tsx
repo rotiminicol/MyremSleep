@@ -164,7 +164,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   ];
 
   const mobileNavLinks = [
-    { label: 'Shop Bundle', href: '/product/midnight-silk-pillowcase' },
+    { label: 'Shop Bundle', href: '/product/winter-cloud' },
     { label: 'Favorites', href: '#', isFavorite: true },
     { label: 'About', href: '/about' },
     { label: 'Blog', href: '/blog' },

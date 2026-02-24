@@ -25,10 +25,11 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
             },
             variants: {
                 edges: [
+                    // Winter Cloud variants
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/1-double',
-                            title: 'Double',
+                            id: 'gid://shopify/ProductVariant/1-double-winter-cloud',
+                            title: 'Double / Winter Cloud',
                             price: { amount: '180.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Winter Cloud' }],
@@ -36,101 +37,18 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
                     },
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/1-king',
-                            title: 'King',
+                            id: 'gid://shopify/ProductVariant/1-king-winter-cloud',
+                            title: 'King / Winter Cloud',
                             price: { amount: '210.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Winter Cloud' }],
                         },
                     },
-                ],
-            },
-            options: [
-                { name: 'Size', values: ['Double', 'King'] },
-                { name: 'Color', values: ['Winter Cloud'] }
-            ],
-            description: 'A bright, clean white with a hotel-fresh finish. In sateen it looks luminous (never flat) and makes every room feel lighter.'
-        },
-    },
-    {
-        node: {
-            id: 'gid://shopify/Product/2',
-            title: 'Buttermilk',
-            handle: 'buttermilk',
-            productType: 'Bedding',
-            priceRange: {
-                minVariantPrice: {
-                    amount: '180.00',
-                    currencyCode: 'GBP',
-                },
-            },
-            images: {
-                edges: [
+                    // Desert Whisperer variants
                     {
                         node: {
-                            url: '/products/cotton-quilt-sandstone.png',
-                            altText: 'Buttermilk Sateen Bundle',
-                        },
-                    },
-                ],
-            },
-            variants: {
-                edges: [
-                    {
-                        node: {
-                            id: 'gid://shopify/ProductVariant/2-double',
-                            title: 'Double',
-                            price: { amount: '180.00', currencyCode: 'GBP' },
-                            availableForSale: true,
-                            selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Buttermilk' }],
-                        },
-                    },
-                    {
-                        node: {
-                            id: 'gid://shopify/ProductVariant/2-king',
-                            title: 'King',
-                            price: { amount: '210.00', currencyCode: 'GBP' },
-                            availableForSale: true,
-                            selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Buttermilk' }],
-                        },
-                    },
-                ],
-            },
-            options: [
-                { name: 'Size', values: ['Double', 'King'] },
-                { name: 'Color', values: ['Buttermilk'] }
-            ],
-            description: 'A creamy off-white with a gentle warmth. Sateen makes it look rich and smooth—like classic white, upgraded.'
-        },
-    },
-    {
-        node: {
-            id: 'gid://shopify/Product/3',
-            title: 'Desert Whisperer',
-            handle: 'desert-whisperer',
-            productType: 'Bedding',
-            priceRange: {
-                minVariantPrice: {
-                    amount: '180.00',
-                    currencyCode: 'GBP',
-                },
-            },
-            images: {
-                edges: [
-                    {
-                        node: {
-                            url: '/products/linen-duvet-clay.png',
-                            altText: 'Desert Whisperer Sateen Bundle',
-                        },
-                    },
-                ],
-            },
-            variants: {
-                edges: [
-                    {
-                        node: {
-                            id: 'gid://shopify/ProductVariant/3-double',
-                            title: 'Double',
+                            id: 'gid://shopify/ProductVariant/1-double-desert-whisperer',
+                            title: 'Double / Desert Whisperer',
                             price: { amount: '180.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Desert Whisperer' }],
@@ -138,101 +56,56 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
                     },
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/3-king',
-                            title: 'King',
+                            id: 'gid://shopify/ProductVariant/1-king-desert-whisperer',
+                            title: 'King / Desert Whisperer',
                             price: { amount: '210.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Desert Whisperer' }],
                         },
                     },
-                ],
-            },
-            options: [
-                { name: 'Size', values: ['Double', 'King'] },
-                { name: 'Color', values: ['Desert Whisperer'] }
-            ],
-            description: 'A blush-sand neutral that warms a room without stealing focus. Sateen adds a refined, clean sheen.'
-        },
-    },
-    {
-        node: {
-            id: 'gid://shopify/Product/4',
-            title: 'Desert Sand',
-            handle: 'desert-sand',
-            productType: 'Bedding',
-            priceRange: {
-                minVariantPrice: {
-                    amount: '180.00',
-                    currencyCode: 'GBP',
-                },
-            },
-            images: {
-                edges: [
+                    // Buttermilk variants
                     {
                         node: {
-                            url: '/products/midnight-silk.png',
-                            altText: 'Desert Sand Sateen Bundle',
-                        },
-                    },
-                ],
-            },
-            variants: {
-                edges: [
-                    {
-                        node: {
-                            id: 'gid://shopify/ProductVariant/4-double',
-                            title: 'Double',
+                            id: 'gid://shopify/ProductVariant/1-double-buttermilk',
+                            title: 'Double / Buttermilk',
                             price: { amount: '180.00', currencyCode: 'GBP' },
                             availableForSale: true,
-                            selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Desert Sand' }],
+                            selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Buttermilk' }],
                         },
                     },
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/4-king',
-                            title: 'King',
+                            id: 'gid://shopify/ProductVariant/1-king-buttermilk',
+                            title: 'King / Buttermilk',
                             price: { amount: '210.00', currencyCode: 'GBP' },
                             availableForSale: true,
-                            selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Desert Sand' }],
+                            selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Buttermilk' }],
                         },
                     },
-                ],
-            },
-            options: [
-                { name: 'Size', values: ['Double', 'King'] },
-                { name: 'Color', values: ['Desert Sand'] }
-            ],
-            description: 'A modern beige with balance and depth—made for layering. Always looks intentional, even on low-effort days.'
-        },
-    },
-    {
-        node: {
-            id: 'gid://shopify/Product/5',
-            title: 'Clay Blush',
-            handle: 'clay-blush',
-            productType: 'Bedding',
-            priceRange: {
-                minVariantPrice: {
-                    amount: '180.00',
-                    currencyCode: 'GBP',
-                },
-            },
-            images: {
-                edges: [
+                    // Clay variants
                     {
                         node: {
-                            url: '/products/lavender-eye-pillow.png',
-                            altText: 'Clay Blush Sateen Bundle',
+                            id: 'gid://shopify/ProductVariant/1-double-clay',
+                            title: 'Double / Clay',
+                            price: { amount: '180.00', currencyCode: 'GBP' },
+                            availableForSale: true,
+                            selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Clay' }],
                         },
                     },
-                ],
-            },
-            variants: {
-                edges: [
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/5-double',
-                            title: 'Double',
+                            id: 'gid://shopify/ProductVariant/1-king-clay',
+                            title: 'King / Clay',
+                            price: { amount: '210.00', currencyCode: 'GBP' },
+                            availableForSale: true,
+                            selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Clay' }],
+                        },
+                    },
+                    // Clay Blush variants
+                    {
+                        node: {
+                            id: 'gid://shopify/ProductVariant/1-double-clay-blush',
+                            title: 'Double / Clay Blush',
                             price: { amount: '180.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Clay Blush' }],
@@ -240,50 +113,18 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
                     },
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/5-king',
-                            title: 'King',
+                            id: 'gid://shopify/ProductVariant/1-king-clay-blush',
+                            title: 'King / Clay Blush',
                             price: { amount: '210.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Clay Blush' }],
                         },
                     },
-                ],
-            },
-            options: [
-                { name: 'Size', values: ['Double', 'King'] },
-                { name: 'Color', values: ['Clay Blush'] }
-            ],
-            description: 'A dusty rose-clay neutral—soft, earthy, quietly romantic. In sateen it reads smooth and elevated, not shiny.'
-        },
-    },
-    {
-        node: {
-            id: 'gid://shopify/Product/6',
-            title: 'Pebble Haze',
-            handle: 'pebble-haze',
-            productType: 'Bedding',
-            priceRange: {
-                minVariantPrice: {
-                    amount: '180.00',
-                    currencyCode: 'GBP',
-                },
-            },
-            images: {
-                edges: [
+                    // Pebble Haze variants
                     {
                         node: {
-                            url: '/products/sleep-mask-indigo.png',
-                            altText: 'Pebble Haze Sateen Bundle',
-                        },
-                    },
-                ],
-            },
-            variants: {
-                edges: [
-                    {
-                        node: {
-                            id: 'gid://shopify/ProductVariant/6-double',
-                            title: 'Double',
+                            id: 'gid://shopify/ProductVariant/1-double-pebble-haze',
+                            title: 'Double / Pebble Haze',
                             price: { amount: '180.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Pebble Haze' }],
@@ -291,50 +132,37 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
                     },
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/6-king',
-                            title: 'King',
+                            id: 'gid://shopify/ProductVariant/1-king-pebble-haze',
+                            title: 'King / Pebble Haze',
                             price: { amount: '210.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Pebble Haze' }],
                         },
                     },
-                ],
-            },
-            options: [
-                { name: 'Size', values: ['Double', 'King'] },
-                { name: 'Color', values: ['Pebble Haze'] }
-            ],
-            description: 'A mid-grey with an architectural feel. Sateen gives it depth and softness—minimal, but never cold.'
-        },
-    },
-    {
-        node: {
-            id: 'gid://shopify/Product/7',
-            title: 'Cinnamon Bark',
-            handle: 'cinnamon-bark',
-            productType: 'Bedding',
-            priceRange: {
-                minVariantPrice: {
-                    amount: '180.00',
-                    currencyCode: 'GBP',
-                },
-            },
-            images: {
-                edges: [
+                    // Desert Sand variants
                     {
                         node: {
-                            url: '/products/linen-duvet-clay.png',
-                            altText: 'Cinnamon Bark Sateen Bundle',
+                            id: 'gid://shopify/ProductVariant/1-double-desert-sand',
+                            title: 'Double / Desert Sand',
+                            price: { amount: '180.00', currencyCode: 'GBP' },
+                            availableForSale: true,
+                            selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Desert Sand' }],
                         },
                     },
-                ],
-            },
-            variants: {
-                edges: [
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/7-double',
-                            title: 'Double',
+                            id: 'gid://shopify/ProductVariant/1-king-desert-sand',
+                            title: 'King / Desert Sand',
+                            price: { amount: '210.00', currencyCode: 'GBP' },
+                            availableForSale: true,
+                            selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Desert Sand' }],
+                        },
+                    },
+                    // Cinnamon Bark variants
+                    {
+                        node: {
+                            id: 'gid://shopify/ProductVariant/1-double-cinnamon-bark',
+                            title: 'Double / Cinnamon Bark',
                             price: { amount: '180.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Cinnamon Bark' }],
@@ -342,8 +170,8 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
                     },
                     {
                         node: {
-                            id: 'gid://shopify/ProductVariant/7-king',
-                            title: 'King',
+                            id: 'gid://shopify/ProductVariant/1-king-cinnamon-bark',
+                            title: 'King / Cinnamon Bark',
                             price: { amount: '210.00', currencyCode: 'GBP' },
                             availableForSale: true,
                             selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Cinnamon Bark' }],
@@ -353,60 +181,9 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
             },
             options: [
                 { name: 'Size', values: ['Double', 'King'] },
-                { name: 'Color', values: ['Cinnamon Bark'] }
+                { name: 'Color', values: ['Winter Cloud', 'Desert Whisperer', 'Buttermilk', 'Clay', 'Clay Blush', 'Pebble Haze', 'Desert Sand', 'Cinnamon Bark'] }
             ],
-            description: 'A rich, earthy brown that makes the room feel intentional. Sateen adds a soft sheen and tailored drape.'
-        },
-    },
-    {
-        node: {
-            id: 'gid://shopify/Product/8',
-            title: 'Clay',
-            handle: 'clay',
-            productType: 'Bedding',
-            priceRange: {
-                minVariantPrice: {
-                    amount: '180.00',
-                    currencyCode: 'GBP',
-                },
-            },
-            images: {
-                edges: [
-                    {
-                        node: {
-                            url: '/products/bamboo-sheets-grey.png',
-                            altText: 'Clay Sateen Bundle',
-                        },
-                    },
-                ],
-            },
-            variants: {
-                edges: [
-                    {
-                        node: {
-                            id: 'gid://shopify/ProductVariant/8-double',
-                            title: 'Double',
-                            price: { amount: '180.00', currencyCode: 'GBP' },
-                            availableForSale: true,
-                            selectedOptions: [{ name: 'Size', value: 'Double' }, { name: 'Color', value: 'Clay' }],
-                        },
-                    },
-                    {
-                        node: {
-                            id: 'gid://shopify/ProductVariant/8-king',
-                            title: 'King',
-                            price: { amount: '210.00', currencyCode: 'GBP' },
-                            availableForSale: true,
-                            selectedOptions: [{ name: 'Size', value: 'King' }, { name: 'Color', value: 'Clay' }],
-                        },
-                    },
-                ],
-            },
-            options: [
-                { name: 'Size', values: ['Double', 'King'] },
-                { name: 'Color', values: ['Clay'] }
-            ],
-            description: 'A pale clay with no pink in it—just a quiet warmth that feels natural and modern. It brightens the room without turning cold.'
+            description: 'A bright, clean white with a hotel-fresh finish. In sateen it looks luminous (never flat) and makes every room feel lighter.'
         },
     },
 ];

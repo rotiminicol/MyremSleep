@@ -17,6 +17,12 @@ import BlogDetailPage from "./pages/BlogDetailPage";
 import ShopPage from "./pages/ShopPage";
 import NewInPage from "./pages/NewInPage";
 import AboutPage from "./pages/AboutPage";
+import OurStoryPage from "./pages/OurStoryPage";
+import AboutRemsleepPage from "./pages/AboutRemsleepPage";
+import CoreValuesPage from "./pages/CoreValuesPage";
+import MaterialsPage from "./pages/MaterialsPage";
+import QualityPromisePage from "./pages/QualityPromisePage";
+import SustainabilityPage from "./pages/SustainabilityPage";
 import ContactPage from "./pages/ContactPage";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
@@ -52,6 +58,12 @@ const App = () => (
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/new-in" element={<NewInPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/our-story" element={<OurStoryPage />} />
+            <Route path="/about-remsleep" element={<AboutRemsleepPage />} />
+            <Route path="/core-values" element={<CoreValuesPage />} />
+            <Route path="/materials" element={<MaterialsPage />} />
+            <Route path="/quality-promise" element={<QualityPromisePage />} />
+            <Route path="/sustainability" element={<SustainabilityPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/faq" element={<FaqPage />} />

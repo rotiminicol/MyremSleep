@@ -476,7 +476,7 @@ export default function ProductPage() {
                       return product.title;
                     })()}
                   </h1>
-                  <p className="text-lg font-sans text-gray-950 font-medium whitespace-nowrap">
+                  <p className="text-lg text-gray-950 font-medium whitespace-nowrap">
                     £{selectedVariant?.price.amount}
                   </p>
                 </div>
@@ -490,7 +490,7 @@ export default function ProductPage() {
                   if (selectedColor && COLOR_DESCRIPTIONS[selectedColor]) {
                     const colorDesc = COLOR_DESCRIPTIONS[selectedColor];
                     return (
-                      <div className="mt-2 text-sm text-gray-600 font-sans leading-relaxed">
+                      <div className="mt-2 text-sm text-gray-600 leading-relaxed">
                         {colorDesc.description}
                       </div>
                     );
@@ -503,7 +503,7 @@ export default function ProductPage() {
               </div>
 
               {/* Product Details */}
-              <div className="text-sm text-gray-500 font-sans space-y-4 pt-2">
+              <div className="text-sm text-gray-500 space-y-4 pt-2">
                 <div className="font-medium text-gray-900">The essentials</div>
                 <div className="space-y-1 text-xs text-gray-600">
                   <div>• Material: 100% Egyptian cotton</div>
@@ -650,44 +650,6 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* You Might Also Like Section */}
-        <section className="mt-8 py-12 px-4 md:px-0">
-          <div className="flex gap-10 border-b border-[#e0dbd5] mb-8">
-            <button className="text-sm font-bold uppercase tracking-[0.1em] text-gray-900 pb-4 border-b-2 border-gray-900 -mb-[2px]">
-              You might also like
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {recommendedProducts.map(({ node: rec }) => (
-              <Link
-                key={rec.id}
-                to={`/product/${rec.handle}`}
-                className="space-y-4 group cursor-pointer"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                <div className="aspect-[3/4] bg-white overflow-hidden relative">
-                  {rec.images.edges[0] && (
-                    <img
-                      src={rec.images.edges[0].node.url}
-                      alt={rec.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  )}
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-[13px] font-sans text-gray-900 group-hover:underline decoration-gray-300 underline-offset-4">
-                    {rec.title}
-                  </h4>
-                  <p className="text-[12px] text-gray-500 font-sans tracking-tight">
-                    £{rec.priceRange.minVariantPrice.amount}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
         <ReviewsSection
           reviewPage={reviewPage}
           setReviewPage={setReviewPage}
@@ -748,14 +710,14 @@ export default function ProductPage() {
                     <div className="space-y-8">
                       {/* Main statement */}
                       <div className="space-y-4">
-                        <p className="text-sm text-gray-600 font-sans leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed">
                           Everything that meets your skin should feel right. We focus on Fabric, Finish and Function—so your bedroom feels calm not cluttered. Our Bedding bundles gives you the hotel-feel comfort, effortlessly. Our 100% cotton 300 thread count sateen bundle brings a smooth, breathable finish and a subtle sheen—so your bed looks instantly considered, every night.
                         </p>
                       </div>
 
                       {/* What's included */}
                       <div className="space-y-4 pt-2 border-t border-[#e0dbd5]">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Each set includes</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Each Set Includes</h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
                           A fitted sheet, duvet cover, and four pillowcases (2 Oxford + 2 plain).
                         </p>
@@ -763,7 +725,6 @@ export default function ProductPage() {
 
                       {/* Key features */}
                       <div className="space-y-4 border-t border-[#e0dbd5]">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Why you'll love it</h4>
                         <ul className="space-y-3">
                           {[
                             '100% Egyptian cotton · 300 thread count sateen weave',
@@ -773,7 +734,7 @@ export default function ProductPage() {
                             'Certified: OEKO-TEX® 100',
                             'Made to last and gets softer with every wash'
                           ].map((feature) => (
-                            <li key={feature} className="flex items-start gap-3 text-sm text-gray-600">
+                            <li key={feature} className="flex items-start gap-3 text-sm text-gray-600 leading-relaxed">
                               <span className="mt-1.5 w-1 h-1 rounded-full bg-gray-400 flex-shrink-0" />
                               {feature}
                             </li>
@@ -787,14 +748,14 @@ export default function ProductPage() {
                     <div className="space-y-8">
                       {/* Main care statement */}
                       <div className="space-y-4">
-                        <p className="text-sm text-gray-600 font-sans leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed">
                           REMsleep sateen is made to live with you. A little intention keeps it crisp, smooth, and softly luminous.
                         </p>
                       </div>
 
                       {/* Three rules of longevity */}
                       <div className="space-y-4 pt-2 border-t border-[#e0dbd5]">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">We follow these three rules of longevity</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">We Follow These Three Rules Of Longevity</h4>
                         <ul className="space-y-3">
                           {[
                             'Protect sheen: wash inside out',
@@ -811,7 +772,7 @@ export default function ProductPage() {
 
                       {/* Wash instructions */}
                       <div className="space-y-4 border-t border-[#e0dbd5]">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Wash (the calm setting wins)</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Wash (The Calm Setting Wins)</h4>
                         <ul className="space-y-3">
                           {[
                             '30°C for most washes (best for softness + sheen)',
@@ -831,7 +792,7 @@ export default function ProductPage() {
 
                       {/* Dry instructions */}
                       <div className="space-y-4 border-t border-[#e0dbd5]">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Dry (drape is made here)</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Dry (Drape Is Made Here)</h4>
                         <ul className="space-y-3">
                           {[
                             'Line dry where possible. If tumble drying: low heat, and remove slightly damp and let air dry',
@@ -848,7 +809,7 @@ export default function ProductPage() {
 
                       {/* Optional finishing */}
                       <div className="space-y-4 border-t border-[#e0dbd5]">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Optional finishing</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Optional Finishing</h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
                           Steam to revive drape, or iron moderate heat while slightly damp for extra crispness.
                         </p>
@@ -860,28 +821,28 @@ export default function ProductPage() {
                     <div className="space-y-8">
                       <div className="space-y-4">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900">Material</h4>
-                        <p className="text-sm text-gray-600 font-sans leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed">
                           100% Egyptian cotton
                         </p>
                       </div>
 
                       <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Weave</h4>
-                        <p className="text-sm text-gray-600 font-sans leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed">
                           Sateen
                         </p>
                       </div>
 
                       <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Thread Count</h4>
-                        <p className="text-sm text-gray-600 font-sans leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed">
                           300
                         </p>
                       </div>
 
                       <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Finish / Feel</h4>
-                        <p className="text-sm text-gray-600 font-sans leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed">
                           Smooth, softly luminous, elegant drape
                         </p>
                       </div>
@@ -892,7 +853,7 @@ export default function ProductPage() {
                     <div className="space-y-8">
                       {/* Write Review Action */}
                       <div className="space-y-4">
-                        <p className="text-sm text-gray-600 font-sans leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed">
                           Changed your mind? No problem. We accept returns on unused, unwashed, and undamaged bedding for a full refund within 30 days of delivery. Items must be returned in their original packaging, with all tags and labels attached. Please see our <Link to="/privacy" className="underline hover:text-gray-900 transition-colors">Returns Policy</Link> for full details.
                         </p>
                       </div>
@@ -915,7 +876,7 @@ export default function ProductPage() {
                                 ))}
                               </div>
                             </div>
-                            <p className="text-[11px] text-gray-500 font-sans tracking-wide uppercase">Based on 128 Reviews</p>
+                            <p className="text-[11px] text-gray-500 tracking-wide uppercase">Based on 128 Reviews</p>
                           </div>
                           <button
                             onClick={() => {
@@ -939,7 +900,7 @@ export default function ProductPage() {
                                   style={{ width: `${rating === 5 ? 92 : rating === 4 ? 6 : 2}%` }}
                                 />
                               </div>
-                              <span className="text-[10px] text-gray-400 w-8 text-right font-sans">
+                              <span className="text-[10px] text-gray-400 w-8 text-right">
                                 {rating === 5 ? '92%' : rating === 4 ? '6%' : '2%'}
                               </span>
                             </div>
@@ -983,11 +944,11 @@ export default function ProductPage() {
                                   </svg>
                                 ))}
                               </div>
-                              <span className="text-[10px] text-gray-400 font-sans">{rev.date}</span>
+                              <span className="text-[10px] text-gray-400">{rev.date}</span>
                             </div>
                             <div className="space-y-1">
                               <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wide">{rev.headline}</h4>
-                              <p className="text-[13px] text-gray-600 font-sans leading-relaxed">{rev.text}</p>
+                              <p className="text-[13px] text-gray-600 leading-relaxed">{rev.text}</p>
                             </div>
                             <p className="text-[11px] font-bold text-gray-900 uppercase tracking-widest pt-1">{rev.name}</p>
                           </div>
@@ -1081,10 +1042,10 @@ export default function ProductPage() {
                                   ].map((row) => (
                                     <tr key={row.size} className="hover:bg-[#faf8f6] transition-colors group">
                                       <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] font-medium text-gray-900 text-left">{row.size}</td>
-                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600 font-sans">{row.duvet}</td>
-                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600 font-sans">{row.fitted}</td>
-                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600 font-sans">{row.oxford}</td>
-                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600 font-sans">{row.regular}</td>
+                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600">{row.duvet}</td>
+                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600">{row.fitted}</td>
+                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600">{row.oxford}</td>
+                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600">{row.regular}</td>
                                     </tr>
                                   ))}
                                 </tbody>
@@ -1110,7 +1071,7 @@ export default function ProductPage() {
                               </h3>
                             </div>
 
-                            <div className="space-y-4 text-sm text-gray-600 font-sans leading-relaxed">
+                            <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
                               <p>
                                 A bed should look finished, not fussy. REMsleep is made for real life: sleep, slow mornings, and the occasional full-day reset.
                               </p>
@@ -1136,7 +1097,7 @@ export default function ProductPage() {
                             </div>
 
                             <div className="space-y-4 border-t border-[#e0dbd5]">
-                              <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Why it stays put</h4>
+                              <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Why You'll Love It</h4>
                               <ul className="space-y-2.5">
                                 {[
                                   'Hugs the corners with a tighter fit',

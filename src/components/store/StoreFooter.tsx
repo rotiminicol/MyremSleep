@@ -38,17 +38,21 @@ export function StoreFooter() {
     {
       title: 'About Us',
       links: [
-        { label: 'About Remsleep', href: '/' },
-        { label: 'Our Story', href: '/' },
-        { label: 'Sustainability', href: '/' },
+        { label: 'Our Story', href: '/our-story' },
+        { label: 'About us at Remsleep', href: '/about-remsleep' },
+        { label: 'Our Core Values', href: '/core-values' },
+        { label: 'Materials', href: '/materials' },
+        { label: 'The REMsleep Quality Promise', href: '/quality-promise' },
+        { label: 'Sustainability at REMsleep', href: '/sustainability' },
+        { label: 'Blogs', href: '/blog' },
       ],
     },
     {
       title: 'Connect',
       links: [
-        { label: 'Instagram', href: 'https://www.instagram.com/myremsleepclub/', external: true },
         { label: 'Pinterest', href: '#', external: true },
-        { label: 'Facebook', href: '#', external: true },
+        { label: 'Instagram', href: 'https://www.instagram.com/myremsleepclub/', external: true },
+        { label: 'Tiktok', href: '#', external: true },
       ],
     },
     {

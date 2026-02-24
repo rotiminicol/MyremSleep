@@ -13,6 +13,53 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
+// Color mappings for cart display
+const COLOR_MAP: Record<string, string> = {
+  'Winter Cloud': '/products/midnight-silk.png',
+  'Desert Whisperer': '/products/linen-duvet-clay.png',
+  'Buttermilk': '/products/cotton-quilt-sandstone.png',
+  'Clay': '/products/bamboo-sheets-grey.png',
+  'Clay Blush': '/products/lavender-eye-pillow.png',
+  'Pebble Haze': '/products/sleep-mask-indigo.png',
+  'Desert Sand': '/products/midnight-silk.png',
+  'Cinnamon Bark': '/products/linen-duvet-clay.png',
+};
+
+const COLOR_DESCRIPTIONS: Record<string, { title: string; description: string }> = {
+  'Winter Cloud': {
+    title: 'Winter Cloud — Crisp white. Soft glow. Always polished.',
+    description: 'A bright, clean white with a hotel-fresh finish. In sateen it looks luminous (never flat) and makes every room feel lighter.'
+  },
+  'Buttermilk': {
+    title: 'Buttermilk — Warm cream. Quiet luxury.',
+    description: 'A creamy off-white with a gentle warmth. Sateen makes it look rich and smooth—like classic white, upgraded.'
+  },
+  'Desert Whisperer': {
+    title: 'Desert Whisperer — Sun-washed nude. Calm, not sweet.',
+    description: 'A blush-sand neutral that warms a room without stealing focus. Sateen adds a refined, clean sheen.'
+  },
+  'Desert Sand': {
+    title: 'Desert Sand — The anchor neutral. Effortlessly styled.',
+    description: 'A modern beige with balance and depth—made for layering. Always looks intentional, even on low-effort days.'
+  },
+  'Clay Blush': {
+    title: 'Clayblush Pink — Muted blush. Modern and grown.',
+    description: 'A dusty rose-clay neutral—soft, earthy, quietly romantic. In sateen it reads smooth and elevated, not shiny.'
+  },
+  'Pebble Haze': {
+    title: 'Pebble Haze — Cool grey. Clean calm.',
+    description: 'A mid-grey with an architectural feel. Sateen gives it depth and softness—minimal, but never cold.'
+  },
+  'Cinnamon Bark': {
+    title: 'Cinnamon Bark — Deep brown. Grounded. Inviting.',
+    description: 'A rich, earthy brown that makes the room feel intentional. Sateen adds a soft sheen and tailored drape.'
+  },
+  'Clay': {
+    title: 'Clay — Soft clay. Lightly sun-warmed. Calm and clean.',
+    description: 'A pale clay with no pink in it—just a quiet warmth that feels natural and modern. It brightens the room without turning cold.'
+  }
+};
+
 
 
 export function CartDrawer() {
@@ -108,68 +155,84 @@ export function CartDrawer() {
               <>
                 <div className="flex-1 overflow-y-auto px-8 py-6 min-h-0 custom-scrollbar">
                   <div className="space-y-10">
-                    {items.map((item) => (
-                      <div
-                        key={item.variantId}
-                        className="grid grid-cols-[80px_1fr_auto] gap-6 items-start"
-                      >
-                        {/* Product Image */}
-                        <div className="aspect-square bg-white rounded-sm overflow-hidden flex-shrink-0 shadow-sm">
-                          {item.product.node.images?.edges?.[0]?.node && (
-                            <img
-                              src={item.product.node.images.edges[0].node.url}
-                              alt={item.product.node.title}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </div>
+                    {items.map((item) => {
+                      // Get the selected color from the item's selected options
+                      const selectedColor = item.selectedOptions.find(opt => 
+                        opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('colour')
+                      )?.value;
+                      
+                      // Get color-specific title and image
+                      const colorTitle = selectedColor && COLOR_DESCRIPTIONS[selectedColor] 
+                        ? COLOR_DESCRIPTIONS[selectedColor].title 
+                        : item.product.node.title;
+                      
+                      const colorImage = selectedColor && COLOR_MAP[selectedColor]
+                        ? COLOR_MAP[selectedColor]
+                        : item.product.node.images?.edges?.[0]?.node?.url;
 
-                        {/* Product Info */}
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[10px] uppercase tracking-[0.15em] text-gray-400 font-semibold mb-0.5">
-                            {item.product.node.productType || 'Bedding'}
-                          </span>
-                          <h4 className="text-[15px] font-medium text-gray-900 leading-tight">
-                            {item.product.node.title}
-                          </h4>
-                          {item.selectedOptions.some(opt => opt.value !== 'Default Title' && opt.value !== 'Default') && (
-                            <p className="text-[11px] text-gray-500 font-medium italic mb-2">
-                              {item.selectedOptions.filter(opt => opt.value !== 'Default').map((opt) => opt.value).join(' • ')}
-                            </p>
-                          )}
+                      return (
+                        <div
+                          key={item.variantId}
+                          className="grid grid-cols-[80px_1fr_auto] gap-6 items-start"
+                        >
+                          {/* Product Image */}
+                          <div className="aspect-square bg-white rounded-sm overflow-hidden flex-shrink-0 shadow-sm">
+                            {colorImage && (
+                              <img
+                                src={colorImage}
+                                alt={colorTitle}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                          </div>
 
-                          {/* Quantity Controls - Boxed Style */}
-                          <div className="mt-2 flex items-center border border-gray-200 bg-white w-fit divide-x divide-gray-200">
+                          {/* Product Info */}
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[10px] uppercase tracking-[0.15em] text-gray-400 font-semibold mb-0.5">
+                              {item.product.node.productType || 'Bedding'}
+                            </span>
+                            <h4 className="text-[15px] font-medium text-gray-900 leading-tight">
+                              {colorTitle}
+                            </h4>
+                            {item.selectedOptions.some(opt => opt.value !== 'Default Title' && opt.value !== 'Default') && (
+                              <p className="text-[11px] text-gray-500 font-medium italic mb-2">
+                                {item.selectedOptions.filter(opt => opt.value !== 'Default').map((opt) => opt.value).join(' • ')}
+                              </p>
+                            )}
+
+                            {/* Quantity Controls - Boxed Style */}
+                            <div className="mt-2 flex items-center border border-gray-200 bg-white w-fit divide-x divide-gray-200">
+                              <button
+                                onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
+                                className="px-3 py-1.5 text-gray-500 hover:text-gray-900 transition-colors"
+                              >
+                                <Minus className="h-3 w-3" />
+                              </button>
+                              <span className="px-5 py-1.5 text-xs font-medium min-w-[40px] text-center">{item.quantity}</span>
+                              <button
+                                onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                                className="px-3 py-1.5 text-gray-500 hover:text-gray-900 transition-colors"
+                              >
+                                <Plus className="h-3 w-3" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Price & Remove */}
+                          <div className="flex flex-col items-end gap-1">
+                            <span className="text-[14px] font-medium text-gray-900">
+                              {getCurrencySymbol(item.price.currencyCode)}{parseFloat(item.price.amount).toFixed(2)}
+                            </span>
                             <button
-                              onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                              className="px-3 py-1.5 text-gray-500 hover:text-gray-900 transition-colors"
+                              onClick={() => removeItem(item.variantId)}
+                              className="mt-6 text-gray-400 hover:text-gray-600 transition-colors text-[10px] uppercase underline tracking-wider font-bold"
                             >
-                              <Minus className="h-3 w-3" />
-                            </button>
-                            <span className="px-5 py-1.5 text-xs font-medium min-w-[40px] text-center">{item.quantity}</span>
-                            <button
-                              onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                              className="px-3 py-1.5 text-gray-500 hover:text-gray-900 transition-colors"
-                            >
-                              <Plus className="h-3 w-3" />
+                              Remove
                             </button>
                           </div>
                         </div>
-
-                        {/* Price & Remove */}
-                        <div className="flex flex-col items-end gap-1">
-                          <span className="text-[14px] font-medium text-gray-900">
-                            {getCurrencySymbol(item.price.currencyCode)}{parseFloat(item.price.amount).toFixed(2)}
-                          </span>
-                          <button
-                            onClick={() => removeItem(item.variantId)}
-                            className="mt-6 text-gray-400 hover:text-gray-600 transition-colors text-[10px] uppercase underline tracking-wider font-bold"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 

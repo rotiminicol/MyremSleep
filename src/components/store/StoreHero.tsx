@@ -111,7 +111,7 @@ export function StoreHero() {
 
           <div className="w-full">
             <Link
-              to="/product/midnight-silk-pillowcase"
+              to="/product/winter-cloud"
               className="inline-block bg-white text-gray-900 px-8 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase rounded-sm hover:bg-gray-100 transition-all duration-300"
             >
               Shop Bundle
