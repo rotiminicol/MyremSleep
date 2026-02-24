@@ -13,7 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-import { CartSidebar } from '@/components/store/CartSidebar';
+
 
 export function CartDrawer() {
   const isMobile = useIsMobile();
@@ -75,17 +75,14 @@ export function CartDrawer() {
       </SheetTrigger>
       <SheetContent
         side="right"
-        className={`bg-[#f5f1ed] p-0 gap-0 border-zinc-200 h-full flex flex-row overflow-hidden ${isMobile
+        className={`bg-[#f5f1ed] p-0 gap-0 border-zinc-200 h-full flex flex-col overflow-hidden ${isMobile
           ? "w-full border-l shadow-2xl"
-          : "w-full sm:max-w-3xl border-l"
+          : "w-full sm:max-w-md border-l"
           }`}
       >
 
-        {/* Left Sidebar - Recommendations */}
-        <CartSidebar mode="cart" />
-
-        {/* Right Side - Cart Content */}
-        <div className="flex flex-col w-[55%] md:flex-1 h-full min-w-0 overflow-hidden">
+        {/* Cart Content */}
+        <div className="flex flex-col flex-1 h-full min-w-0 overflow-hidden">
           <SheetHeader className="sticky top-0 z-30 flex-shrink-0 px-3 md:px-8 py-4 md:py-6 border-b border-[#e0dbd5] bg-[#f5f1ed]">
             <div className="flex items-center justify-between gap-2">
               <SheetTitle className="text-[15px] md:text-[22px] font-medium tracking-tight text-gray-900 whitespace-nowrap">Shopping Bag</SheetTitle>

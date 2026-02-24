@@ -13,16 +13,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
-  Truck,
-  Clock,
-  Gift,
-  RotateCcw,
-  MessageCircle,
   Plus,
   Minus,
-  Globe,
-  ShieldCheck,
-  Leaf,
   X,
   ArrowRight
 } from 'lucide-react';
@@ -63,45 +55,37 @@ const COLOR_HEX: Record<string, string> = {
   'Slate': '#4A5568',
 };
 
-const COLOR_DESCRIPTIONS: Record<string, { title: string; subtitle: string; description: string }> = {
+const COLOR_DESCRIPTIONS: Record<string, { title: string; description: string }> = {
   'Winter Cloud': {
-    title: 'Crisp white. Soft glow. Always polished.',
-    subtitle: 'Winter Cloud',
+    title: 'Winter Cloud — Crisp white. Soft glow. Always polished.',
     description: 'A bright, clean white with a hotel-fresh finish. In sateen it looks luminous (never flat) and makes every room feel lighter.'
   },
   'Buttermilk': {
-    title: 'Warm cream. Quiet luxury.',
-    subtitle: 'Buttermilk',
+    title: 'Buttermilk — Warm cream. Quiet luxury.',
     description: 'A creamy off-white with a gentle warmth. Sateen makes it look rich and smooth—like classic white, upgraded.'
   },
   'Desert Whisperer': {
-    title: 'Sun-washed nude. Calm, not sweet.',
-    subtitle: 'Desert Whisperer',
+    title: 'Desert Whisperer — Sun-washed nude. Calm, not sweet.',
     description: 'A blush-sand neutral that warms a room without stealing focus. Sateen adds a refined, clean sheen.'
   },
   'Desert Sand': {
-    title: 'The anchor neutral. Effortlessly styled.',
-    subtitle: 'Desert Sand',
+    title: 'Desert Sand — The anchor neutral. Effortlessly styled.',
     description: 'A modern beige with balance and depth—made for layering. Always looks intentional, even on low-effort days.'
   },
   'Clay Blush': {
-    title: 'Muted blush. Modern and grown.',
-    subtitle: 'Clayblush Pink',
+    title: 'Clayblush Pink — Muted blush. Modern and grown.',
     description: 'A dusty rose-clay neutral—soft, earthy, quietly romantic. In sateen it reads smooth and elevated, not shiny.'
   },
   'Pebble Haze': {
-    title: 'Cool grey. Clean calm.',
-    subtitle: 'Pebble Haze',
+    title: 'Pebble Haze — Cool grey. Clean calm.',
     description: 'A mid-grey with an architectural feel. Sateen gives it depth and softness—minimal, but never cold.'
   },
   'Cinnamon Bark': {
-    title: 'Deep brown. Grounded. Inviting.',
-    subtitle: 'Cinnamon Bark',
+    title: 'Cinnamon Bark — Deep brown. Grounded. Inviting.',
     description: 'A rich, earthy brown that makes the room feel intentional. Sateen adds a soft sheen and tailored drape.'
   },
   'Clay': {
-    title: 'Soft clay. Lightly sun-warmed. Calm and clean.',
-    subtitle: 'Clay',
+    title: 'Clay — Soft clay. Lightly sun-warmed. Calm and clean.',
     description: 'A pale clay with no pink in it—just a quiet warmth that feels natural and modern. It brightens the room without turning cold.'
   }
 };
@@ -186,7 +170,7 @@ export default function ProductPage() {
 
           const colorParam = searchParams.get('color');
           let defaultOptions: Record<string, string> = {};
-          
+
           const firstVariant = productData.variants.edges[0]?.node;
           if (firstVariant) {
             setSelectedVariant(firstVariant);
@@ -196,14 +180,14 @@ export default function ProductPage() {
           }
 
           if (colorParam) {
-            const colorOption = productData.options.find(option => 
+            const colorOption = productData.options.find(option =>
               option.name.toLowerCase().includes('color') || option.name.toLowerCase().includes('colour')
             );
             if (colorOption && colorOption.values.includes(colorParam)) {
               defaultOptions[colorOption.name] = colorParam;
             }
           }
-          
+
           setSelectedOptions(defaultOptions);
 
           try {
@@ -243,10 +227,10 @@ export default function ProductPage() {
           const mockProduct = MOCK_PRODUCTS.find(p => p.node.handle === handle);
           if (mockProduct) {
             setProduct(mockProduct.node);
-            
+
             const colorParam = searchParams.get('color');
             let defaultOptions: Record<string, string> = {};
-            
+
             const firstVariant = mockProduct.node.variants.edges[0]?.node;
             if (firstVariant) {
               setSelectedVariant(firstVariant);
@@ -254,16 +238,16 @@ export default function ProductPage() {
                 defaultOptions[opt.name] = opt.value;
               });
             }
-            
+
             if (colorParam) {
-              const colorOption = mockProduct.node.options.find(option => 
+              const colorOption = mockProduct.node.options.find(option =>
                 option.name.toLowerCase().includes('color') || option.name.toLowerCase().includes('colour')
               );
               if (colorOption && colorOption.values.includes(colorParam)) {
                 defaultOptions[colorOption.name] = colorParam;
               }
             }
-            
+
             setSelectedOptions(defaultOptions);
             setRecommendedProducts(MOCK_PRODUCTS.filter(p => p.node.handle !== handle).slice(0, 4));
           }
@@ -294,11 +278,11 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (!product) return;
-    
-    const selectedColor = Object.entries(selectedOptions).find(([key]) => 
+
+    const selectedColor = Object.entries(selectedOptions).find(([key]) =>
       key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
     )?.[1];
-    
+
     if (selectedColor && COLOR_MAP[selectedColor]) {
       setCustomColorImage(COLOR_MAP[selectedColor]);
     }
@@ -477,34 +461,58 @@ export default function ProductPage() {
                 <span>Sateen Bundle Set</span>
               </div>
 
-              <div className="flex items-baseline justify-between gap-4">
-                <h1 className="text-3xl md:text-4xl font-serif text-gray-900 tracking-tight leading-none">
-                  {(() => {
-                    const selectedColor = Object.entries(selectedOptions).find(([key]) => 
-                      key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-                    )?.[1];
-                    
-                    if (selectedColor && COLOR_DESCRIPTIONS[selectedColor]) {
-                      return COLOR_DESCRIPTIONS[selectedColor].title;
-                    }
-                    return 'Please select a color';
-                  })()}
-                </h1>
-                <p className="text-lg font-sans text-gray-950 font-medium">
-                  {selectedVariant?.price.amount} {selectedVariant?.price.currencyCode === 'GBP' ? '£' : selectedVariant?.price.currencyCode}
-                </p>
+              {/* Title, Color Description, and Price with Divider */}
+              <div className="relative pb-6">
+                <div className="grid grid-cols-[1fr_auto] gap-4 items-baseline">
+                  <h1 className="text-3xl md:text-4xl font-serif text-gray-900 tracking-tight leading-none">
+                    {(() => {
+                      const selectedColor = Object.entries(selectedOptions).find(([key]) =>
+                        key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
+                      )?.[1];
+
+                      if (selectedColor && COLOR_DESCRIPTIONS[selectedColor]) {
+                        return COLOR_DESCRIPTIONS[selectedColor].title;
+                      }
+                      return product.title;
+                    })()}
+                  </h1>
+                  <p className="text-lg font-sans text-gray-950 font-medium whitespace-nowrap">
+                    £{selectedVariant?.price.amount}
+                  </p>
+                </div>
+
+                {/* Color Description - directly under title */}
+                {(() => {
+                  const selectedColor = Object.entries(selectedOptions).find(([key]) =>
+                    key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
+                  )?.[1];
+
+                  if (selectedColor && COLOR_DESCRIPTIONS[selectedColor]) {
+                    const colorDesc = COLOR_DESCRIPTIONS[selectedColor];
+                    return (
+                      <div className="mt-2 text-sm text-gray-600 font-sans leading-relaxed">
+                        {colorDesc.description}
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+
+                {/* Divider Line */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-[#e0dbd5]" />
               </div>
 
-              <div className="text-sm text-gray-500 font-sans space-y-2">
-                <div className="font-medium">The essentials</div>
-                <div className="space-y-1 text-xs">
+              {/* Product Details */}
+              <div className="text-sm text-gray-500 font-sans space-y-4 pt-2">
+                <div className="font-medium text-gray-900">The essentials</div>
+                <div className="space-y-1 text-xs text-gray-600">
                   <div>• Material: 100% Egyptian cotton</div>
                   <div>• Weave: Sateen</div>
                   <div>• Thread count: 300</div>
                   <div>• Includes: Duvet cover + fitted sheet + 4 pillowcases (2 Oxford + 2 plain)</div>
                   <div>• Certification: OEKO-TEX® Standard 100</div>
                 </div>
-                <div className="pt-2 text-xs">
+                <div className="pt-2 text-xs text-gray-600 italic">
                   This is your "exhale" bedding, woven for a clean drape and a smooth hand-feel. It looks crisp. It feels indulgent — no extras needed.
                 </div>
               </div>
@@ -519,7 +527,7 @@ export default function ProductPage() {
                   <div className="flex items-baseline justify-between">
                     <h3 className="text-[11px] font-bold text-gray-900 uppercase tracking-[0.15em]">{option.name}</h3>
                     {option.name.toLowerCase().includes('size') && (
-                      <button 
+                      <button
                         onClick={handleOpenSizeDrawer}
                         className="text-[11px] text-gray-500 hover:text-gray-900 underline underline-offset-4 decoration-gray-300 font-medium tracking-wide"
                       >
@@ -571,38 +579,14 @@ export default function ProductPage() {
               );
             })}
 
-            {/* Color Description */}
-            {(() => {
-              const selectedColor = Object.entries(selectedOptions).find(([key]) => 
-                key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-              )?.[1];
-              
-              if (selectedColor && COLOR_DESCRIPTIONS[selectedColor]) {
-                const colorDesc = COLOR_DESCRIPTIONS[selectedColor];
-                return (
-                  <div className="pt-4 border-t border-[#e0dbd5] animate-in fade-in duration-300">
-                    <div className="space-y-2">
-                      <div className="text-xs font-bold text-gray-700 uppercase tracking-wide">{colorDesc.subtitle}</div>
-                      <p className="text-xs text-gray-600 leading-relaxed">{colorDesc.description}</p>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })()}
-
             {/* CTA Buttons */}
             <div className="flex gap-3 pt-6">
               <Button
                 onClick={handleAddToCart}
-                disabled={!selectedVariant?.availableForSale || isCartLoading || !Object.entries(selectedOptions).find(([key]) => 
-                  key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-                )}
+                disabled={!selectedVariant?.availableForSale || isCartLoading}
                 className="flex-1 h-16 bg-[#2D2D2D] hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
               >
-                {isCartLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (!Object.entries(selectedOptions).find(([key]) => 
-                  key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-                ) ? 'Please select a color' : (!selectedVariant?.availableForSale ? 'Out of Stock' : 'Add to Cart'))}
+                {isCartLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (!selectedVariant?.availableForSale ? 'Out of Stock' : 'Add to Cart')}
               </Button>
               <Button
                 onClick={handleToggleFavorite}
@@ -621,20 +605,16 @@ export default function ProductPage() {
               </Button>
             </div>
 
-            {/* Info Cards List */}
-            <div className="space-y-[1px] bg-[#e0dbd5] border-y border-[#e0dbd5]">
-            </div>
-
             {/* Product Accordions */}
             <div className="pt-8 space-y-4">
               <button
-                onClick={() => setOpenDrawer(' Why You Will Love It')}
+                onClick={() => setOpenDrawer('why-you-will-love-it')}
                 className="w-full flex items-center justify-between py-4 group border-b border-[#e0dbd5]"
               >
                 <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">Why You Will Love It</span>
                 <Plus className="w-4 h-4 text-gray-400" />
               </button>
-              
+
               <button
                 onClick={() => setOpenDrawer('care')}
                 className="w-full flex items-center justify-between py-4 group border-b border-[#e0dbd5]"
@@ -642,7 +622,7 @@ export default function ProductPage() {
                 <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">Care</span>
                 <Plus className="w-4 h-4 text-gray-400" />
               </button>
-              
+
               <button
                 onClick={() => setOpenDrawer('specifications')}
                 className="w-full flex items-center justify-between py-4 group border-b border-[#e0dbd5]"
@@ -650,7 +630,7 @@ export default function ProductPage() {
                 <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">Specifications +</span>
                 <Plus className="w-4 h-4 text-gray-400" />
               </button>
-              
+
               <button
                 onClick={() => setOpenDrawer('returns')}
                 className="w-full flex items-center justify-between py-4 group border-b border-[#e0dbd5]"
@@ -658,7 +638,7 @@ export default function ProductPage() {
                 <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">Return and Delivery +</span>
                 <Plus className="w-4 h-4 text-gray-400" />
               </button>
-              
+
               <button
                 onClick={() => setOpenDrawer('reviews')}
                 className="w-full flex items-center justify-between py-4 group"
@@ -667,7 +647,6 @@ export default function ProductPage() {
                 <Plus className="w-4 h-4 text-gray-400" />
               </button>
             </div>
-
           </div>
         </div>
 
@@ -701,7 +680,7 @@ export default function ProductPage() {
                     {rec.title}
                   </h4>
                   <p className="text-[12px] text-gray-500 font-sans tracking-tight">
-                    {rec.priceRange.minVariantPrice.amount} {rec.priceRange.minVariantPrice.currencyCode === 'GBP' ? '£' : rec.priceRange.minVariantPrice.currencyCode}
+                    £{rec.priceRange.minVariantPrice.amount}
                   </p>
                 </div>
               </Link>
@@ -710,16 +689,15 @@ export default function ProductPage() {
         </section>
 
         <ReviewsSection
-        reviewPage={reviewPage}
-        setReviewPage={setReviewPage}
-        reviewFilter={reviewFilter}
-        setReviewFilter={setReviewFilter}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        reviewDrawerOpen={reviewDrawerOpen}
-        setReviewDrawerOpen={setReviewDrawerOpen}
-      />
-      
+          reviewPage={reviewPage}
+          setReviewPage={setReviewPage}
+          reviewFilter={reviewFilter}
+          setReviewFilter={setReviewFilter}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          reviewDrawerOpen={reviewDrawerOpen}
+          setReviewDrawerOpen={setReviewDrawerOpen}
+        />
       </main>
 
       {/* Drawer */}
@@ -735,34 +713,25 @@ export default function ProductPage() {
               className="fixed inset-0 bg-black/50 z-40"
               onClick={() => setOpenDrawer(null)}
             />
-            
+
             {/* Drawer Panel */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl z-50 overflow-y-auto scrollbar-hide"
+              className="fixed right-0 top-0 h-full w-full max-w-md bg-[#f5f1ed] shadow-xl z-50 overflow-y-auto scrollbar-hide"
             >
               <div className="p-6">
                 {/* Drawer Header */}
                 <div className="flex items-center justify-between mb-6">
-                  {/* Back button — only shown on size drawer page 2 */}
-                  {openDrawer === 'size' && sizeDrawerPage === 2 ? (
-                    <button
-                      onClick={() => setSizeDrawerPage(1)}
-                      className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.15em] text-gray-500 hover:text-gray-900 transition-colors"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      Back
-                    </button>
-                  ) : (
+                  {openDrawer === 'size' ? null : (
                     <h2 className="text-lg font-serif text-gray-900">
-                      {openDrawer === ' Why You Will Love It' && ' Why You Will Love It'}
+                      {openDrawer === 'why-you-will-love-it' && 'Why You Will Love It'}
                       {openDrawer === 'care' && 'Care'}
                       {openDrawer === 'specifications' && 'Specifications'}
-                      {openDrawer === 'size' && 'Size Guide'}
-                      {openDrawer === 'Return and Delivery' && 'Return and Delivery'}
+                      {openDrawer === 'returns' && 'Return and Delivery'}
+                      {openDrawer === 'reviews' && 'Reviews'}
                     </h2>
                   )}
                   <button
@@ -775,7 +744,7 @@ export default function ProductPage() {
 
                 {/* Drawer Content */}
                 <div className="space-y-6">
-                  {openDrawer === ' Why You Will Love It' && (
+                  {openDrawer === 'why-you-will-love-it' && (
                     <div className="space-y-8">
                       {/* Main statement */}
                       <div className="space-y-4">
@@ -813,7 +782,7 @@ export default function ProductPage() {
                       </div>
                     </div>
                   )}
-                  
+
                   {openDrawer === 'care' && (
                     <div className="space-y-8">
                       {/* Main care statement */}
@@ -839,7 +808,6 @@ export default function ProductPage() {
                           ))}
                         </ul>
                       </div>
-                      
 
                       {/* Wash instructions */}
                       <div className="space-y-4 border-t border-[#e0dbd5]">
@@ -887,34 +855,30 @@ export default function ProductPage() {
                       </div>
                     </div>
                   )}
-                  
+
                   {openDrawer === 'specifications' && (
                     <div className="space-y-8">
-                      {/* Material specifications */}
                       <div className="space-y-4">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900">Material</h4>
                         <p className="text-sm text-gray-600 font-sans leading-relaxed">
                           100% Egyptian cotton
                         </p>
                       </div>
-                      
-                      {/* Weave specifications */}
+
                       <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Weave</h4>
                         <p className="text-sm text-gray-600 font-sans leading-relaxed">
                           Sateen
                         </p>
                       </div>
-                      
-                      {/* Thread count */}
+
                       <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Thread Count</h4>
                         <p className="text-sm text-gray-600 font-sans leading-relaxed">
                           300
                         </p>
                       </div>
-                      
-                      {/* Finish and feel */}
+
                       <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Finish / Feel</h4>
                         <p className="text-sm text-gray-600 font-sans leading-relaxed">
@@ -923,179 +887,276 @@ export default function ProductPage() {
                       </div>
                     </div>
                   )}
-                  
+
                   {openDrawer === 'returns' && (
                     <div className="space-y-8">
-                      {/* Main return statement */}
+                      {/* Write Review Action */}
                       <div className="space-y-4">
                         <p className="text-sm text-gray-600 font-sans leading-relaxed">
-                          Changed your mind? No problem. We accept returns on unused, unwashed, and undamaged bedding for a full refund within 30 days of delivery. Items must be returned in their original packaging, with all tags and labels attached. Please see our Returns Policy for full details.
+                          Changed your mind? No problem. We accept returns on unused, unwashed, and undamaged bedding for a full refund within 30 days of delivery. Items must be returned in their original packaging, with all tags and labels attached. Please see our <Link to="/privacy" className="underline hover:text-gray-900 transition-colors">Returns Policy</Link> for full details.
                         </p>
                       </div>
                     </div>
                   )}
-                  
+
                   {openDrawer === 'reviews' && (
-                    <div className="space-y-8">
-                      {/* Reviews placeholder */}
-                      <div className="space-y-4">
-                        <p className="text-sm text-gray-600 font-sans leading-relaxed">
-                          Customer reviews coming soon. Be the first to share your experience with REMsleep bedding.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* SIZE DRAWER — Page 1: Guide */}
-                  {openDrawer === 'size' && sizeDrawerPage === 1 && (
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key="size-page-1"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.25 }}
-                        className="space-y-8"
-                      >
-                       
-                        {/* Hero statement */}
-                        <div className="space-y-2">
-                          <h3 className="font-serif text-2xl text-gray-900 leading-snug">
-                            A fitted sheet that stays put — even on deeper mattresses.
-                          </h3>
-                        </div>
-
-                        {/* Intro paragraph */}
-                        <div className="space-y-4 text-sm text-gray-600 font-sans leading-relaxed">
-                          <p>
-                            A bed should look finished, not fussy. REMsleep is made for real life: sleep, slow mornings, and the occasional full-day reset.
-                          </p>
-                          <p>
-                            Our fitted sheet is designed to keep the bed looking made — with less shifting, less bunching, and no corner slip.
-                          </p>
-                        </div>
-
-                        {/* How sizing works */}
-                        <div className="space-y-3 pt-2 border-t border-[#e0dbd5]">
-                          <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">How sizing works</h4>
-                          <p className="text-sm text-gray-600 leading-relaxed">
-                            Choose the size that matches your mattress. The cut is shaped to sit neatly, with corners designed to stay anchored.
-                          </p>
-                        </div>
-
-                        {/* Deep-mattress elastic */}
-                        <div className="space-y-3 border-t border-[#e0dbd5]">
-                          <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">
-                            Deep-mattress elastic <span className="text-gray-400 font-normal normal-case tracking-normal">(the part you feel, quietly)</span>
-                          </h4>
-                          <p className="text-sm text-gray-600 leading-relaxed">
-                            Our fitted sheet uses elastic designed for deeper mattresses, so it tucks in cleanly and stays there. Expect sharper corners, a smoother surface, and less re-tucking.
-                          </p>
-                        </div>
-
-                        {/* Why it stays put */}
-                        <div className="space-y-4 border-t border-[#e0dbd5]">
-                          <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Why it stays put</h4>
-                          <ul className="space-y-2.5">
-                            {[
-                              'Hugs the corners with a tighter fit',
-                              'Holds position with strong, deep-mattress elastic',
-                              'Stays smooth for a cleaner, more intentional finish',
-                            ].map((point) => (
-                              <li key={point} className="flex items-start gap-3 text-sm text-gray-600">
-                                <span className="mt-1.5 w-1 h-1 rounded-full bg-gray-400 flex-shrink-0" />
-                                {point}
-                              </li>
-                            ))}
-                          </ul>
-                          <p className="text-xs text-gray-500 italic pt-1">
-                            Using a topper? Choose your size based on your overall mattress depth for the most secure hold.
-                          </p>
-                        </div>
-
-                        {/* CTA to page 2 */}
-                        <div className="pt-4">
+                    <div className="space-y-8 pb-8 bg-[#f5f1ed]">
+                      {/* Review Summary */}
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1">
+                              <span className="text-3xl font-serif text-gray-900">4.9</span>
+                              <div className="flex gap-0.5 ml-2">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <svg key={star} width="16" height="16" viewBox="0 0 24 24" fill={star <= 4 ? "#2D2D2D" : "none"} stroke="#2D2D2D" strokeWidth="1.5">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                  </svg>
+                                ))}
+                              </div>
+                            </div>
+                            <p className="text-[11px] text-gray-500 font-sans tracking-wide uppercase">Based on 128 Reviews</p>
+                          </div>
                           <button
-                            onClick={() => setSizeDrawerPage(2)}
-                            className="w-full flex items-center justify-between py-4 px-5 bg-[#2D2D2D] hover:bg-black text-white transition-colors group"
+                            onClick={() => {
+                              setOpenDrawer(null);
+                              setReviewDrawerOpen(true);
+                            }}
+                            className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 border-b border-gray-900 pb-0.5 hover:text-gray-500 hover:border-gray-500 transition-colors"
                           >
-                            <span className="text-[11px] font-bold uppercase tracking-[0.2em]">View measurements</span>
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            Write a Review
                           </button>
                         </div>
-                      </motion.div>
-                    </AnimatePresence>
+
+                        {/* Rating Breakdown (simplified) */}
+                        <div className="space-y-2 pt-2">
+                          {[5, 4, 3, 2, 1].map((rating) => (
+                            <div key={rating} className="flex items-center gap-3">
+                              <span className="text-[10px] font-bold text-gray-900 w-3">{rating}</span>
+                              <div className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-gray-900"
+                                  style={{ width: `${rating === 5 ? 92 : rating === 4 ? 6 : 2}%` }}
+                                />
+                              </div>
+                              <span className="text-[10px] text-gray-400 w-8 text-right font-sans">
+                                {rating === 5 ? '92%' : rating === 4 ? '6%' : '2%'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="border-t border-[#e0dbd5]" />
+
+                      {/* Mock Reviews List */}
+                      <div className="space-y-10">
+                        {[
+                          {
+                            name: "Sarah M.",
+                            date: "Feb 12, 2026",
+                            rating: 5,
+                            headline: "Unbelievable comfort, it truly stays put!",
+                            text: "I was skeptical about the 'stays put' claim, but this fitted sheet is a game changer. No more waking up with the sheet bunched up under me. The fabric is incredibly soft and has a lovely subtle sheen."
+                          },
+                          {
+                            name: "James T.",
+                            date: "Jan 28, 2026",
+                            rating: 5,
+                            headline: "Premium feel, worth every penny.",
+                            text: "The quality is evident as soon as you open the box. The tailoring is precise, and the 300TC sateen feels much more luxurious than other high-count sheets I've tried. Highly recommend the bundle."
+                          },
+                          {
+                            name: "Elena R.",
+                            date: "Jan 15, 2026",
+                            rating: 4,
+                            headline: "Beautiful color, very smooth.",
+                            text: "The Winter Cloud color is exactly what I was looking for. The sateen finish is very smooth and cool to the touch. Docked one star only because shipping took a day longer than expected, but the product itself is perfect."
+                          }
+                        ].map((rev, i) => (
+                          <div key={i} className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex gap-0.5">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <svg key={star} width="12" height="12" viewBox="0 0 24 24" fill={star <= rev.rating ? "#2D2D2D" : "none"} stroke="#2D2D2D" strokeWidth="1.5">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                  </svg>
+                                ))}
+                              </div>
+                              <span className="text-[10px] text-gray-400 font-sans">{rev.date}</span>
+                            </div>
+                            <div className="space-y-1">
+                              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wide">{rev.headline}</h4>
+                              <p className="text-[13px] text-gray-600 font-sans leading-relaxed">{rev.text}</p>
+                            </div>
+                            <p className="text-[11px] font-bold text-gray-900 uppercase tracking-widest pt-1">{rev.name}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="sticky bottom-0 z-20 flex-shrink-0 py-6 border-t border-[#e0dbd5] bg-[#f5f1ed]/95 backdrop-blur-md">
+                        <button className="w-full bg-white border border-gray-200 text-gray-900 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-gray-50 transition-all transform active:scale-[0.99]"
+                          onClick={() => setOpenDrawer(null)}
+                        >
+                          Continue Shopping
+                        </button>
+                      </div>
+                    </div>
                   )}
 
-                  {/* SIZE DRAWER — Page 2: Measurements Chart */}
-                  {openDrawer === 'size' && sizeDrawerPage === 2 && (
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key="size-page-2"
-                        initial={{ opacity: 0, x: 40 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -40 }}
-                        transition={{ duration: 0.25 }}
-                        className="space-y-5"
-                      >
-                        {/* Section label */}
-                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-900">Measurements</p>
-
-                        {/* Bordered grid table matching reference style */}
-                        <div className="border border-gray-200 overflow-hidden">
-                          <table className="w-full text-center border-collapse">
-                            <thead>
-                              <tr>
-                                <th className="border border-gray-200 px-2 py-3 text-[10px] font-normal text-gray-500 text-center leading-tight w-[22%]">
-                                  UK SIZE (cm)
-                                </th>
-                                <th className="border border-gray-200 px-2 py-3 text-[10px] font-normal text-gray-500 text-center leading-tight">
-                                  Duvet<br />Cover
-                                </th>
-                                <th className="border border-gray-200 px-2 py-3 text-[10px] font-normal text-gray-500 text-center leading-tight">
-                                  Fitted Sheet
-                                </th>
-                                <th className="border border-gray-200 px-2 py-3 text-[10px] font-normal text-gray-500 text-center leading-tight">
-                                  Oxford<br />Pillowcase
-                                </th>
-                                <th className="border border-gray-200 px-2 py-3 text-[10px] font-normal text-gray-500 text-center leading-tight">
-                                  Regular<br />Pillowcase
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {[
-                                { size: 'Single',  duvet: '140×200', fitted: '90×190×40',  oxford: '50×75\n+5cm', regular: '50×75' },
-                                { size: 'Double',  duvet: '200×200', fitted: '135×190×40', oxford: '50×75\n+5cm', regular: '50×75' },
-                                { size: 'King',    duvet: '225×220', fitted: '150×200×40', oxford: '50×75\n+5cm', regular: '50×75' },
-                              ].map((row) => (
-                                <tr key={row.size} className="hover:bg-[#faf8f6] transition-colors">
-                                  <td className="border border-gray-200 px-2 py-3 text-[11px] text-gray-700 text-center">{row.size}</td>
-                                  <td className="border border-gray-200 px-2 py-3 text-[11px] text-gray-700 text-center">{row.duvet}</td>
-                                  <td className="border border-gray-200 px-2 py-3 text-[11px] text-gray-700 text-center">{row.fitted}</td>
-                                  <td className="border border-gray-200 px-2 py-3 text-[11px] text-gray-700 text-center whitespace-pre-line">{row.oxford}</td>
-                                  <td className="border border-gray-200 px-2 py-3 text-[11px] text-gray-700 text-center">{row.regular}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-
-                        {/* Footnote */}
-                        <p className="text-[11px] text-gray-400 leading-relaxed">
-                          All measurements are approximate. Minor variation may occur due to production tolerances. Oxford pillowcase border allowance (+5cm) not included in dimensions shown.
-                        </p>
-
-                        {/* Back to guide link */}
+                  {openDrawer === 'size' && (
+                    <div className="space-y-6">
+                      {/* Tabs Navigation */}
+                      <div className="flex gap-8 border-b border-[#e0dbd5] mb-6">
                         <button
                           onClick={() => setSizeDrawerPage(1)}
-                          className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-gray-500 hover:text-gray-900 transition-colors pt-1"
+                          className={cn(
+                            "pb-4 text-[11px] font-bold uppercase tracking-[0.2em] transition-all relative",
+                            sizeDrawerPage === 1 ? "text-gray-900" : "text-gray-400 hover:text-gray-600"
+                          )}
                         >
-                          <ChevronLeft className="w-4 h-4" />
-                          Back to size guide
+                          Measurements
+                          {sizeDrawerPage === 1 && (
+                            <motion.div
+                              layoutId="activeTab"
+                              className="absolute bottom-0 left-0 right-0 h-[2px] bg-gray-900"
+                            />
+                          )}
                         </button>
-                      </motion.div>
-                    </AnimatePresence>
+                        <button
+                          onClick={() => setSizeDrawerPage(2)}
+                          className={cn(
+                            "pb-4 text-[11px] font-bold uppercase tracking-[0.2em] transition-all relative",
+                            sizeDrawerPage === 2 ? "text-gray-900" : "text-gray-400 hover:text-gray-600"
+                          )}
+                        >
+                          Details
+                          {sizeDrawerPage === 2 && (
+                            <motion.div
+                              layoutId="activeTab"
+                              className="absolute bottom-0 left-0 right-0 h-[2px] bg-gray-900"
+                            />
+                          )}
+                        </button>
+                      </div>
+
+                      <AnimatePresence mode="wait">
+                        {sizeDrawerPage === 1 ? (
+                          <motion.div
+                            key="size-tab-1"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="space-y-5"
+                          >
+                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-900">Measurements (cm)</p>
+
+                            <div className="border border-[#e0dbd5] overflow-hidden bg-white">
+                              <table className="w-full text-center border-collapse">
+                                <thead className="bg-[#faf8f6]">
+                                  <tr>
+                                    <th className="border border-[#e0dbd5] px-4 py-5 text-[10px] font-bold text-gray-900 text-left uppercase tracking-widest w-[25%]">
+                                      Size
+                                    </th>
+                                    <th className="border border-[#e0dbd5] px-4 py-5 text-[10px] font-bold text-gray-900 text-center uppercase tracking-widest">
+                                      Duvet<br />Cover
+                                    </th>
+                                    <th className="border border-[#e0dbd5] px-4 py-5 text-[10px] font-bold text-gray-900 text-center uppercase tracking-widest">
+                                      Fitted<br />Sheet
+                                    </th>
+                                    <th className="border border-[#e0dbd5] px-4 py-5 text-[10px] font-bold text-gray-900 text-center uppercase tracking-widest">
+                                      Oxford<br />Case
+                                    </th>
+                                    <th className="border border-[#e0dbd5] px-4 py-5 text-[10px] font-bold text-gray-900 text-center uppercase tracking-widest">
+                                      Regular<br />Case
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-[#e0dbd5]">
+                                  {[
+                                    { size: 'Single', duvet: '140×200', fitted: '90×190×40', oxford: '50×75', regular: '50×75' },
+                                    { size: 'Double', duvet: '200×200', fitted: '135×190×40', oxford: '50×75', regular: '50×75' },
+                                    { size: 'King', duvet: '225×220', fitted: '150×200×40', oxford: '50×75', regular: '50×75' },
+                                  ].map((row) => (
+                                    <tr key={row.size} className="hover:bg-[#faf8f6] transition-colors group">
+                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] font-medium text-gray-900 text-left">{row.size}</td>
+                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600 font-sans">{row.duvet}</td>
+                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600 font-sans">{row.fitted}</td>
+                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600 font-sans">{row.oxford}</td>
+                                      <td className="border border-[#e0dbd5] px-4 py-6 text-[12px] text-gray-600 font-sans">{row.regular}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+
+                            <p className="text-[11px] text-gray-400 leading-relaxed">
+                              All measurements are approximate. Oxford pillowcase border (+5cm) not included in total dimensions.
+                            </p>
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key="size-tab-2"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="space-y-8"
+                          >
+                            <div className="space-y-2">
+                              <h3 className="font-serif text-2xl text-gray-900 leading-snug">
+                                A fitted sheet that stays put — even on deeper mattresses.
+                              </h3>
+                            </div>
+
+                            <div className="space-y-4 text-sm text-gray-600 font-sans leading-relaxed">
+                              <p>
+                                A bed should look finished, not fussy. REMsleep is made for real life: sleep, slow mornings, and the occasional full-day reset.
+                              </p>
+                              <p>
+                                Our fitted sheet is designed to keep the bed looking made — with less shifting, less bunching, and no corner slip.
+                              </p>
+                            </div>
+
+                            <div className="space-y-3 pt-2 border-t border-[#e0dbd5]">
+                              <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">How sizing works</h4>
+                              <p className="text-sm text-gray-600 leading-relaxed">
+                                Choose the size that matches your mattress. The cut is shaped to sit neatly, with corners designed to stay anchored.
+                              </p>
+                            </div>
+
+                            <div className="space-y-3 border-t border-[#e0dbd5]">
+                              <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">
+                                Deep-mattress elastic <span className="text-gray-400 font-normal normal-case tracking-normal">(the part you feel, quietly)</span>
+                              </h4>
+                              <p className="text-sm text-gray-600 leading-relaxed">
+                                Our fitted sheet uses elastic designed for deeper mattresses, so it tucks in cleanly and stays there. Expect sharper corners, a smoother surface, and less re-tucking.
+                              </p>
+                            </div>
+
+                            <div className="space-y-4 border-t border-[#e0dbd5]">
+                              <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Why it stays put</h4>
+                              <ul className="space-y-2.5">
+                                {[
+                                  'Hugs the corners with a tighter fit',
+                                  'Holds position with strong, deep-mattress elastic',
+                                  'Stays smooth for a cleaner, more intentional finish',
+                                ].map((point) => (
+                                  <li key={point} className="flex items-start gap-3 text-sm text-gray-600">
+                                    <span className="mt-1.5 w-1 h-1 rounded-full bg-gray-400 flex-shrink-0" />
+                                    {point}
+                                  </li>
+                                ))}
+                              </ul>
+                              <p className="text-xs text-gray-500 italic pt-1">
+                                Using a topper? Choose your size based on your overall mattress depth for the most secure hold.
+                              </p>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   )}
                 </div>
               </div>
@@ -1105,79 +1166,12 @@ export default function ProductPage() {
       </AnimatePresence>
 
       {/* Write Review Drawer */}
-      <WriteReviewDrawer 
-        open={reviewDrawerOpen} 
-        onClose={() => setReviewDrawerOpen(false)} 
+      <WriteReviewDrawer
+        open={reviewDrawerOpen}
+        onClose={() => setReviewDrawerOpen(false)}
       />
 
       <StoreFooter />
-    </div>
-  );
-}
-
-// Helper Components
-function InfoItem({ icon, text }: { icon: React.ReactNode, text: string }) {
-  return (
-    <button className="w-full flex items-center justify-between p-4 bg-[#f5f1ed] hover:bg-[#F8F5F2] transition-colors group">
-      <div className="flex items-center gap-3">
-        <span className="text-gray-400 group-hover:text-gray-900 transition-colors">{icon}</span>
-        <span className="text-[12px] text-gray-700 font-sans">{text}</span>
-      </div>
-      <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-900 group-hover:translate-x-0.5 transition-all" />
-    </button>
-  );
-}
-
-function Accordion({ title, children, defaultOpen = false }: { title: string, children: React.ReactNode, defaultOpen?: boolean }) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  return (
-    <div className="overflow-hidden">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between py-4 group"
-      >
-        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">{title}</span>
-        {isOpen ? <Minus className="w-4 h-4 text-gray-400" /> : <Plus className="w-4 h-4 text-gray-400" />}
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-          >
-            <div className="pb-4 pt-2">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-function ImpactSmallItem({ icon, title }: { icon: React.ReactNode, title: string }) {
-  return (
-    <div className="flex flex-col items-center text-center space-y-2">
-      <div className="p-3 bg-white border border-gray-100 rounded-lg text-gray-400">
-        {icon}
-      </div>
-      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-900">{title}</span>
-    </div>
-  );
-}
-
-function ImpactCard({ icon, title, linkText }: { icon: React.ReactNode, title: string, linkText: string }) {
-  return (
-    <div className="flex flex-col items-center text-center space-y-6">
-      <div className="text-gray-900">{icon}</div>
-      <div className="space-y-4">
-        <h4 className="text-[13px] font-bold uppercase tracking-[0.1em] text-gray-900">{title}</h4>
-        <button className="text-[12px] text-gray-500 hover:text-gray-900 underline underline-offset-8 decoration-gray-300 transition-colors">
-          {linkText}
-        </button>
-      </div>
     </div>
   );
 }

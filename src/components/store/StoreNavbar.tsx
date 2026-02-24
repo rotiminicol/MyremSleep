@@ -58,7 +58,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
     flag: 'https://flagcdn.com/w20/ng.png',
     name: 'Nigerian Naira'
   });
-  
+
   // Define currencies array inside the component
   const currencies = [
     { code: 'USD', symbol: '$', flag: 'https://flagcdn.com/w20/us.png', name: 'US Dollar' },
@@ -103,7 +103,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   const { items: favoriteItems, setFavoritesOpen } = useFavoritesStore();
 
   // Filter currencies based on search
-  const filteredCurrencies = currencies.filter(currency => 
+  const filteredCurrencies = currencies.filter(currency =>
     currency.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     currency.code.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -138,13 +138,17 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      if (currentScrollY < 10) {
+      if (currentScrollY <= 10) {
         setIsVisible(true);
-      } else if (currentScrollY > lastScrollY) {
+      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down and past threshold - hide
         setIsVisible(false);
-      } else {
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up - show
         setIsVisible(true);
       }
+      // If currentScrollY === lastScrollY (stationary), we don't change isVisible
+      // which means it stays hidden if it was already hidden.
 
       setLastScrollY(currentScrollY);
     };
@@ -195,7 +199,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
     <>
       {/* Announcement Bar */}
       {announcementVisible && (
-        <div className="bg-[#7c7f70] text-white py-2 px-4 flex items-center justify-between text-[11px] font-medium tracking-[0.15em] uppercase">
+        <div className="bg-primary text-white py-2 px-4 flex items-center justify-between text-[11px] font-medium tracking-[0.15em] uppercase">
           {/* Left: Empty for centering or carousel controls */}
           <div className="hidden md:flex flex-1"></div>
 
@@ -231,7 +235,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
       {/* Main Navbar */}
       <motion.header
         initial={{ y: 0 }}
-        animate={{ y: isVisible ? 0 : -100 }}
+        animate={{ y: isVisible ? 0 : '-100%' }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className="sticky top-0 z-50 bg-[#f5f1ed] border-b border-[#e0dbd5]"
         onMouseLeave={() => { }}
@@ -278,7 +282,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                     <ChevronDown className="h-3 w-3 text-gray-400 group-hover:text-gray-600" />
                   </motion.div>
                 </motion.button>
-                
+
                 {/* Currency Dropdown - Enhanced with Search */}
                 <AnimatePresence>
                   {isCurrencyOpen && (
@@ -293,14 +297,14 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                       <div className="p-4 border-b border-[#d8d1c8]">
                         <div className="flex items-center justify-between mb-3">
                           <h3 className="text-sm font-serif text-gray-900">Select Currency</h3>
-                          <button 
+                          <button
                             onClick={() => setIsCurrencyOpen(false)}
                             className="p-1 hover:bg-[#e8e3dc] rounded-full transition-colors"
                           >
                             <X className="h-4 w-4 text-gray-500" />
                           </button>
                         </div>
-                        
+
                         {/* Search Input */}
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -330,11 +334,10 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                                   setIsCurrencyOpen(false);
                                   setSearchQuery('');
                                 }}
-                                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
-                                  selectedCurrency.code === currency.code 
-                                    ? 'bg-[#e8e3dc] shadow-sm' 
-                                    : 'hover:bg-[#e8e3dc]'
-                                }`}
+                                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${selectedCurrency.code === currency.code
+                                  ? 'bg-[#e8e3dc] shadow-sm'
+                                  : 'hover:bg-[#e8e3dc]'
+                                  }`}
                               >
                                 <img
                                   src={currency.flag}
@@ -377,11 +380,10 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                                         setSelectedCurrency(currency);
                                         setIsCurrencyOpen(false);
                                       }}
-                                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 ${
-                                        selectedCurrency.code === currency.code 
-                                          ? 'bg-[#e8e3dc] shadow-sm' 
-                                          : 'hover:bg-[#e8e3dc]'
-                                      }`}
+                                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 ${selectedCurrency.code === currency.code
+                                        ? 'bg-[#e8e3dc] shadow-sm'
+                                        : 'hover:bg-[#e8e3dc]'
+                                        }`}
                                     >
                                       <img
                                         src={currency.flag}
@@ -539,7 +541,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                         </span>
                         <ChevronDown className={`h-3 w-3 text-[#1c1c1c] transition-transform ${isCurrencyOpen ? 'rotate-180' : ''}`} />
                       </button>
-                      
+
                       {/* Mobile Currency Dropdown - Enhanced */}
                       <AnimatePresence>
                         {isCurrencyOpen && (
@@ -574,9 +576,8 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                                     setIsCurrencyOpen(false);
                                     setSearchQuery('');
                                   }}
-                                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${
-                                    selectedCurrency.code === currency.code ? 'bg-[#e8e3dc]' : 'hover:bg-[#e8e3dc]'
-                                  }`}
+                                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${selectedCurrency.code === currency.code ? 'bg-[#e8e3dc]' : 'hover:bg-[#e8e3dc]'
+                                    }`}
                                 >
                                   <img
                                     src={currency.flag}

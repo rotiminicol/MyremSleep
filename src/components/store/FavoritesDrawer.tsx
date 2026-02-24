@@ -68,7 +68,7 @@ export function FavoritesDrawer() {
                 side="right"
                 className={`bg-[#f5f1ed] p-0 gap-0 border-zinc-200 h-full flex flex-row overflow-hidden ${isMobile
                     ? "w-full border-l shadow-2xl"
-                    : "w-full sm:max-w-3xl border-l"
+                    : "w-full sm:max-w-md border-l"
                     }`}
             >
 

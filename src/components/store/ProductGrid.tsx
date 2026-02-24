@@ -19,7 +19,7 @@ const COLOR_VARIANTS = [
 export function ProductGrid() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeColor, setActiveColor] = useState<typeof COLOR_VARIANTS[0] | null>(null);
+  const [activeColor, setActiveColor] = useState<typeof COLOR_VARIANTS[0]>(COLOR_VARIANTS[0]); // Set Winter Cloud as default
 
   useEffect(() => {
     async function loadProducts() {
@@ -66,8 +66,7 @@ export function ProductGrid() {
         viewport={{ once: true }}
         className="group"
       >
-        {activeColor ? (
-          <Link to={`/product/${product.node.handle}?color=${encodeURIComponent(activeColor.name)}`} className="block">
+        <Link to={`/product/${product.node.handle}?color=${encodeURIComponent(activeColor.name)}`} className="block">
             <div className="relative aspect-[3/4] md:aspect-[21/9] bg-[#EBE7E0] overflow-hidden md:rounded-sm shadow-sm group-hover:shadow-md transition-shadow duration-700">
               <AnimatePresence mode="wait">
                 <motion.img
@@ -98,37 +97,6 @@ export function ProductGrid() {
               </div>
             </div>
           </Link>
-        ) : (
-          <div className="relative aspect-[3/4] md:aspect-[21/9] bg-[#EBE7E0] overflow-hidden md:rounded-sm shadow-sm">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key="default"
-                src={image?.url}
-                alt={product.node.title}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-              />
-            </AnimatePresence>
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700" />
-
-            {/* Centered Content Overlay for wide card */}
-            <div className="absolute inset-x-0 bottom-0 p-8 md:p-16 flex flex-col items-center text-center bg-gradient-to-t from-black/20 to-transparent">
-              <div className="w-full max-w-xs transition-all duration-300">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="w-full bg-gray-200 text-gray-500 py-4 text-[10px] font-semibold tracking-[0.2em] uppercase rounded-sm cursor-not-allowed flex items-center justify-center"
-                >
-                  Please select a color
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        )}
       </motion.div>
 
       {/* Color Swatches Section */}
@@ -163,7 +131,7 @@ export function ProductGrid() {
         </div>
 
         <span className="text-[11px] text-gray-900 font-sans uppercase tracking-[0.1em] font-medium min-h-[1.5em]">
-          {activeColor?.name || 'Select a color'}
+          {activeColor?.name}
         </span>
       </motion.div>
     </section>

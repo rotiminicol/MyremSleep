@@ -9,11 +9,25 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, index }: ProductCardProps) {
-    const [activeColor, setActiveColor] = useState(
-        product.node.variants.edges[0]?.node.selectedOptions.find(opt => opt.name === 'Color')
-            ? product.node.variants.edges[0]?.node.selectedOptions.find(opt => opt.name === 'Color')?.value
-            : 'Default'
-    );
+    // Set Winter Cloud as default color, or find the first available color option
+    const getDefaultColor = () => {
+        const colorOption = product.node.options.find(option => 
+            option.name.toLowerCase().includes('color') || option.name.toLowerCase().includes('colour')
+        );
+        
+        if (colorOption && colorOption.values.includes('Winter Cloud')) {
+            return 'Winter Cloud';
+        }
+        
+        // Fallback to first variant's color or first available color
+        const firstVariantColor = product.node.variants.edges[0]?.node.selectedOptions.find(opt => 
+            opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('colour')
+        )?.value;
+        
+        return firstVariantColor || (colorOption?.values[0]) || 'Default';
+    };
+    
+    const [activeColor, setActiveColor] = useState(getDefaultColor());
 
     const image = product.node.images.edges[0]?.node;
     const price = product.node.priceRange.minVariantPrice;
@@ -26,7 +40,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
             viewport={{ once: true }}
             className="group"
         >
-            <Link to={`/product/${product.node.handle}`} className="block">
+            <Link to={`/product/${product.node.handle}?color=${encodeURIComponent(activeColor)}`} className="block">
                 <div className="relative aspect-[3/4] bg-[#EBE7E0] overflow-hidden md:rounded-sm shadow-sm group-hover:shadow-md transition-shadow duration-700">
                     <img
                         src={image?.url}
