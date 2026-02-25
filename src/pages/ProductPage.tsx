@@ -651,6 +651,7 @@ export default function ProductPage() {
         </div>
 
         <ReviewsSection
+          productHandle={handle || ''}
           reviewPage={reviewPage}
           setReviewPage={setReviewPage}
           reviewFilter={reviewFilter}
@@ -1130,6 +1131,8 @@ export default function ProductPage() {
       <WriteReviewDrawer
         open={reviewDrawerOpen}
         onClose={() => setReviewDrawerOpen(false)}
+        productId={product?.id || ''}
+        productHandle={handle || ''}
       />
 
       <StoreFooter />

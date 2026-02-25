@@ -1,26 +1,60 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useCreateReview } from '@/hooks/useProductReviews';
+import { toast } from 'sonner';
 
 interface WriteReviewDrawerProps {
   open: boolean;
   onClose: () => void;
+  productId?: string;
+  productHandle?: string;
 }
 
-export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
+export function WriteReviewDrawer({ open, onClose, productId, productHandle }: WriteReviewDrawerProps) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [headline, setHeadline] = useState('');
   const [review, setReview] = useState('');
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [files, setFiles] = useState<File[]>([]);
 
-  const handleSubmit = () => {
+  const createReview = useCreateReview();
+
+  const handleSubmit = async () => {
     if (!rating || !headline || !review || !name) return;
-    // Hook up to your reviews API here
-    console.log({ rating, headline, review, name, files });
-    onClose();
+
+    try {
+      await createReview.mutateAsync({
+        name,
+        email: email || undefined,
+        rating,
+        title: headline,
+        reviewBody: review,
+        productId: productId || '',
+      });
+
+      toast.success('Review submitted!', {
+        description: 'Thank you for sharing your experience.',
+        position: 'top-center',
+      });
+
+      // Reset form
+      setRating(0);
+      setHeadline('');
+      setReview('');
+      setName('');
+      setEmail('');
+      setFiles([]);
+      onClose();
+    } catch (error) {
+      toast.error('Failed to submit review', {
+        description: 'Please try again later.',
+        position: 'top-center',
+      });
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +69,6 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -45,7 +78,6 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
             onClick={onClose}
           />
 
-          {/* Drawer */}
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -53,11 +85,8 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed right-0 top-0 h-full w-full max-w-md bg-[#f5f1ed] shadow-xl z-50 flex flex-col"
           >
-            {/* Scrollable body */}
             <div className="flex-1 overflow-y-auto scrollbar-hide">
               <div className="p-6 space-y-7">
-
-                {/* Header */}
                 <div className="flex items-start justify-between">
                   <h2 className="font-serif text-2xl text-gray-900 leading-snug">
                     Share your thoughts
@@ -70,7 +99,7 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
                   </button>
                 </div>
 
-                {/* Rate your experience */}
+                {/* Rate */}
                 <div className="space-y-3">
                   <label className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">
                     Rate Your Experience <span className="text-gray-400">*</span>
@@ -86,14 +115,7 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
                           onMouseLeave={() => setHoverRating(0)}
                           className="transition-transform hover:scale-110 active:scale-95"
                         >
-                          <svg
-                            width="32"
-                            height="32"
-                            viewBox="0 0 24 24"
-                            fill={filled ? '#2D2D2D' : 'none'}
-                            stroke={filled ? '#2D2D2D' : '#C4BDB6'}
-                            strokeWidth="1.5"
-                          >
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill={filled ? '#2D2D2D' : 'none'} stroke={filled ? '#2D2D2D' : '#C4BDB6'} strokeWidth="1.5">
                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                           </svg>
                         </button>
@@ -102,7 +124,7 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
                   </div>
                 </div>
 
-                {/* Add a headline */}
+                {/* Headline */}
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">
                     Add a Headline <span className="text-gray-400">*</span>
@@ -116,7 +138,7 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
                   />
                 </div>
 
-                {/* Write a review */}
+                {/* Review body */}
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">
                     Write a Review <span className="text-gray-400">*</span>
@@ -130,7 +152,7 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
                   />
                 </div>
 
-                {/* Add media */}
+                {/* Media upload */}
                 <div className="space-y-2">
                   <div>
                     <p className="text-sm font-medium text-gray-900">Add media (Optional)</p>
@@ -145,13 +167,7 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
                       <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
                     </svg>
                     Upload
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*,video/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
+                    <input type="file" multiple accept="image/*,video/*" onChange={handleFileChange} className="hidden" />
                   </label>
                   {files.length > 0 && (
                     <p className="text-xs text-gray-500 font-sans">{files.length} file(s) selected</p>
@@ -160,14 +176,12 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
 
                 <div className="border-t border-[#e0dbd5]" />
 
-                {/* Your name */}
+                {/* Name */}
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">
                     Your Name <span className="text-gray-400">*</span>
                   </label>
-                  <p className="text-xs text-gray-500 font-sans -mt-1">
-                    This will appear publicly with your review
-                  </p>
+                  <p className="text-xs text-gray-500 font-sans -mt-1">This will appear publicly with your review</p>
                   <input
                     type="text"
                     value={name}
@@ -177,23 +191,37 @@ export function WriteReviewDrawer({ open, onClose }: WriteReviewDrawerProps) {
                   />
                 </div>
 
+                {/* Email */}
+                <div className="space-y-2">
+                  <label className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">
+                    Your Email <span className="text-gray-400 font-normal">(optional)</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    className="w-full border border-[#C4BDB6] bg-white px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 font-sans focus:outline-none focus:border-gray-900 transition-colors"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Sticky footer */}
+            {/* Footer */}
             <div className="border-t border-[#e0dbd5] px-6 py-4 bg-[#f5f1ed] flex items-center justify-between flex-shrink-0">
               <p className="text-[11px] text-gray-400 font-sans">* required fields</p>
               <button
                 onClick={handleSubmit}
-                disabled={!isValid}
+                disabled={!isValid || createReview.isPending}
                 className={cn(
-                  'px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors',
-                  isValid
+                  'px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors flex items-center gap-2',
+                  isValid && !createReview.isPending
                     ? 'bg-[#2D2D2D] hover:bg-black text-white'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 )}
               >
-                Send
+                {createReview.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                {createReview.isPending ? 'Sending...' : 'Send'}
               </button>
             </div>
           </motion.div>
