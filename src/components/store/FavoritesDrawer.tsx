@@ -10,7 +10,7 @@ import {
 import { useFavoritesStore } from '@/stores/favoritesStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { CartSidebar } from './CartSidebar';
+
 import { toast } from 'sonner';
 
 export function FavoritesDrawer() {
@@ -72,11 +72,11 @@ export function FavoritesDrawer() {
                     }`}
             >
 
-                {/* Left Sidebar - Recommendations */}
-                <CartSidebar mode="favorite" />
+
+                {/* Favorites Content */}
 
                 {/* Right Side - Favorites Content */}
-                <div className="flex flex-col w-[55%] md:flex-1 h-full min-w-0 overflow-hidden">
+                <div className="flex flex-col flex-1 h-full min-w-0 overflow-hidden">
                     <SheetHeader className="sticky top-0 z-30 flex-shrink-0 px-3 md:px-8 py-4 md:py-6 border-b border-[#e0dbd5] bg-[#f5f1ed]">
                         <div className="flex items-center justify-between gap-2">
                             <SheetTitle className="text-[15px] md:text-[22px] font-medium tracking-tight text-gray-900 whitespace-nowrap">

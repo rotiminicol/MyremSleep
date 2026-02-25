@@ -1,1 +1,7 @@
 project_id = "veszdrgnldqcbgqwhaos"
+
+[functions.send-contact-email]
+verify_jwt = false
+
+[functions.judgeme-reviews]
+verify_jwt = false
