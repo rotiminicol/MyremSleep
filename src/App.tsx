@@ -24,6 +24,8 @@ import MaterialsPage from "./pages/MaterialsPage";
 import QualityPromisePage from "./pages/QualityPromisePage";
 import SustainabilityPage from "./pages/SustainabilityPage";
 import ContactPage from "./pages/ContactPage";
+import HelpCenterPage from "./pages/HelpCenterPage";
+import CheckoutPage from "./pages/CheckoutPage";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import { CookieConsent } from "./components/CookieConsent";
@@ -65,6 +67,8 @@ const App = () => (
             <Route path="/quality-promise" element={<QualityPromisePage />} />
             <Route path="/sustainability" element={<SustainabilityPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/help" element={<HelpCenterPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />

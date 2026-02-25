@@ -29,10 +29,7 @@ export function StoreFooter() {
       title: 'Online Support',
       links: [
         { label: 'Contact', href: '/faq' },
-        { label: 'Shipping & Returns', href: '/faq' },
-        { label: 'Size Guide', href: '/faq' },
-        { label: 'Care Guide', href: '/faq' },
-        { label: 'Help Center', href: '/faq' },
+        { label: 'Help Center', href: '/help' },
       ],
     },
     {

@@ -42,8 +42,8 @@ export function SimpleBackButton() {
                 </button>
             </div>
 
-            {/* Center: Announcement Carousel */}
-            <div className="flex items-center justify-center gap-4 flex-1">
+            {/* Center: Announcement Carousel - Desktop Only */}
+            <div className="flex items-center justify-center gap-4 flex-1 hidden md:flex">
                 <button onClick={prevAnnouncement} className="hover:opacity-70 transition-opacity">
                     <ChevronLeft className="h-3.5 w-3.5 stroke-[1.5]" />
                 </button>
@@ -66,7 +66,9 @@ export function SimpleBackButton() {
                 </button>
             </div>
 
-            {/* Right: Spacer for balance */}
+            {/* Right: Spacer for balance - Always visible on mobile for centering */}
+            <div className="flex-1 flex md:hidden"></div>
+            {/* Right: Spacer for balance - Desktop only */}
             <div className="flex-1 hidden md:flex"></div>
         </div>
     );

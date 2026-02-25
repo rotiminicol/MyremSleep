@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, X } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -63,6 +64,7 @@ const COLOR_DESCRIPTIONS: Record<string, { title: string; description: string }>
 
 
 export function CartDrawer() {
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { items, isLoading, isSyncing, isCartOpen, updateQuantity, removeItem, getCheckoutUrl, syncCart, setCartOpen } =
     useCartStore();
@@ -89,11 +91,9 @@ export function CartDrawer() {
   }, [isCartOpen, syncCart]);
 
   const handleCheckout = () => {
-    const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
-      setCartOpen(false);
-    }
+    // Navigate to the checkout page instead of Shopify checkout
+    navigate('/checkout');
+    setCartOpen(false);
   };
 
   // Helper function to get currency symbol
