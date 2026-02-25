@@ -725,7 +725,7 @@ export default function ProductPage() {
                       </div>
 
                       {/* Key features */}
-                      <div className="space-y-4 border-t border-[#e0dbd5]">
+                      <div className="space-y-4">
                         <ul className="space-y-3">
                           {[
                             '100% Egyptian cotton · 300 thread count sateen weave',
@@ -773,7 +773,7 @@ export default function ProductPage() {
 
                       {/* Wash instructions */}
                       <div className="space-y-4 border-t border-[#e0dbd5]">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Wash (The Calm Setting Wins)</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Wash</h4>
                         <ul className="space-y-3">
                           {[
                             '30°C for most washes (best for softness + sheen)',
@@ -855,7 +855,7 @@ export default function ProductPage() {
                       {/* Write Review Action */}
                       <div className="space-y-4">
                         <p className="text-sm text-gray-600 leading-relaxed">
-                          Changed your mind? No problem. We accept returns on unused, unwashed, and undamaged bedding for a full refund within 30 days of delivery. Items must be returned in their original packaging, with all tags and labels attached. Please see our <Link to="/privacy" className="underline hover:text-gray-900 transition-colors">Returns Policy</Link> for full details.
+                          Changed your mind? No problem. We accept returns on unused, unwashed, and undamaged bedding for a full refund within 30 days of delivery. Items must be returned in their original packaging, with all tags and labels attached. Please see our <Link to="/help" className="underline hover:text-gray-900 transition-colors">Returns Policy</Link> for full details.
                         </p>
                       </div>
                     </div>

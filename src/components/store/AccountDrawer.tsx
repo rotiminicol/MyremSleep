@@ -1,7 +1,7 @@
-
 import { useState } from 'react';
-import { User, X, Mail, Lock, ArrowRight, Package, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { User, X, Mail, Lock, ArrowRight, Package, Settings, LogOut, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useNavigate } from 'react-router-dom';
 import {
     Sheet,
     SheetContent,
@@ -16,15 +16,84 @@ import { motion, AnimatePresence } from 'framer-motion';
 export function AccountDrawer() {
     const [isOpen, setIsOpen] = useState(false);
     const [view, setView] = useState<'home' | 'login' | 'signup' | 'profile'>('home');
+    const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState({
+        fullName: '',
+        email: '',
+        password: ''
+    });
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const isMobile = useIsMobile();
+    const navigate = useNavigate();
 
     // Mock state for demonstration
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    const validatePassword = (password: string) => {
+        const requirements = {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            number: /[0-9]/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+        };
+        
+        const failedRequirements = Object.entries(requirements)
+            .filter(([_, passed]) => !passed)
+            .map(([requirement]) => {
+                switch(requirement) {
+                    case 'length': return 'At least 8 characters';
+                    case 'uppercase': return 'One uppercase letter';
+                    case 'lowercase': return 'One lowercase letter';
+                    case 'number': return 'One number';
+                    case 'special': return 'One special character';
+                    default: return '';
+                }
+            });
+        
+        return failedRequirements;
+    };
+
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+        
+        if (view === 'signup' && !formData.fullName.trim()) {
+            newErrors.fullName = 'Full name is required';
+        }
+        
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email';
+        }
+        
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        } else {
+            const passwordErrors = validatePassword(formData.password);
+            if (passwordErrors.length > 0) {
+                newErrors.password = passwordErrors.join(', ');
+            }
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleInputChange = (field: string, value: string) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+        // Clear error for this field when user starts typing
+        if (errors[field]) {
+            setErrors(prev => ({ ...prev, [field]: '' }));
+        }
+    };
+
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoggedIn(true);
-        setView('profile');
+        if (validateForm()) {
+            setIsLoggedIn(true);
+            setView('profile');
+        }
     };
 
     const handleLogout = () => {
@@ -110,12 +179,24 @@ export function AccountDrawer() {
                                     </h3>
 
                                     <div className="space-y-3">
-                                        <button className="w-full flex items-center justify-center gap-3 h-16 bg-[#F8F5F2] hover:bg-[#EBE7E0] border border-[#e0dbd5] transition-colors group">
+                                        <button 
+                                            onClick={() => {
+                                                setIsOpen(false);
+                                                navigate('/orders');
+                                            }}
+                                            className="w-full flex items-center justify-center gap-3 h-16 bg-[#F8F5F2] hover:bg-[#EBE7E0] border border-[#e0dbd5] transition-colors group"
+                                        >
                                             <Package className="h-5 w-5 text-gray-700" strokeWidth={1.5} />
                                             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">Orders</span>
                                         </button>
 
-                                        <button className="w-full flex items-center justify-center gap-3 h-16 bg-[#F8F5F2] hover:bg-[#EBE7E0] border border-[#e0dbd5] transition-colors group">
+                                        <button 
+                                            onClick={() => {
+                                                setIsOpen(false);
+                                                navigate('/profile');
+                                            }}
+                                            className="w-full flex items-center justify-center gap-3 h-16 bg-[#F8F5F2] hover:bg-[#EBE7E0] border border-[#e0dbd5] transition-colors group"
+                                        >
                                             <User className="h-5 w-5 text-gray-700" strokeWidth={1.5} />
                                             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">Profile</span>
                                         </button>
@@ -144,34 +225,60 @@ export function AccountDrawer() {
                                     </p>
                                 </div>
 
-                                <form onSubmit={handleLogin} className="space-y-4">
+                                <form onSubmit={handleLogin} className="space-y-6">
                                     <div className="space-y-4">
                                         {view === 'signup' && (
                                             <div className="relative">
                                                 <Input
+                                                    value={formData.fullName}
+                                                    onChange={(e) => handleInputChange('fullName', e.target.value)}
                                                     placeholder="Full Name"
-                                                    className="pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm"
+                                                    className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.fullName ? 'border-red-500' : ''}`}
                                                 />
                                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                                {errors.fullName && (
+                                                    <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.fullName}</p>
+                                                )}
                                             </div>
                                         )}
                                         <div className="relative">
                                             <Input
                                                 type="email"
+                                                value={formData.email}
+                                                onChange={(e) => handleInputChange('email', e.target.value)}
                                                 placeholder="Email Address"
-                                                className="pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm"
+                                                className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.email ? 'border-red-500' : ''}`}
                                                 required
                                             />
                                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                            {errors.email && (
+                                                <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.email}</p>
+                                            )}
                                         </div>
                                         <div className="relative">
                                             <Input
-                                                type="password"
+                                                type={showPassword ? "text" : "password"}
+                                                value={formData.password}
+                                                onChange={(e) => handleInputChange('password', e.target.value)}
                                                 placeholder="Password"
-                                                className="pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm"
+                                                className={`pl-10 pr-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.password ? 'border-red-500' : ''}`}
                                                 required
                                             />
                                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-4 w-4" />
+                                                ) : (
+                                                    <Eye className="h-4 w-4" />
+                                                )}
+                                            </button>
+                                            {errors.password && (
+                                                <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.password}</p>
+                                            )}
                                         </div>
                                     </div>
 

@@ -26,6 +26,8 @@ import SustainabilityPage from "./pages/SustainabilityPage";
 import ContactPage from "./pages/ContactPage";
 import HelpCenterPage from "./pages/HelpCenterPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import OrdersPage from "./pages/OrdersPage";
+import ProfilePage from "./pages/ProfilePage";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import { CookieConsent } from "./components/CookieConsent";
@@ -69,6 +71,8 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/help" element={<HelpCenterPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />
