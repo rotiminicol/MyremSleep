@@ -93,9 +93,15 @@ export function CartDrawer() {
   }, [isCartOpen, syncCart]);
 
   const handleCheckout = () => {
-    // Navigate to the checkout page instead of Shopify checkout
-    navigate('/checkout');
-    setCartOpen(false);
+    const checkoutUrl = getCheckoutUrl();
+    if (checkoutUrl) {
+      window.open(checkoutUrl, '_blank');
+      setCartOpen(false);
+    } else {
+      // Fallback to custom checkout page
+      navigate('/checkout');
+      setCartOpen(false);
+    }
   };
 
   // Helper function to get currency symbol

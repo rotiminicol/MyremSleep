@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,10 +35,22 @@ import { CookieConsent } from "./components/CookieConsent";
 import { StoreOfferPopup } from "./components/store/StoreOfferPopup";
 import { useCartSync } from "./hooks/useCartSync";
 
+import { useCustomerStore } from "./stores/customerStore";
+
 const queryClient = new QueryClient();
 
-function CartSyncProvider({ children }: { children: React.ReactNode }) {
+function AppProviders({ children }: { children: React.ReactNode }) {
   useCartSync();
+  // Refresh customer session on app load
+  const refreshCustomer = useCustomerStore(state => state.refreshCustomer);
+  const isLoggedIn = useCustomerStore(state => state.isLoggedIn);
+  
+  React.useEffect(() => {
+    if (isLoggedIn()) {
+      refreshCustomer();
+    }
+  }, []);
+
   return <>{children}</>;
 }
 
@@ -51,7 +64,7 @@ const App = () => (
         <CookieConsent />
         <StoreOfferPopup />
         <GoogleAnalytics />
-        <CartSyncProvider>
+        <AppProviders>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/store" element={<StorePage />} />
@@ -80,7 +93,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </CartSyncProvider>
+        </AppProviders>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

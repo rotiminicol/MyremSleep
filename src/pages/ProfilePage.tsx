@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
   User, Mail, Phone, MapPin, Edit2, Save, X, Check, Lock,
-  Bell, CreditCard, Package, Heart, LogOut, ChevronRight,
-  Shield, Eye, EyeOff, Globe, Sparkles, Camera
+  Bell, Package, Heart, LogOut, ChevronRight,
+  Shield, Eye, EyeOff, Globe, Sparkles, Camera, Loader2
 } from 'lucide-react';
 import { SimpleBackButton } from '../components/SimpleBackButton';
+import { useCustomerStore } from '@/stores/customerStore';
+import { toast } from 'sonner';
 
 // ── 3D Tilt ───────────────────────────────────────────────────────────────
 function TiltCard({ children, className = '', intensity = 1 }) {
@@ -65,23 +67,8 @@ function FormField({ label, children }) {
 }
 
 // ── Avatar ────────────────────────────────────────────────────────────────
-function Avatar({ name, onAvatarChange }) {
+function Avatar({ name }) {
   const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2);
-  const [imageUrl, setImageUrl] = useState(null);
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageUrl(reader.result);
-        if (onAvatarChange) {
-          onAvatarChange(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   return (
     <TiltCard intensity={1.5}>
@@ -90,31 +77,16 @@ function Avatar({ name, onAvatarChange }) {
         style={{ transformStyle: 'preserve-3d' }}
         whileHover={{ scale: 1.05 }}
       >
-        {imageUrl ? (
-          <img src={imageUrl} alt="Profile" className="absolute inset-0 w-full h-full rounded-full object-cover" style={{ transform: 'translateZ(10px)' }} />
-        ) : (
-          <span className="text-white text-2xl" style={{ transform: 'translateZ(10px)' }}>{initials}</span>
-        )}
+        <span className="text-white text-2xl" style={{ transform: 'translateZ(10px)' }}>{initials}</span>
         <motion.div
           className="absolute inset-0 rounded-full border-2 border-white/30"
           animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0, 0.5] }}
           transition={{ duration: 3, repeat: Infinity }}
         />
-        <label className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center shadow-lg hover:bg-black transition-colors cursor-pointer z-10">
-          <Camera className="w-3.5 h-3.5 text-white" />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
-        </label>
       </motion.div>
     </TiltCard>
   );
 }
-
-Avatar.displayName = 'Avatar';
 
 const SECTIONS = [
   { id: 'personal', label: 'Personal', icon: User },
@@ -126,46 +98,79 @@ const SECTIONS = [
 export default function ProfilePage() {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('personal');
-  const [showFavoritesDrawer, setShowFavoritesDrawer] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showPw, setShowPw] = useState({ cur: false, new: false, confirm: false });
   const [showPwForm, setShowPwForm] = useState(false);
 
-  const [profile, setProfile] = useState({
-    firstName: 'Alex', lastName: 'Remsleep',
-    email: 'alex@example.com', phone: '+44 20 7123 4567',
-    address: { street: '123 Sleep Street', city: 'London', postcode: 'SW1A 1AA', country: 'United Kingdom' },
-    preferences: { newsletter: true, orderUpdates: true, promotions: false },
-    avatarImage: null,
+  const { customer, isLoading, isLoggedIn, logout, updateProfile, refreshCustomer } = useCustomerStore();
+
+  const [draft, setDraft] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
   });
-  const [draft, setDraft] = useState({ ...profile });
   const [pw, setPw] = useState({ cur: '', new: '', confirm: '' });
+  const [preferences, setPreferences] = useState({ newsletter: true, orderUpdates: true, promotions: false });
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate('/store');
+    } else {
+      refreshCustomer();
+    }
+  }, []);
+
+  // Sync draft with customer data
+  useEffect(() => {
+    if (customer) {
+      setDraft({
+        firstName: customer.firstName || '',
+        lastName: customer.lastName || '',
+        email: customer.email || '',
+        phone: customer.phone || '',
+      });
+    }
+  }, [customer]);
 
   const triggerSuccess = () => {
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
-  const handleSave = () => {
-    setProfile({ ...draft });
-    setIsEditing(false);
-    triggerSuccess();
+  const handleSave = async () => {
+    const success = await updateProfile({
+      firstName: draft.firstName,
+      lastName: draft.lastName,
+      phone: draft.phone,
+    });
+    if (success) {
+      setIsEditing(false);
+      triggerSuccess();
+    } else {
+      toast.error('Failed to update profile', { position: 'top-center' });
+    }
   };
 
-  const handlePwSave = (e) => {
-    e.preventDefault();
-    setShowPwForm(false);
-    setPw({ cur: '', new: '', confirm: '' });
-    triggerSuccess();
+  const handleSignOut = async () => {
+    await logout();
+    setShowSignOutModal(false);
+    navigate('/store');
   };
 
-  const handleAvatarChange = (imageUrl) => {
-    setProfile(prevProfile => ({ ...prevProfile, avatarImage: imageUrl }));
-  };
+  if (!customer) {
+    return (
+      <div className="min-h-screen bg-[#f5f1ed] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
 
-  const fullName = `${profile.firstName} ${profile.lastName}`;
+  const fullName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'User';
+  const address = customer.defaultAddress;
 
   return (
     <div className="min-h-screen bg-[#f5f1ed] overflow-x-hidden" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -221,15 +226,16 @@ export default function ProfilePage() {
                 style={{ transformStyle: 'preserve-3d' }}
               >
                 <div className="flex justify-center mb-4" style={{ transform: 'translateZ(12px)' }}>
-                  <Avatar name={fullName} onAvatarChange={handleAvatarChange} />
+                  <Avatar name={fullName} />
                 </div>
                 <h3 className="text-gray-900 text-xl mb-0.5" style={{ transform: 'translateZ(6px)' }}>{fullName}</h3>
-                <p className="text-xs text-[#8f877d]">{profile.email}</p>
+                <p className="text-xs text-[#8f877d]">{customer.email}</p>
 
-                {/* Member since badge */}
                 <div className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 bg-[#f0ece7] rounded-full">
                   <Sparkles className="w-3 h-3 text-[#8f877d]" />
-                  <span className="text-[11px] text-[#8f877d] font-medium">Member since 2024</span>
+                  <span className="text-[11px] text-[#8f877d] font-medium">
+                    Member since {new Date(customer.createdAt).getFullYear()}
+                  </span>
                 </div>
               </motion.div>
             </TiltCard>
@@ -241,7 +247,7 @@ export default function ProfilePage() {
               transition={{ duration: 0.8, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
               className="bg-white/75 backdrop-blur-lg rounded-2xl border border-white/80 shadow-sm overflow-hidden"
             >
-              {SECTIONS.map((sec, i) => {
+              {SECTIONS.map((sec) => {
                 const Icon = sec.icon;
                 const active = activeSection === sec.id;
                 return (
@@ -262,7 +268,7 @@ export default function ProfilePage() {
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${active ? 'bg-gray-900' : 'bg-[#f0ece7]'}`}>
                         <Icon className={`w-3.5 h-3.5 ${active ? 'text-white' : 'text-[#8f877d]'}`} />
                       </div>
-                      <span className="text-sm font-medium" style={{ fontFamily: 'Montserrat, sans-serif' }}>{sec.label}</span>
+                      <span className="text-sm font-medium">{sec.label}</span>
                     </div>
                     <ChevronRight className={`relative z-10 w-4 h-4 transition-transform ${active ? 'translate-x-0.5' : ''}`} />
                   </motion.button>
@@ -279,20 +285,20 @@ export default function ProfilePage() {
             >
               {[
                 { icon: Package, label: 'View Orders', action: () => navigate('/orders') },
-                { icon: Heart, label: 'Favourites', action: () => setShowFavoritesDrawer(true) },
+                { icon: Heart, label: 'Favourites', action: () => navigate('/store') },
               ].map((item, i) => (
                 <motion.button key={i} whileHover={{ scale: 1.01, y: -1 }} whileTap={{ scale: 0.99 }}
                   onClick={item.action}
                   className="w-full flex items-center gap-3 px-5 py-3.5 bg-white/70 backdrop-blur-lg border border-white/80 rounded-xl text-sm text-gray-600 hover:text-gray-900 hover:bg-white/90 transition-all shadow-sm">
                   <item.icon className="w-4 h-4" />
-                  <span style={{ fontFamily: 'Montserrat, sans-serif' }}>{item.label}</span>
+                  <span>{item.label}</span>
                 </motion.button>
               ))}
               <motion.button whileHover={{ scale: 1.01, y: -1 }} whileTap={{ scale: 0.99 }}
                 onClick={() => setShowSignOutModal(true)}
                 className="w-full flex items-center gap-3 px-5 py-3.5 bg-red-50/80 backdrop-blur-lg border border-red-100 rounded-xl text-sm text-red-500 hover:text-red-700 hover:bg-red-50 transition-all shadow-sm">
                 <LogOut className="w-4 h-4" />
-                <span style={{ fontFamily: 'Montserrat, sans-serif' }}>Sign Out</span>
+                <span>Sign Out</span>
               </motion.button>
             </motion.div>
           </div>
@@ -330,14 +336,24 @@ export default function ProfilePage() {
                       ) : (
                         <div className="flex items-center gap-2">
                           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                            onClick={() => { setDraft({ ...profile }); setIsEditing(false); }}
+                            onClick={() => {
+                              setDraft({
+                                firstName: customer.firstName || '',
+                                lastName: customer.lastName || '',
+                                email: customer.email || '',
+                                phone: customer.phone || '',
+                              });
+                              setIsEditing(false);
+                            }}
                             className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#e8e3dc] text-sm font-medium text-gray-600 hover:bg-[#f0ece7] transition-all">
                             <X className="w-3.5 h-3.5" /> Cancel
                           </motion.button>
                           <motion.button whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}
                             onClick={handleSave}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-black transition-all shadow-lg">
-                            <Save className="w-3.5 h-3.5" /> Save Changes
+                            disabled={isLoading}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-black transition-all shadow-lg disabled:opacity-50">
+                            {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                            Save Changes
                           </motion.button>
                         </div>
                       )}
@@ -349,7 +365,7 @@ export default function ProfilePage() {
                           <input className={inputBase} value={draft.firstName}
                             onChange={e => setDraft({ ...draft, firstName: e.target.value })} />
                         ) : (
-                          <div className={inputDisabled}>{profile.firstName}</div>
+                          <div className={inputDisabled}>{customer.firstName || '—'}</div>
                         )}
                       </FormField>
                       <FormField label="Last Name">
@@ -357,22 +373,14 @@ export default function ProfilePage() {
                           <input className={inputBase} value={draft.lastName}
                             onChange={e => setDraft({ ...draft, lastName: e.target.value })} />
                         ) : (
-                          <div className={inputDisabled}>{profile.lastName}</div>
+                          <div className={inputDisabled}>{customer.lastName || '—'}</div>
                         )}
                       </FormField>
                       <FormField label="Email Address">
-                        {isEditing ? (
-                          <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <input className={`${inputBase} pl-11`} type="email" value={draft.email}
-                              onChange={e => setDraft({ ...draft, email: e.target.value })} />
-                          </div>
-                        ) : (
-                          <div className={`${inputDisabled} flex items-center gap-2`}>
-                            <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            {profile.email}
-                          </div>
-                        )}
+                        <div className={`${inputDisabled} flex items-center gap-2`}>
+                          <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          {customer.email}
+                        </div>
                       </FormField>
                       <FormField label="Phone Number">
                         {isEditing ? (
@@ -384,7 +392,7 @@ export default function ProfilePage() {
                         ) : (
                           <div className={`${inputDisabled} flex items-center gap-2`}>
                             <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            {profile.phone}
+                            {customer.phone || '—'}
                           </div>
                         )}
                       </FormField>
@@ -395,54 +403,58 @@ export default function ProfilePage() {
                 {/* ── ADDRESS ── */}
                 {activeSection === 'address' && (
                   <div className="space-y-7">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h2 className="text-2xl text-gray-900">Shipping Address</h2>
-                        <p className="text-sm text-gray-400 mt-1">Your default delivery address</p>
-                      </div>
-                      <motion.button whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#e8e3dc] bg-[#faf9f7] hover:bg-[#f0ece7] text-sm font-medium text-gray-700 transition-all shadow-sm">
-                        <Edit2 className="w-3.5 h-3.5" /> Edit
-                      </motion.button>
+                    <div>
+                      <h2 className="text-2xl text-gray-900">Shipping Address</h2>
+                      <p className="text-sm text-gray-400 mt-1">Your default delivery address</p>
                     </div>
 
-                    {/* Address display card */}
-                    <TiltCard intensity={0.4}>
-                      <div className="bg-gradient-to-br from-[#faf9f7] to-[#f0ece7] rounded-xl p-6 border border-[#ede9e4]"
-                        style={{ transformStyle: 'preserve-3d' }}>
-                        <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0"
-                            style={{ transform: 'translateZ(8px)' }}>
-                            <MapPin className="w-4 h-4 text-white" />
+                    {address ? (
+                      <>
+                        <TiltCard intensity={0.4}>
+                          <div className="bg-gradient-to-br from-[#faf9f7] to-[#f0ece7] rounded-xl p-6 border border-[#ede9e4]"
+                            style={{ transformStyle: 'preserve-3d' }}>
+                            <div className="flex items-start gap-4">
+                              <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0"
+                                style={{ transform: 'translateZ(8px)' }}>
+                                <MapPin className="w-4 h-4 text-white" />
+                              </div>
+                              <div style={{ transform: 'translateZ(4px)' }}>
+                                <p className="font-medium text-gray-900 mb-0.5">{fullName}</p>
+                                <p className="text-sm text-gray-600">{address.address1}</p>
+                                {address.address2 && <p className="text-sm text-gray-600">{address.address2}</p>}
+                                <p className="text-sm text-gray-600">{address.city}, {address.zip}</p>
+                                <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                                  <Globe className="w-3.5 h-3.5" />{address.country}
+                                </p>
+                              </div>
+                            </div>
                           </div>
-                          <div style={{ transform: 'translateZ(4px)' }}>
-                            <p className="font-medium text-gray-900 mb-0.5">{profile.firstName} {profile.lastName}</p>
-                            <p className="text-sm text-gray-600">{profile.address.street}</p>
-                            <p className="text-sm text-gray-600">{profile.address.city}, {profile.address.postcode}</p>
-                            <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                              <Globe className="w-3.5 h-3.5" />{profile.address.country}
-                            </p>
+                        </TiltCard>
+
+                        <div className="space-y-5">
+                          <FormField label="Street Address">
+                            <div className={inputDisabled}>{address.address1}</div>
+                          </FormField>
+                          <div className="grid sm:grid-cols-3 gap-5">
+                            <FormField label="City">
+                              <div className={inputDisabled}>{address.city}</div>
+                            </FormField>
+                            <FormField label="Postcode">
+                              <div className={inputDisabled}>{address.zip}</div>
+                            </FormField>
+                            <FormField label="Country">
+                              <div className={inputDisabled}>{address.country}</div>
+                            </FormField>
                           </div>
                         </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-12">
+                        <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                        <p className="text-gray-500">No address saved yet</p>
+                        <p className="text-sm text-gray-400 mt-1">Your address will be saved when you place your first order</p>
                       </div>
-                    </TiltCard>
-
-                    <div className="space-y-5">
-                      <FormField label="Street Address">
-                        <div className={inputDisabled}>{profile.address.street}</div>
-                      </FormField>
-                      <div className="grid sm:grid-cols-3 gap-5">
-                        <FormField label="City">
-                          <div className={inputDisabled}>{profile.address.city}</div>
-                        </FormField>
-                        <FormField label="Postcode">
-                          <div className={inputDisabled}>{profile.address.postcode}</div>
-                        </FormField>
-                        <FormField label="Country">
-                          <div className={inputDisabled}>{profile.address.country}</div>
-                        </FormField>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 )}
 
@@ -461,7 +473,7 @@ export default function ProfilePage() {
                         { key: 'promotions', icon: Sparkles, title: 'Special Offers', desc: 'Exclusive discounts and member-only promotions' },
                       ].map((item, i) => {
                         const Icon = item.icon;
-                        const checked = profile.preferences[item.key];
+                        const checked = preferences[item.key];
                         return (
                           <motion.div
                             key={item.key}
@@ -469,7 +481,7 @@ export default function ProfilePage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.08 }}
                             className={`relative flex items-center gap-5 p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer ${checked ? 'border-[#c4bbb1] bg-[#faf9f7]' : 'border-[#ede9e4] bg-white/50 hover:border-[#d8d1c8]'}`}
-                            onClick={() => setProfile({ ...profile, preferences: { ...profile.preferences, [item.key]: !checked } })}
+                            onClick={() => setPreferences({ ...preferences, [item.key]: !checked })}
                           >
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-gray-900' : 'bg-[#f0ece7]'}`}>
                               <Icon className={`w-4 h-4 ${checked ? 'text-white' : 'text-[#8f877d]'}`} />
@@ -478,7 +490,7 @@ export default function ProfilePage() {
                               <p className="font-medium text-gray-900 text-sm">{item.title}</p>
                               <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
                             </div>
-                            <Toggle checked={checked} onChange={(v) => setProfile({ ...profile, preferences: { ...profile.preferences, [item.key]: v } })} />
+                            <Toggle checked={checked} onChange={(v) => setPreferences({ ...preferences, [item.key]: v })} />
                           </motion.div>
                         );
                       })}
@@ -494,7 +506,6 @@ export default function ProfilePage() {
                       <p className="text-sm text-gray-400 mt-1">Manage your password and account security</p>
                     </div>
 
-                    {/* Change password */}
                     <AnimatePresence mode="wait">
                       {!showPwForm ? (
                         <motion.button
@@ -509,7 +520,7 @@ export default function ProfilePage() {
                           </div>
                           <div className="flex-1 text-left">
                             <p className="text-sm font-medium text-gray-900">Change Password</p>
-                            <p className="text-xs text-gray-500">Last updated 3 months ago</p>
+                            <p className="text-xs text-gray-500">Update your account password</p>
                           </div>
                           <ChevronRight className="w-4 h-4 text-gray-400" />
                         </motion.button>
@@ -517,7 +528,12 @@ export default function ProfilePage() {
                         <motion.form
                           key="form"
                           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                          onSubmit={handlePwSave}
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            setShowPwForm(false);
+                            setPw({ cur: '', new: '', confirm: '' });
+                            toast.success('Password updated', { position: 'top-center' });
+                          }}
                           className="space-y-5 bg-[#faf9f7] rounded-xl border border-[#e8e3dc] p-6"
                         >
                           <h3 className="text-base text-gray-900">Update Password</h3>
@@ -564,102 +580,6 @@ export default function ProfilePage() {
         </div>
       </main>
 
-      {/* Favorites Drawer */}
-      <AnimatePresence>
-        {showFavoritesDrawer && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
-            onClick={() => setShowFavoritesDrawer(false)}
-          >
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
-                    <Heart className="w-5 h-5 text-red-500" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg text-gray-900">My Favourites</h2>
-                    <p className="text-sm text-gray-500">Items you've saved</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowFavoritesDrawer(false)}
-                  className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors"
-                >
-                  <X className="w-4 h-4 text-gray-500" />
-                </button>
-              </div>
-
-              {/* Drawer Content */}
-              <div className="p-6 overflow-y-auto h-[calc(100%-88px)]">
-                {/* Sample favorites items */}
-                <div className="space-y-4">
-                  {[
-                    {
-                      name: 'Winter Cloud Bundle Set',
-                      price: '£299',
-                      image: 'https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845',
-                      savedDate: '2 days ago'
-                    },
-                    {
-                      name: 'Silken Sateen Pillowcase Pair',
-                      price: '£149',
-                      image: 'https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845',
-                      savedDate: '1 week ago'
-                    },
-                    {
-                      name: 'Cashmere Dream Throw',
-                      price: '£199',
-                      image: 'https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845',
-                      savedDate: '2 weeks ago'
-                    }
-                  ].map((item, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
-                    >
-                      <img src={item.image} alt={item.name} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 truncate">{item.name}</h3>
-                        <p className="text-sm text-gray-500 mt-1">{item.savedDate}</p>
-                        <p className="text-lg text-gray-900 mt-2">{item.price}</p>
-                      </div>
-                      <button className="flex-shrink-0">
-                        <Heart className="w-5 h-5 text-red-500 fill-red-500" />
-                      </button>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Empty state if no favorites */}
-                {false && (
-                  <div className="text-center py-12">
-                    <Heart className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-                    <h3 className="text-lg text-gray-400 mb-2">No favorites yet</h3>
-                    <p className="text-sm text-gray-400">Start adding items you love to see them here</p>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Sign Out Confirmation Modal */}
       <AnimatePresence>
         {showSignOutModal && (
@@ -679,7 +599,6 @@ export default function ProfilePage() {
               className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-white/80"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header */}
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
                   <LogOut className="w-5 h-5 text-red-500" />
@@ -690,12 +609,10 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Modal Content */}
               <p className="text-sm text-gray-600 mb-6">
                 You will need to sign in again to access your account and order history.
               </p>
 
-              {/* Modal Actions */}
               <div className="flex gap-3">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -708,13 +625,7 @@ export default function ProfilePage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    // Clear any auth tokens and redirect to login/home
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('user');
-                    setShowSignOutModal(false);
-                    navigate('/');
-                  }}
+                  onClick={handleSignOut}
                   className="flex-1 py-3 px-4 bg-red-500 text-white rounded-xl text-sm font-medium hover:bg-red-600 transition-colors shadow-lg"
                 >
                   Sign Out

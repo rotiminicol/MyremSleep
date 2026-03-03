@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { User, X, Mail, Lock, ArrowRight, Package, Settings, LogOut, ChevronRight, Eye, EyeOff } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, X, Mail, Lock, ArrowRight, Package, LogOut, ChevronRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -12,13 +12,16 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCustomerStore } from '@/stores/customerStore';
+import { toast } from 'sonner';
 
 export function AccountDrawer() {
     const [isOpen, setIsOpen] = useState(false);
     const [view, setView] = useState<'home' | 'login' | 'signup' | 'profile'>('home');
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
-        fullName: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: ''
     });
@@ -26,39 +29,32 @@ export function AccountDrawer() {
     const isMobile = useIsMobile();
     const navigate = useNavigate();
 
-    // Mock state for demonstration
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { customer, isLoading, error, login, signup, logout, isLoggedIn, clearError, refreshCustomer } = useCustomerStore();
 
-    const validatePassword = (password: string) => {
-        const requirements = {
-            length: password.length >= 8,
-            uppercase: /[A-Z]/.test(password),
-            lowercase: /[a-z]/.test(password),
-            number: /[0-9]/.test(password),
-            special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
-        };
-        
-        const failedRequirements = Object.entries(requirements)
-            .filter(([_, passed]) => !passed)
-            .map(([requirement]) => {
-                switch(requirement) {
-                    case 'length': return 'At least 8 characters';
-                    case 'uppercase': return 'One uppercase letter';
-                    case 'lowercase': return 'One lowercase letter';
-                    case 'number': return 'One number';
-                    case 'special': return 'One special character';
-                    default: return '';
-                }
-            });
-        
-        return failedRequirements;
-    };
+    // Refresh customer data when drawer opens and user is logged in
+    useEffect(() => {
+        if (isOpen && isLoggedIn()) {
+            refreshCustomer();
+            setView('profile');
+        } else if (isOpen && !isLoggedIn()) {
+            setView('home');
+        }
+    }, [isOpen]);
+
+    // Show error from store
+    useEffect(() => {
+        if (error) {
+            toast.error(error, { position: 'top-center' });
+            clearError();
+        }
+    }, [error]);
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
         
-        if (view === 'signup' && !formData.fullName.trim()) {
-            newErrors.fullName = 'Full name is required';
+        if (view === 'signup') {
+            if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+            if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
         }
         
         if (!formData.email.trim()) {
@@ -69,11 +65,8 @@ export function AccountDrawer() {
         
         if (!formData.password) {
             newErrors.password = 'Password is required';
-        } else {
-            const passwordErrors = validatePassword(formData.password);
-            if (passwordErrors.length > 0) {
-                newErrors.password = passwordErrors.join(', ');
-            }
+        } else if (formData.password.length < 5) {
+            newErrors.password = 'Password must be at least 5 characters';
         }
         
         setErrors(newErrors);
@@ -82,23 +75,44 @@ export function AccountDrawer() {
 
     const handleInputChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
-        // Clear error for this field when user starts typing
         if (errors[field]) {
             setErrors(prev => ({ ...prev, [field]: '' }));
         }
     };
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (validateForm()) {
-            setIsLoggedIn(true);
+        if (!validateForm()) return;
+        
+        const success = await login(formData.email, formData.password);
+        if (success) {
+            toast.success('Welcome back!', { position: 'top-center' });
             setView('profile');
+            setFormData({ firstName: '', lastName: '', email: '', password: '' });
         }
     };
 
-    const handleLogout = () => {
-        setIsLoggedIn(false);
+    const handleSignup = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+
+        const success = await signup({
+            email: formData.email,
+            password: formData.password,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+        });
+        if (success) {
+            toast.success('Account created successfully!', { position: 'top-center' });
+            setView('profile');
+            setFormData({ firstName: '', lastName: '', email: '', password: '' });
+        }
+    };
+
+    const handleLogout = async () => {
+        await logout();
         setView('home');
+        toast.success('Signed out successfully', { position: 'top-center' });
     };
 
     return (
@@ -122,7 +136,7 @@ export function AccountDrawer() {
                 <SheetHeader className="sticky top-0 z-30 flex-shrink-0 px-6 py-6 border-b border-[#e0dbd5] bg-[#f5f1ed]">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            {view !== 'home' && (
+                            {view !== 'home' && view !== 'profile' && (
                                 <button
                                     onClick={() => setView('home')}
                                     className="p-1 -ml-2 text-gray-400 hover:text-gray-900 transition-colors"
@@ -145,6 +159,7 @@ export function AccountDrawer() {
 
                 <div className="flex-1 overflow-y-auto px-6 py-8">
                     <AnimatePresence mode="wait">
+                        {/* Home - Not logged in */}
                         {view === 'home' && (
                             <motion.div
                                 key="home"
@@ -208,6 +223,7 @@ export function AccountDrawer() {
                             </motion.div>
                         )}
 
+                        {/* Login / Signup Forms */}
                         {(view === 'login' || view === 'signup') && (
                             <motion.div
                                 key={view}
@@ -228,22 +244,37 @@ export function AccountDrawer() {
                                     </p>
                                 </div>
 
-                                <form onSubmit={handleLogin} className="space-y-6">
+                                <form onSubmit={view === 'login' ? handleLogin : handleSignup} className="space-y-6">
                                     <div className="space-y-4">
                                         {view === 'signup' && (
-                                            <div className="relative">
-                                                <Input
-                                                    value={formData.fullName}
-                                                    onChange={(e) => handleInputChange('fullName', e.target.value)}
-                                                    placeholder="Full Name"
-                                                    className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.fullName ? 'border-red-500' : ''}`}
-                                                    style={{ fontFamily: 'Montserrat, sans-serif' }}
-                                                />
-                                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                                {errors.fullName && (
-                                                    <p className="absolute -bottom-5 left-0 text-xs text-red-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>{errors.fullName}</p>
-                                                )}
-                                            </div>
+                                            <>
+                                                <div className="relative">
+                                                    <Input
+                                                        value={formData.firstName}
+                                                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                                                        placeholder="First Name"
+                                                        className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.firstName ? 'border-red-500' : ''}`}
+                                                        style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                                    />
+                                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                                    {errors.firstName && (
+                                                        <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.firstName}</p>
+                                                    )}
+                                                </div>
+                                                <div className="relative">
+                                                    <Input
+                                                        value={formData.lastName}
+                                                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                                                        placeholder="Last Name"
+                                                        className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.lastName ? 'border-red-500' : ''}`}
+                                                        style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                                    />
+                                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                                    {errors.lastName && (
+                                                        <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.lastName}</p>
+                                                    )}
+                                                </div>
+                                            </>
                                         )}
                                         <div className="relative">
                                             <Input
@@ -257,7 +288,7 @@ export function AccountDrawer() {
                                             />
                                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                             {errors.email && (
-                                                <p className="absolute -bottom-5 left-0 text-xs text-red-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>{errors.email}</p>
+                                                <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.email}</p>
                                             )}
                                         </div>
                                         <div className="relative">
@@ -276,31 +307,47 @@ export function AccountDrawer() {
                                                 onClick={() => setShowPassword(!showPassword)}
                                                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                             >
-                                                {showPassword ? (
-                                                    <EyeOff className="h-4 w-4" />
-                                                ) : (
-                                                    <Eye className="h-4 w-4" />
-                                                )}
+                                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                             </button>
                                             {errors.password && (
-                                                <p className="absolute -bottom-5 left-0 text-xs text-red-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>{errors.password}</p>
+                                                <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.password}</p>
                                             )}
                                         </div>
                                     </div>
 
                                     <Button
                                         type="submit"
+                                        disabled={isLoading}
                                         className="w-full h-14 bg-[#2D2D2D] hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
                                         style={{ fontFamily: 'Montserrat, sans-serif' }}
                                     >
-                                        {view === 'login' ? 'Log In' : 'Create Account'}
-                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                        {isLoading ? (
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <>
+                                                {view === 'login' ? 'Log In' : 'Create Account'}
+                                                <ArrowRight className="ml-2 h-4 w-4" />
+                                            </>
+                                        )}
                                     </Button>
+
+                                    <p className="text-center text-sm text-gray-500">
+                                        {view === 'login' ? (
+                                            <>Don't have an account?{' '}
+                                                <button type="button" onClick={() => setView('signup')} className="text-gray-900 underline">Sign up</button>
+                                            </>
+                                        ) : (
+                                            <>Already have an account?{' '}
+                                                <button type="button" onClick={() => setView('login')} className="text-gray-900 underline">Log in</button>
+                                            </>
+                                        )}
+                                    </p>
                                 </form>
                             </motion.div>
                         )}
 
-                        {view === 'profile' && (
+                        {/* Profile - Logged in */}
+                        {view === 'profile' && customer && (
                             <motion.div
                                 key="profile"
                                 initial={{ opacity: 0, scale: 0.95 }}
@@ -312,44 +359,57 @@ export function AccountDrawer() {
                                         <User className="h-8 w-8 text-zinc-400" />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Alex Remsleep</h4>
-                                        <p className="text-xs text-gray-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>alex@example.com</p>
+                                        <h4 className="text-lg text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                                            {customer.firstName} {customer.lastName}
+                                        </h4>
+                                        <p className="text-xs text-gray-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                                            {customer.email}
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <nav className="space-y-1">
-                                        <button className="w-full flex items-center justify-between p-4 hover:bg-white transition-all group border-b border-zinc-100">
-                                            <div className="flex items-center gap-4">
-                                                <Package className="h-5 w-5 text-gray-600" strokeWidth={1.5} />
-                                                <span className="text-sm font-medium text-gray-700" style={{ fontFamily: 'Montserrat, sans-serif' }}>My Orders</span>
-                                            </div>
-                                            <ChevronRight className="h-4 w-4 text-gray-400 group-hover:translate-x-1 transition-transform" />
-                                        </button>
+                                    <button
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            navigate('/orders');
+                                        }}
+                                        className="w-full flex items-center gap-4 p-5 bg-white border border-zinc-200 hover:border-zinc-400 transition-colors"
+                                    >
+                                        <Package className="h-5 w-5 text-gray-600" strokeWidth={1.5} />
+                                        <div className="flex-1 text-left">
+                                            <p className="text-sm font-medium text-gray-900">Orders</p>
+                                            <p className="text-xs text-gray-500">View your order history</p>
+                                        </div>
+                                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                                    </button>
 
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-full flex items-center justify-between p-4 hover:bg-white transition-all group"
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <LogOut className="h-5 w-5 text-red-600" strokeWidth={1.5} />
-                                                <span className="text-sm font-medium text-red-600" style={{ fontFamily: 'Montserrat, sans-serif' }}>Sign Out</span>
-                                            </div>
-                                            <ChevronRight className="h-4 w-4 text-red-300 group-hover:translate-x-1 transition-transform" />
-                                        </button>
-                                    </nav>
+                                    <button
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            navigate('/profile');
+                                        }}
+                                        className="w-full flex items-center gap-4 p-5 bg-white border border-zinc-200 hover:border-zinc-400 transition-colors"
+                                    >
+                                        <User className="h-5 w-5 text-gray-600" strokeWidth={1.5} />
+                                        <div className="flex-1 text-left">
+                                            <p className="text-sm font-medium text-gray-900">Profile Settings</p>
+                                            <p className="text-xs text-gray-500">Manage your account details</p>
+                                        </div>
+                                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                                    </button>
                                 </div>
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full flex items-center justify-center gap-2 h-14 border border-red-200 text-red-600 hover:bg-red-50 transition-colors text-xs font-bold tracking-[0.2em] uppercase"
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                    Sign Out
+                                </button>
                             </motion.div>
                         )}
                     </AnimatePresence>
-                </div>
-
-                <div className="p-6 border-t border-[#e0dbd5] bg-[#f5f1ed]">
-                    <p className="text-[9px] text-center text-gray-400 uppercase tracking-widest leading-relaxed" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                        Secure checkout powered by Shopify.
-                        <br />
-                        © 2026 REMsleep.
-                    </p>
                 </div>
             </SheetContent>
         </Sheet>
