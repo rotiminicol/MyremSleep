@@ -98,15 +98,15 @@ export function StoreFooter() {
   ];
 
   return (
-    <footer className="bg-[#f5f1ed] border-t border-[#e0dbd5] pt-16 pb-8">
+    <footer className="bg-[#f5f1ed] border-t border-[#e0dbd5] pt-16 pb-8" style={{ fontFamily: 'Montserrat, sans-serif' }}>
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 mb-16">
           {/* Newsletter Section */}
           <div className="lg:col-span-2">
-            <h3 className="text-sm font-medium text-gray-800 mb-4 tracking-wide">
+            <h3 className="text-sm font-medium text-gray-800 mb-4 tracking-wide" style={{ fontFamily: 'Montserrat, sans-serif' }}>
               Keep in touch
             </h3>
-            <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+            <p className="text-sm text-gray-600 mb-6 leading-relaxed" style={{ fontFamily: 'Montserrat, sans-serif' }}>
               Sign up to our newsletter and receive a 10% discount on your next order.
             </p>
             <form onSubmit={handleNewsletterSubmit} className="flex flex-col gap-3">
@@ -116,12 +116,14 @@ export function StoreFooter() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full max-w-xs px-4 py-3 border border-gray-300 bg-transparent text-sm focus:outline-none focus:border-gray-500 transition-colors"
+                style={{ fontFamily: 'Montserrat, sans-serif' }}
                 required
               />
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className="w-max text-sm text-gray-600 hover:text-gray-900 underline underline-offset-4 transition-colors disabled:opacity-50"
+                style={{ fontFamily: 'Montserrat, sans-serif' }}
               >
                 {isSubmitting ? 'Subscribing...' : 'Subscribe'}
               </button>
@@ -131,7 +133,7 @@ export function StoreFooter() {
           {/* Footer Links */}
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h3 className="text-sm font-medium text-gray-800 mb-4 tracking-wide">
+              <h3 className="text-sm font-medium text-gray-800 mb-4 tracking-wide" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -143,6 +145,7 @@ export function StoreFooter() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                        style={{ fontFamily: 'Montserrat, sans-serif' }}
                       >
                         {link.label}
                       </a>
@@ -150,6 +153,7 @@ export function StoreFooter() {
                       <Link
                         to={link.href}
                         className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                        style={{ fontFamily: 'Montserrat, sans-serif' }}
                       >
                         {link.label}
                       </Link>
@@ -163,9 +167,9 @@ export function StoreFooter() {
 
         {/* Copyright and Payment Methods */}
         <div className="pt-8 border-t border-[#e0dbd5] flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             © 2026 Remsleep.{' '}
-            <Link to="/blog" className="hover:underline">
+            <Link to="/blog" className="hover:underline" style={{ fontFamily: 'Montserrat, sans-serif' }}>
               Blog
             </Link>{' '}
             • All rights reserved.

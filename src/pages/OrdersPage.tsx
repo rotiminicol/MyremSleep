@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
 import { Package, Calendar, Truck, Check, X, ArrowRight, ChevronDown, Search, MapPin, Clock, Star, RotateCcw, ExternalLink, Sparkles } from 'lucide-react';
+import { SimpleBackButton } from '../components/SimpleBackButton';
+import { useOrderStore } from '@/stores/orderStore';
+import { useCurrency } from '@/hooks/useCurrency';
 
 // ── 3D Tilt Card ──────────────────────────────────────────────────────────
 function TiltCard({ children, className = '', intensity = 1, glare = true }) {
@@ -11,6 +14,8 @@ function TiltCard({ children, className = '', intensity = 1, glare = true }) {
 
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6 * intensity, -6 * intensity]), { stiffness: 120, damping: 20 });
   const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-7 * intensity, 7 * intensity]), { stiffness: 120, damping: 20 });
+  
+  // Store as percentage strings directly (no multiplication needed)
   const glareX = useTransform(x, [-0.5, 0.5], ['0%', '100%']);
   const glareY = useTransform(y, [-0.5, 0.5], ['0%', '100%']);
 
@@ -35,7 +40,7 @@ function TiltCard({ children, className = '', intensity = 1, glare = true }) {
         <motion.div
           className="absolute inset-0 rounded-2xl pointer-events-none"
           style={{
-            background: `radial-gradient(circle at ${glareX.get() * 100}% ${glareY.get() * 100}%, rgba(255,255,255,0.15) 0%, transparent 60%)`,
+            background: `radial-gradient(circle at ${glareX} ${glareY}, rgba(255,255,255,0.15) 0%, transparent 60%)`,
             mixBlendMode: 'overlay',
           }}
         />
@@ -103,29 +108,6 @@ const STATUS = {
   },
 };
 
-const mockOrders = [
-  {
-    id: 'REM-2024-001', date: '2024-02-15', status: 'delivered', total: 299, items: 1,
-    tracking: '1Z999AA1234567847',
-    product: 'Winter Cloud Bundle Set',
-    image: 'https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845',
-    size: 'King',
-  },
-  {
-    id: 'REM-2024-002', date: '2024-02-20', status: 'shipped', total: 598, items: 2,
-    tracking: '1Z999AA1234567848',
-    product: 'Silken Sateen Pillowcase Pair',
-    image: 'https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845',
-    size: 'Standard',
-  },
-  {
-    id: 'REM-2024-003', date: '2024-02-25', status: 'processing', total: 299, items: 1,
-    product: 'Cashmere Dream Throw',
-    image: 'https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845',
-    size: 'One Size',
-  },
-];
-
 // ── Timeline Steps ─────────────────────────────────────────────────────────
 function OrderTimeline({ status }) {
   const steps = [
@@ -184,9 +166,15 @@ function OrderTimeline({ status }) {
 }
 
 // ── Order Card ─────────────────────────────────────────────────────────────
-function OrderCard({ order, index, onClick }) {
+function OrderCard({ order, index, onClick, formatPrice }) {
   const cfg = STATUS[order.status];
   const StatusIcon = cfg.icon;
+  
+  // Get first item for display
+  const firstItem = order.items[0];
+  const productTitle = firstItem?.productTitle || 'Product';
+  const productImage = firstItem?.image || '/placeholder.png';
+  const itemCount = order.items.length;
 
   return (
     <TiltCard intensity={0.4} className="cursor-pointer group" glare={true}>
@@ -207,7 +195,7 @@ function OrderCard({ order, index, onClick }) {
             style={{ transformStyle: 'preserve-3d', transform: 'translateZ(8px)' }}
             whileHover={{ scale: 1.05 }}
           >
-            <img src={order.image} alt={order.product} className="w-full h-full object-cover" />
+            <img src={productImage} alt={productTitle} className="w-full h-full object-cover" />
           </motion.div>
 
           {/* Info */}
@@ -224,19 +212,19 @@ function OrderCard({ order, index, onClick }) {
                 {cfg.label}
               </motion.div>
             </div>
-            <p className="text-sm text-gray-600 mb-1 truncate">{order.product} · {order.size}</p>
+            <p className="text-sm text-gray-600 mb-1 truncate">{productTitle}</p>
             <div className="flex items-center gap-4 text-xs text-gray-400">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
                 {new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
               </span>
-              <span>{order.items} {order.items === 1 ? 'item' : 'items'}</span>
+              <span>{itemCount} {itemCount === 1 ? 'item' : 'items'}</span>
             </div>
           </div>
 
           {/* Price + arrow */}
           <div className="flex flex-col items-end gap-3 flex-shrink-0">
-            <p className="text-xl font-serif text-gray-900">£{order.total}</p>
+            <p className="text-xl font-serif text-gray-900">{formatPrice(order.total)}</p>
             <motion.div
               className="w-8 h-8 rounded-full bg-[#f0ece7] flex items-center justify-center group-hover:bg-gray-900 transition-colors duration-300"
               whileHover={{ scale: 1.1 }}
@@ -259,15 +247,20 @@ function OrderCard({ order, index, onClick }) {
 }
 
 // ── Modal ──────────────────────────────────────────────────────────────────
-function OrderModal({ order, onClose }) {
+function OrderModal({ order, onClose, formatPrice }) {
   const cfg = STATUS[order.status];
   const StatusIcon = cfg.icon;
+  
+  // Get first item for display
+  const firstItem = order.items[0];
+  const productTitle = firstItem?.productTitle || 'Product';
+  const productImage = firstItem?.image || '/placeholder.png';
 
   useEffect(() => {
     const fn = (e) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', fn);
     return () => window.removeEventListener('keydown', fn);
-  }, []);
+  }, [onClose]);
 
   return (
     <motion.div
@@ -289,7 +282,7 @@ function OrderModal({ order, onClose }) {
       >
         {/* Header image strip */}
         <div className="relative h-44 rounded-t-3xl overflow-hidden">
-          <img src={order.image} alt={order.product} className="w-full h-full object-cover" />
+          <img src={productImage} alt={productTitle} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           <button
             onClick={onClose}
@@ -299,26 +292,25 @@ function OrderModal({ order, onClose }) {
           </button>
           <div className="absolute bottom-4 left-6 right-6">
             <p className="text-white/70 text-xs tracking-[0.3em] uppercase mb-1">Order</p>
-            <h2 className="text-white text-2xl font-serif">{order.id}</h2>
+            <p className="text-white text-2xl font-serif">{order.id}</p>
           </div>
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Status badge */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.15 }}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r ${cfg.color} ${cfg.text} border ${cfg.border}`}
-          >
-            <motion.div className={`w-2 h-2 rounded-full ${cfg.dot}`}
-              animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 2, repeat: Infinity }} />
-            {cfg.label}
-          </motion.div>
-
-          {/* Timeline */}
-          <div>
-            <p className="text-xs tracking-[0.25em] uppercase text-[#8f877d] mb-2 font-medium">Delivery Progress</p>
+          {/* Status */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs tracking-[0.25em] uppercase text-[#8f877d] mb-3 font-medium">Status</p>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold tracking-wide ${cfg.text} bg-white/70 border ${cfg.border}`}
+              >
+                <span className={`w-2 h-2 rounded-full ${cfg.dot}`} />
+                {cfg.label}
+              </motion.div>
+            </div>
             <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-white/80 px-4">
               <OrderTimeline status={order.status} />
             </div>
@@ -329,11 +321,12 @@ function OrderModal({ order, onClose }) {
             <p className="text-xs tracking-[0.25em] uppercase text-[#8f877d] mb-3 font-medium">Order Details</p>
             <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-white/80 p-5 space-y-4">
               {[
-                { label: 'Product', value: order.product },
-                { label: 'Size', value: order.size },
+                { label: 'Product', value: productTitle },
                 { label: 'Order Date', value: new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) },
-                { label: 'Items', value: `${order.items} ${order.items === 1 ? 'item' : 'items'}` },
-                { label: 'Total', value: `£${order.total}`, bold: true },
+                { label: 'Items', value: `${order.items.length} ${order.items.length === 1 ? 'item' : 'items'}` },
+                { label: 'Total', value: formatPrice(order.total), bold: true },
+                { label: 'Subtotal', value: formatPrice(order.subtotal) },
+                { label: 'Shipping', value: order.shippingCost === 0 ? 'Free' : formatPrice(order.shippingCost) },
                 ...(order.tracking ? [{ label: 'Tracking', value: order.tracking, mono: true }] : []),
               ].map((row, i) => (
                 <motion.div
@@ -375,6 +368,8 @@ function OrderModal({ order, onClose }) {
 
 // ── Main ───────────────────────────────────────────────────────────────────
 export default function OrdersPage() {
+  const { orders } = useOrderStore();
+  const { formatPrice } = useCurrency();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -382,29 +377,31 @@ export default function OrdersPage() {
   const { scrollYProgress } = useScroll({ target: containerRef });
   const headerY = useTransform(scrollYProgress, [0, 0.2], [0, -30]);
 
-  const filteredOrders = mockOrders.filter(order => {
+  const filteredOrders = orders.filter(order => {
     const matchesSearch = order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.product.toLowerCase().includes(searchTerm.toLowerCase());
+      order.items.some(item => item.productTitle.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const stats = [
-    { label: 'Total Orders', value: mockOrders.length, icon: Package },
-    { label: 'Delivered', value: mockOrders.filter(o => o.status === 'delivered').length, icon: Check },
-    { label: 'Total Spent', value: `£${mockOrders.reduce((s, o) => s + o.total, 0)}`, icon: Star },
+    { label: 'Total Orders', value: orders.length, icon: Package },
+    { label: 'Delivered', value: orders.filter(o => o.status === 'delivered').length, icon: Check },
+    { label: 'Total Spent', value: formatPrice(orders.reduce((s, o) => s + o.total, 0)), icon: Star },
   ];
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#f5f1ed] overflow-x-hidden" style={{ fontFamily: 'Georgia, serif' }}>
+    <div ref={containerRef} className="min-h-screen bg-[#f5f1ed] overflow-x-hidden" style={{ fontFamily: 'Montserrat, sans-serif' }}>
       {/* Ambient */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <FloatingOrb className="top-[-100px] left-[-100px] w-[500px] h-[500px] bg-[#d4ccc3]" delay={0} />
         <FloatingOrb className="bottom-0 right-0 w-[400px] h-[400px] bg-[#c8c0b7]" delay={4} />
         <FloatingOrb className="top-1/2 left-1/3 w-[300px] h-[300px] bg-[#e0dbd5]" delay={8} />
       </div>
+      
+      <SimpleBackButton />
 
-      <main className="relative z-10 max-w-[960px] mx-auto px-6 md:px-10 pt-16 pb-24">
+      <main className="relative z-10 max-w-[960px] mx-auto px-1 md:px-2 pt-16 pb-24">
 
         {/* Header */}
         <motion.div style={{ y: headerY }} className="mb-12">
@@ -495,7 +492,7 @@ export default function OrdersPage() {
               </motion.div>
             ) : (
               filteredOrders.map((order, i) => (
-                <OrderCard key={order.id} order={order} index={i} onClick={() => setSelectedOrder(order)} />
+                <OrderCard key={order.id} order={order} index={i} onClick={() => setSelectedOrder(order)} formatPrice={formatPrice} />
               ))
             )}
           </AnimatePresence>
@@ -504,7 +501,7 @@ export default function OrdersPage() {
 
       {/* Modal */}
       <AnimatePresence>
-        {selectedOrder && <OrderModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />}
+        {selectedOrder && <OrderModal order={selectedOrder} onClose={() => setSelectedOrder(null)} formatPrice={formatPrice} />}
       </AnimatePresence>
     </div>
   );

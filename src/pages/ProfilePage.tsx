@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
   User, Mail, Phone, MapPin, Edit2, Save, X, Check, Lock,
   Bell, CreditCard, Package, Heart, LogOut, ChevronRight,
   Shield, Eye, EyeOff, Globe, Sparkles, Camera
 } from 'lucide-react';
+import { SimpleBackButton } from '../components/SimpleBackButton';
 
 // ── 3D Tilt ───────────────────────────────────────────────────────────────
 function TiltCard({ children, className = '', intensity = 1 }) {
@@ -63,8 +65,24 @@ function FormField({ label, children }) {
 }
 
 // ── Avatar ────────────────────────────────────────────────────────────────
-function Avatar({ name }) {
+function Avatar({ name, onAvatarChange }) {
   const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2);
+  const [imageUrl, setImageUrl] = useState(null);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result);
+        if (onAvatarChange) {
+          onAvatarChange(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <TiltCard intensity={1.5}>
       <motion.div
@@ -72,19 +90,31 @@ function Avatar({ name }) {
         style={{ transformStyle: 'preserve-3d' }}
         whileHover={{ scale: 1.05 }}
       >
-        <span className="text-white text-2xl font-serif" style={{ transform: 'translateZ(10px)' }}>{initials}</span>
+        {imageUrl ? (
+          <img src={imageUrl} alt="Profile" className="absolute inset-0 w-full h-full rounded-full object-cover" style={{ transform: 'translateZ(10px)' }} />
+        ) : (
+          <span className="text-white text-2xl" style={{ transform: 'translateZ(10px)' }}>{initials}</span>
+        )}
         <motion.div
           className="absolute inset-0 rounded-full border-2 border-white/30"
           animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0, 0.5] }}
           transition={{ duration: 3, repeat: Infinity }}
         />
-        <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center shadow-lg hover:bg-black transition-colors">
+        <label className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center shadow-lg hover:bg-black transition-colors cursor-pointer z-10">
           <Camera className="w-3.5 h-3.5 text-white" />
-        </button>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
+        </label>
       </motion.div>
     </TiltCard>
   );
 }
+
+Avatar.displayName = 'Avatar';
 
 const SECTIONS = [
   { id: 'personal', label: 'Personal', icon: User },
@@ -94,7 +124,10 @@ const SECTIONS = [
 ];
 
 export default function ProfilePage() {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('personal');
+  const [showFavoritesDrawer, setShowFavoritesDrawer] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showPw, setShowPw] = useState({ cur: false, new: false, confirm: false });
@@ -105,6 +138,7 @@ export default function ProfilePage() {
     email: 'alex@example.com', phone: '+44 20 7123 4567',
     address: { street: '123 Sleep Street', city: 'London', postcode: 'SW1A 1AA', country: 'United Kingdom' },
     preferences: { newsletter: true, orderUpdates: true, promotions: false },
+    avatarImage: null,
   });
   const [draft, setDraft] = useState({ ...profile });
   const [pw, setPw] = useState({ cur: '', new: '', confirm: '' });
@@ -127,10 +161,14 @@ export default function ProfilePage() {
     triggerSuccess();
   };
 
+  const handleAvatarChange = (imageUrl) => {
+    setProfile(prevProfile => ({ ...prevProfile, avatarImage: imageUrl }));
+  };
+
   const fullName = `${profile.firstName} ${profile.lastName}`;
 
   return (
-    <div className="min-h-screen bg-[#f5f1ed] overflow-x-hidden" style={{ fontFamily: 'Georgia, serif' }}>
+    <div className="min-h-screen bg-[#f5f1ed] overflow-x-hidden" style={{ fontFamily: 'Montserrat, sans-serif' }}>
       {/* Ambient orbs */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <motion.div className="absolute top-[-80px] right-0 w-[500px] h-[500px] rounded-full bg-[#d4ccc3] blur-[100px] opacity-20"
@@ -138,6 +176,8 @@ export default function ProfilePage() {
         <motion.div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-[#c8c0b7] blur-[90px] opacity-15"
           animate={{ scale: [1, 1.1, 1], y: [0, -30, 0] }} transition={{ duration: 16, repeat: Infinity, delay: 4 }} />
       </div>
+      
+      <SimpleBackButton />
 
       <main className="relative z-10 max-w-[1100px] mx-auto px-6 md:px-10 pt-16 pb-24">
 
@@ -181,9 +221,9 @@ export default function ProfilePage() {
                 style={{ transformStyle: 'preserve-3d' }}
               >
                 <div className="flex justify-center mb-4" style={{ transform: 'translateZ(12px)' }}>
-                  <Avatar name={fullName} />
+                  <Avatar name={fullName} onAvatarChange={handleAvatarChange} />
                 </div>
-                <h3 className="font-serif text-gray-900 text-xl mb-0.5" style={{ transform: 'translateZ(6px)' }}>{fullName}</h3>
+                <h3 className="text-gray-900 text-xl mb-0.5" style={{ transform: 'translateZ(6px)' }}>{fullName}</h3>
                 <p className="text-xs text-[#8f877d]">{profile.email}</p>
 
                 {/* Member since badge */}
@@ -222,7 +262,7 @@ export default function ProfilePage() {
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${active ? 'bg-gray-900' : 'bg-[#f0ece7]'}`}>
                         <Icon className={`w-3.5 h-3.5 ${active ? 'text-white' : 'text-[#8f877d]'}`} />
                       </div>
-                      <span className="text-sm font-medium">{sec.label}</span>
+                      <span className="text-sm font-medium" style={{ fontFamily: 'Montserrat, sans-serif' }}>{sec.label}</span>
                     </div>
                     <ChevronRight className={`relative z-10 w-4 h-4 transition-transform ${active ? 'translate-x-0.5' : ''}`} />
                   </motion.button>
@@ -238,19 +278,21 @@ export default function ProfilePage() {
               className="space-y-2"
             >
               {[
-                { icon: Package, label: 'View Orders' },
-                { icon: Heart, label: 'Favourites' },
+                { icon: Package, label: 'View Orders', action: () => navigate('/orders') },
+                { icon: Heart, label: 'Favourites', action: () => setShowFavoritesDrawer(true) },
               ].map((item, i) => (
                 <motion.button key={i} whileHover={{ scale: 1.01, y: -1 }} whileTap={{ scale: 0.99 }}
+                  onClick={item.action}
                   className="w-full flex items-center gap-3 px-5 py-3.5 bg-white/70 backdrop-blur-lg border border-white/80 rounded-xl text-sm text-gray-600 hover:text-gray-900 hover:bg-white/90 transition-all shadow-sm">
                   <item.icon className="w-4 h-4" />
-                  {item.label}
+                  <span style={{ fontFamily: 'Montserrat, sans-serif' }}>{item.label}</span>
                 </motion.button>
               ))}
               <motion.button whileHover={{ scale: 1.01, y: -1 }} whileTap={{ scale: 0.99 }}
+                onClick={() => setShowSignOutModal(true)}
                 className="w-full flex items-center gap-3 px-5 py-3.5 bg-red-50/80 backdrop-blur-lg border border-red-100 rounded-xl text-sm text-red-500 hover:text-red-700 hover:bg-red-50 transition-all shadow-sm">
                 <LogOut className="w-4 h-4" />
-                Sign Out
+                <span style={{ fontFamily: 'Montserrat, sans-serif' }}>Sign Out</span>
               </motion.button>
             </motion.div>
           </div>
@@ -276,7 +318,7 @@ export default function ProfilePage() {
                   <div className="space-y-7">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h2 className="text-2xl font-serif text-gray-900">Personal Information</h2>
+                        <h2 className="text-2xl text-gray-900">Personal Information</h2>
                         <p className="text-sm text-gray-400 mt-1">Manage your name and contact details</p>
                       </div>
                       {!isEditing ? (
@@ -355,7 +397,7 @@ export default function ProfilePage() {
                   <div className="space-y-7">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h2 className="text-2xl font-serif text-gray-900">Shipping Address</h2>
+                        <h2 className="text-2xl text-gray-900">Shipping Address</h2>
                         <p className="text-sm text-gray-400 mt-1">Your default delivery address</p>
                       </div>
                       <motion.button whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}
@@ -408,7 +450,7 @@ export default function ProfilePage() {
                 {activeSection === 'preferences' && (
                   <div className="space-y-7">
                     <div>
-                      <h2 className="text-2xl font-serif text-gray-900">Communication Preferences</h2>
+                      <h2 className="text-2xl text-gray-900">Communication Preferences</h2>
                       <p className="text-sm text-gray-400 mt-1">Choose what you'd like to hear from us</p>
                     </div>
 
@@ -448,29 +490,8 @@ export default function ProfilePage() {
                 {activeSection === 'security' && (
                   <div className="space-y-7">
                     <div>
-                      <h2 className="text-2xl font-serif text-gray-900">Security</h2>
+                      <h2 className="text-2xl text-gray-900">Security</h2>
                       <p className="text-sm text-gray-400 mt-1">Manage your password and account security</p>
-                    </div>
-
-                    {/* Security indicators */}
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {[
-                        { icon: Shield, label: 'Account Protected', sub: '256-bit encryption', ok: true },
-                        { icon: Lock, label: 'Password Strength', sub: 'Strong', ok: true },
-                      ].map((item, i) => (
-                        <TiltCard key={i} intensity={0.6}>
-                          <div className="bg-gradient-to-br from-green-50 to-emerald-50/50 rounded-xl p-4 border border-green-100 flex items-center gap-3"
-                            style={{ transformStyle: 'preserve-3d' }}>
-                            <div className="w-9 h-9 rounded-full bg-green-500/10 flex items-center justify-center" style={{ transform: 'translateZ(6px)' }}>
-                              <item.icon className="w-4 h-4 text-green-600" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">{item.label}</p>
-                              <p className="text-xs text-green-600 font-medium">{item.sub}</p>
-                            </div>
-                          </div>
-                        </TiltCard>
-                      ))}
                     </div>
 
                     {/* Change password */}
@@ -499,7 +520,7 @@ export default function ProfilePage() {
                           onSubmit={handlePwSave}
                           className="space-y-5 bg-[#faf9f7] rounded-xl border border-[#e8e3dc] p-6"
                         >
-                          <h3 className="text-base font-serif text-gray-900">Update Password</h3>
+                          <h3 className="text-base text-gray-900">Update Password</h3>
                           {[
                             { key: 'cur', label: 'Current Password', placeholder: '••••••••' },
                             { key: 'new', label: 'New Password', placeholder: '••••••••' },
@@ -542,6 +563,167 @@ export default function ProfilePage() {
           </motion.div>
         </div>
       </main>
+
+      {/* Favorites Drawer */}
+      <AnimatePresence>
+        {showFavoritesDrawer && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+            onClick={() => setShowFavoritesDrawer(false)}
+          >
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+                    <Heart className="w-5 h-5 text-red-500" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg text-gray-900">My Favourites</h2>
+                    <p className="text-sm text-gray-500">Items you've saved</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowFavoritesDrawer(false)}
+                  className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+
+              {/* Drawer Content */}
+              <div className="p-6 overflow-y-auto h-[calc(100%-88px)]">
+                {/* Sample favorites items */}
+                <div className="space-y-4">
+                  {[
+                    {
+                      name: 'Winter Cloud Bundle Set',
+                      price: '£299',
+                      image: 'https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845',
+                      savedDate: '2 days ago'
+                    },
+                    {
+                      name: 'Silken Sateen Pillowcase Pair',
+                      price: '£149',
+                      image: 'https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845',
+                      savedDate: '1 week ago'
+                    },
+                    {
+                      name: 'Cashmere Dream Throw',
+                      price: '£199',
+                      image: 'https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845',
+                      savedDate: '2 weeks ago'
+                    }
+                  ].map((item, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                    >
+                      <img src={item.image} alt={item.name} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 truncate">{item.name}</h3>
+                        <p className="text-sm text-gray-500 mt-1">{item.savedDate}</p>
+                        <p className="text-lg text-gray-900 mt-2">{item.price}</p>
+                      </div>
+                      <button className="flex-shrink-0">
+                        <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Empty state if no favorites */}
+                {false && (
+                  <div className="text-center py-12">
+                    <Heart className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+                    <h3 className="text-lg text-gray-400 mb-2">No favorites yet</h3>
+                    <p className="text-sm text-gray-400">Start adding items you love to see them here</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Sign Out Confirmation Modal */}
+      <AnimatePresence>
+        {showSignOutModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowSignOutModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 10 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-white/80"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+                  <LogOut className="w-5 h-5 text-red-500" />
+                </div>
+                <div>
+                  <h3 className="text-lg text-gray-900">Sign Out</h3>
+                  <p className="text-sm text-gray-500">Are you sure you want to sign out?</p>
+                </div>
+              </div>
+
+              {/* Modal Content */}
+              <p className="text-sm text-gray-600 mb-6">
+                You will need to sign in again to access your account and order history.
+              </p>
+
+              {/* Modal Actions */}
+              <div className="flex gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setShowSignOutModal(false)}
+                  className="flex-1 py-3 px-4 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    // Clear any auth tokens and redirect to login/home
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('user');
+                    setShowSignOutModal(false);
+                    navigate('/');
+                  }}
+                  className="flex-1 py-3 px-4 bg-red-500 text-white rounded-xl text-sm font-medium hover:bg-red-600 transition-colors shadow-lg"
+                >
+                  Sign Out
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, X } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
+import { useCurrency } from '@/hooks/useCurrency';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Sheet,
@@ -68,6 +69,7 @@ export function CartDrawer() {
   const isMobile = useIsMobile();
   const { items, isLoading, isSyncing, isCartOpen, updateQuantity, removeItem, getCheckoutUrl, syncCart, setCartOpen } =
     useCartStore();
+  const { formatPrice } = useCurrency();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
@@ -221,7 +223,7 @@ export function CartDrawer() {
                           {/* Price & Remove */}
                           <div className="flex flex-col items-end gap-1">
                             <span className="text-[14px] font-medium text-gray-900">
-                              {getCurrencySymbol(item.price.currencyCode)}{parseFloat(item.price.amount).toFixed(2)}
+                              {formatPrice(parseFloat(item.price.amount))}
                             </span>
                             <button
                               onClick={() => removeItem(item.variantId)}
@@ -241,7 +243,7 @@ export function CartDrawer() {
                   <div className="flex justify-between items-center mb-8">
                     <span className="text-sm font-semibold text-gray-700 tracking-wide uppercase">Subtotal</span>
                     <span className="text-lg font-bold text-gray-900 tracking-tight">
-                      {getCurrencySymbol(items[0]?.price.currencyCode || 'GBP')}{totalPrice.toFixed(2)}
+                      {formatPrice(totalPrice)}
                     </span>
                   </div>
 

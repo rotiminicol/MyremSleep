@@ -8,6 +8,7 @@ import { ReviewsSection } from '@/components/ReviewsSection';
 import { WriteReviewDrawer } from '@/components/WriteReviewDrawer';
 import { useCartStore } from '@/stores/cartStore';
 import { useFavoritesStore } from '@/stores/favoritesStore';
+import { useCurrency } from '@/hooks/useCurrency';
 import {
   Loader2,
   ChevronLeft,
@@ -156,6 +157,7 @@ export default function ProductPage() {
 
   const { addItem, isLoading: isCartLoading } = useCartStore();
   const { addFavorite, removeFavorite, isFavorited } = useFavoritesStore();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     async function loadProduct() {
@@ -477,7 +479,7 @@ export default function ProductPage() {
                     })()}
                   </h1>
                   <p className="text-lg text-gray-950 font-medium whitespace-nowrap">
-                    £{selectedVariant?.price.amount}
+                    {formatPrice(parseFloat(selectedVariant?.price.amount || '0'))}
                   </p>
                 </div>
 

@@ -4,6 +4,7 @@ import { Search, ShoppingCart, Menu, X, Heart, User, ChevronLeft, ChevronRight, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/stores/cartStore';
 import { useFavoritesStore } from '@/stores/favoritesStore';
+import { useCurrencyStore } from '@/stores/currencyStore';
 import { FavoritesDrawer } from './FavoritesDrawer';
 import { CartDrawer } from './CartDrawer';
 import { AccountDrawer } from './AccountDrawer';
@@ -52,12 +53,9 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCurrency, setSelectedCurrency] = useState({
-    code: 'NGN',
-    symbol: '₦',
-    flag: 'https://flagcdn.com/w20/ng.png',
-    name: 'Nigerian Naira'
-  });
+
+  // Use currency store
+  const { selectedCurrency, setSelectedCurrency } = useCurrencyStore();
 
   // Define currencies array inside the component
   const currencies = [
