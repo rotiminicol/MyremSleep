@@ -644,10 +644,10 @@ export default function CheckoutPage() {
 
                     {/* Completed step summaries */}
                     <div className="space-y-3 mb-6">
-                      {step >= 2 && (
+                      {typeof step === 'number' && step >= 2 && (
                         <CompletedStep icon={<Mail />} title="Contact" summary={getContactSummary()} onEdit={() => setStep(1)} delay={0} />
                       )}
-                      {step >= 3 && (
+                      {typeof step === 'number' && step >= 3 && (
                         <CompletedStep icon={<MapPin />} title="Shipping" summary={getShippingSummary()} onEdit={() => setStep(2)} delay={0.05} />
                       )}
                     </div>
