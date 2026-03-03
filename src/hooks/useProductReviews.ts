@@ -1,5 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+const JUDGEME_API_TOKEN = import.meta.env.VITE_JUDGEME_API_TOKEN;
+const SHOP_DOMAIN = 'zr4ktm-7m.myshopify.com';
+
 export interface Review {
   id: number;
   rating: number;
@@ -23,15 +26,9 @@ export function useProductReviews(productHandle: string, page: number = 1, perPa
   return useQuery({
     queryKey: ['reviews', productHandle, page, perPage],
     queryFn: async (): Promise<ReviewsResponse> => {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/judgeme-reviews?action=fetch&page=${page}&per_page=${perPage}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-        }
-      );
+      const apiUrl = `https://judge.me/api/v1/reviews?shop_domain=${SHOP_DOMAIN}&api_token=${JUDGEME_API_TOKEN}&per_page=${perPage}&page=${page}`;
+
+      const response = await fetch(apiUrl);
 
       if (!response.ok) {
         throw new Error('Failed to fetch reviews');
@@ -63,18 +60,28 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: async (input: CreateReviewInput) => {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/judgeme-reviews?action=create`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-            'Content-Type': 'application/json',
+      const response = await fetch('https://judge.me/api/v1/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          shop_domain: SHOP_DOMAIN,
+          api_token: JUDGEME_API_TOKEN,
+          platform: 'shopify',
+          id: input.productId,
+          url: SHOP_DOMAIN,
+          review: {
+            rating: input.rating,
+            title: input.title,
+            body: input.reviewBody,
+            reviewer: {
+              name: input.name,
+              email: input.email || `${input.name.replace(/\s/g, '').toLowerCase()}@review.local`,
+            },
           },
-          body: JSON.stringify(input),
-        }
-      );
+        }),
+      });
 
       if (!response.ok) {
         const err = await response.json();
