@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, X } from 'lucide-react';
-import { useCartStore } from '@/stores/cartStore';
+import { useUserCart } from '@/stores/userCartStore';
+import { useCustomerStore } from '@/stores/customerStore';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
@@ -14,6 +15,7 @@ import {
 } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 // Color mappings for cart display
 const COLOR_MAP: Record<string, string> = {
@@ -24,7 +26,7 @@ const COLOR_MAP: Record<string, string> = {
   'Clay Blush': '/products/lavender-eye-pillow.png',
   'Pebble Haze': '/products/sleep-mask-indigo.png',
   'Desert Sand': '/products/midnight-silk.png',
-  'Cinnamon Bark': '/products/linen-duvet-clay.png',
+  'Cinnamon Bark': '/cinamon3.png',
 };
 
 const COLOR_DESCRIPTIONS: Record<string, { title: string; description: string }> = {
@@ -68,14 +70,22 @@ export function CartDrawer() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { items, isLoading, isSyncing, isCartOpen, updateQuantity, removeItem, getCheckoutUrl, syncCart, setCartOpen } =
-    useCartStore();
+    useUserCart();
   const { formatPrice } = useCurrency();
+  const { isLoggedIn } = useCustomerStore();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
     (sum, item) => sum + parseFloat(item.price.amount) * item.quantity,
     0
   );
+
+  // Auto-close cart when it becomes empty
+  useEffect(() => {
+    if (items.length === 0 && isCartOpen) {
+      setCartOpen(false);
+    }
+  }, [items.length, isCartOpen, setCartOpen]);
 
   // Debug logging
   useEffect(() => {
@@ -93,6 +103,17 @@ export function CartDrawer() {
   }, [isCartOpen, syncCart]);
 
   const handleCheckout = () => {
+    if (!isLoggedIn()) {
+      toast.error('Please log in to proceed to checkout', { position: 'top-center' });
+      
+      // Dispatch custom event to open account drawer with login view
+      window.dispatchEvent(new CustomEvent('openAccountDrawer', { detail: { view: 'login' } }));
+      
+      // Close cart drawer
+      setCartOpen(false);
+      return;
+    }
+    
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
       window.open(checkoutUrl, '_blank');

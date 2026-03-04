@@ -29,6 +29,7 @@ import HelpCenterPage from "./pages/HelpCenterPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrdersPage from "./pages/OrdersPage";
 import ProfilePage from "./pages/ProfilePage";
+import FavoritesPage from "./pages/FavoritesPage";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import { CookieConsent } from "./components/CookieConsent";
@@ -95,6 +96,7 @@ const App = () => (
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />

@@ -331,7 +331,7 @@ export default function ProfilePage() {
             >
               {[
                 { icon: Package, label: 'View Orders', action: () => navigate('/orders') },
-                { icon: Heart, label: 'Favourites', action: () => navigate('/store') },
+                { icon: Heart, label: 'Favourites', action: () => navigate('/favorites') },
               ].map((item, i) => (
                 <motion.button key={i} whileHover={{ scale: 1.01, y: -1 }} whileTap={{ scale: 0.99 }}
                   onClick={item.action}

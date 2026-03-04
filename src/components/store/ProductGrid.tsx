@@ -10,10 +10,10 @@ const COLOR_VARIANTS = [
   { name: 'Desert Whisperer', hex: '#E5DACE', image: '/products/linen-duvet-clay.png' },
   { name: 'Buttermilk', hex: '#FFF4D2', image: '/products/cotton-quilt-sandstone.png' },
   { name: 'Clay', hex: '#D2C4B5', image: '/products/bamboo-sheets-grey.png' },
-  { name: 'Clay Blush', hex: '#D9A891', image: '/products/lavender-eye-pillow.png' },
+  { name: 'Clay Blush', hex: '#D9A891', image: '/clayblush.png' },
   { name: 'Pebble Haze', hex: '#A3A3A3', image: '/products/sleep-mask-indigo.png' },
   { name: 'Desert Sand', hex: '#E2CA9D', image: '/products/midnight-silk.png' },
-  { name: 'Cinnamon Bark', hex: '#8B4513', image: '/products/linen-duvet-clay.png' },
+  { name: 'Cinnamon Bark', hex: '#8B4513', image: '/cinamon3.png' },
 ];
 
 export function ProductGrid() {

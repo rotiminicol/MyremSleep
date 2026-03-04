@@ -5,7 +5,7 @@ import {
   Eye, EyeOff, Check, Lock, Package, ChevronDown, Zap
 } from 'lucide-react';
 import { SimpleBackButton } from '@/components/SimpleBackButton';
-import { useCartStore } from '@/stores/cartStore';
+import { useUserCart } from '@/stores/userCartStore';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useOrderStore } from '@/stores/orderStore';
 
@@ -43,6 +43,18 @@ const COLOR_DESCRIPTIONS: Record<string, { title: string; description: string }>
     title: 'Clay — Soft clay. Lightly sun-warmed. Calm and clean.',
     description: 'A pale clay with no pink in it—just a quiet warmth that feels natural and modern. It brightens the room without turning cold.'
   }
+};
+
+// Color mappings for checkout display
+const COLOR_MAP: Record<string, string> = {
+  'Winter Cloud': '/products/midnight-silk.png',
+  'Desert Whisperer': '/products/linen-duvet-clay.png',
+  'Buttermilk': '/products/cotton-quilt-sandstone.png',
+  'Clay': '/products/bamboo-sheets-grey.png',
+  'Clay Blush': '/products/lavender-eye-pillow.png',
+  'Pebble Haze': '/products/sleep-mask-indigo.png',
+  'Desert Sand': '/products/midnight-silk.png',
+  'Cinnamon Bark': '/cinamon3.png',
 };
 
 // ── Tilt Card ──────────────────────────────────────────────────────────────
@@ -247,15 +259,34 @@ function StepContact({ data, onChange, onNext }) {
   );
 }
 
-// ── Step 2: Shipping ───────────────────────────────────────────────────────
 function StepShipping({ data, onChange, onNext, onBack }) {
-  const countries = ['United Kingdom', 'United States', 'Canada', 'Australia', 'Germany', 'France', 'Netherlands', 'Sweden', 'Norway', 'Denmark'];
-  const shippingMethods = [
-    { id: 'standard', label: 'Standard Delivery', sub: '5–7 business days', price: 'Free' },
-    { id: 'express', label: 'Express Delivery', sub: '2–3 business days', price: '£9.99' },
-    { id: 'next', label: 'Next Day Delivery', sub: 'Order before 2pm', price: '£14.99' },
+  const countries = [
+    'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria',
+    'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan', 'Bolivia',
+    'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon',
+    'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 'Costa Rica', 'Croatia', 'Cuba',
+    'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea',
+    'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana',
+    'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India',
+    'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati',
+    'Kuwait', 'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg',
+    'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania', 'Mauritius', 'Mexico', 'Micronesia',
+    'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands',
+    'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Macedonia', 'Norway', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua New Guinea',
+    'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia',
+    'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles',
+    'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Korea', 'South Sudan',
+    'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand',
+    'Timor-Leste', 'Togo', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine',
+    'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam',
+    'Yemen', 'Zambia', 'Zimbabwe'
   ];
-  const allFilled = data.firstName && data.lastName && data.address && data.city && data.postcode;
+  const shippingMethods = [
+    { id: 'standard', label: 'Standard Delivery', sub: '5–7 business days', price: '50.00' },
+    { id: 'express', label: 'Express Delivery', sub: '2–3 business days', price: '75.00' },
+    { id: 'next', label: 'Next Day Delivery', sub: 'Order before 2pm', price: '99.99' },
+  ];
+  const allFilled = data.firstName && data.lastName && data.address && data.city && data.postcode && data.phone;
 
   return (
     <div className="space-y-6">
@@ -288,10 +319,10 @@ function StepShipping({ data, onChange, onNext, onBack }) {
               <input type="text" name="city" value={data.city} onChange={onChange} className={inputClass} placeholder="London" />
             </Field>
             <Field label="Postcode">
-              <input type="text" name="postcode" value={data.postcode} onChange={onChange} className={inputClass} placeholder="SW1A 0AA" />
+              <input type="text" name="postcode" value={data.postcode} onChange={onChange} className={inputClass} placeholder="SW1A 0AA" maxLength={8} />
             </Field>
           </div>
-          <Field label="Phone number" optional>
+          <Field label="Phone number">
             <input type="tel" name="phone" value={data.phone} onChange={onChange} className={inputClass} placeholder="+44 20 1234 5678" />
           </Field>
         </div>
@@ -311,7 +342,7 @@ function StepShipping({ data, onChange, onNext, onBack }) {
                 <p className="text-sm font-medium text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{method.label}</p>
                 <p className="text-xs text-gray-500 mt-0.5" style={{ fontFamily: 'Montserrat, sans-serif' }}>{method.sub}</p>
               </div>
-              <span className={`text-sm font-medium ${method.price === 'Free' ? 'text-green-600' : 'text-gray-900'}`} style={{ fontFamily: 'Montserrat, sans-serif' }}>{method.price}</span>
+              <span className={`text-sm font-medium text-gray-900`} style={{ fontFamily: 'Montserrat, sans-serif' }}>{method.price}</span>
             </label>
           ))}
         </div>
@@ -495,7 +526,7 @@ function OrderSuccess({ email, onReset }) {
 type StepType = 1 | 2 | 3 | 'success' | 'express';
 
 export default function CheckoutPage() {
-  const { items, clearCart } = useCartStore();
+  const { items, clearCart } = useUserCart();
   const { addOrder } = useOrderStore();
   const { formatPrice } = useCurrency();
   const [step, setStep] = useState<StepType>(1);
@@ -533,7 +564,7 @@ export default function CheckoutPage() {
     
     // Create order from cart data
     const subtotal = items.reduce((sum, item) => sum + parseFloat(item.price.amount) * item.quantity, 0);
-    const shippingCost = formData.shippingMethod === 'express' ? 9.99 : formData.shippingMethod === 'next' ? 14.99 : 0;
+    const shippingCost = formData.shippingMethod === 'express' ? 75.00 : formData.shippingMethod === 'next' ? 99.99 : 50.00;
     const total = subtotal + shippingCost;
     
     // Convert cart items to order items
@@ -574,7 +605,7 @@ export default function CheckoutPage() {
 
   // Calculate totals from real cart data
   const subtotal = items.reduce((sum, item) => sum + parseFloat(item.price.amount) * item.quantity, 0);
-  const shippingCost = formData.shippingMethod === 'express' ? 9.99 : formData.shippingMethod === 'next' ? 14.99 : 0;
+  const shippingCost = formData.shippingMethod === 'express' ? 75.00 : formData.shippingMethod === 'next' ? 99.99 : 50.00;
   const total = subtotal + shippingCost;
 
   const getContactSummary = () => formData.email || '—';
@@ -672,10 +703,14 @@ export default function CheckoutPage() {
                           opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('colour')
                         )?.value;
                         
-                        // Get color-specific title
+                        // Get color-specific title and image
                         const colorTitle = selectedColor && COLOR_DESCRIPTIONS[selectedColor] 
                           ? COLOR_DESCRIPTIONS[selectedColor].title 
                           : item.product.node.title;
+                        
+                        const colorImage = selectedColor && COLOR_MAP[selectedColor]
+                          ? COLOR_MAP[selectedColor]
+                          : item.product.node.images?.edges?.[0]?.node?.url;
                         
                         // Get variant details
                         const size = item.selectedOptions.find(opt => 
@@ -686,7 +721,7 @@ export default function CheckoutPage() {
                           <div key={item.variantId} className="flex gap-4 mb-6">
                             <div className="w-[72px] h-[72px] rounded-xl overflow-hidden bg-[#e8e3dc] flex-shrink-0">
                               <img 
-                                src={item.product.node.images?.edges?.[0]?.node?.url || '/placeholder.png'} 
+                                src={colorImage || '/placeholder.png'} 
                                 alt={colorTitle} 
                                 className="w-full h-full object-cover" 
                               />
@@ -723,8 +758,8 @@ export default function CheckoutPage() {
                           <span className="text-gray-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>Shipping</span>
                           <AnimatePresence mode="wait">
                             <motion.span key={shippingCost} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }}
-                              className={`font-medium ${shippingCost === 0 ? 'text-green-600' : 'text-gray-900'}`} style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                              {shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}
+                              className="font-medium text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                              {formatPrice(shippingCost)}
                             </motion.span>
                           </AnimatePresence>
                         </div>

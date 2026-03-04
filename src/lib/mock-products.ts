@@ -21,6 +21,54 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
                             altText: 'Winter Cloud Sateen Bundle',
                         },
                     },
+                    {
+                        node: {
+                            url: '/Cinamon1.png',
+                            altText: 'Cinnamon Bark Product Image 1',
+                        },
+                    },
+                    {
+                        node: {
+                            url: '/cinamon2.png',
+                            altText: 'Cinnamon Bark Product Image 2',
+                        },
+                    },
+                    {
+                        node: {
+                            url: '/cinamon3.png',
+                            altText: 'Cinnamon Bark Product Image 3',
+                        },
+                    },
+                    {
+                        node: {
+                            url: '/Cinamon4.png',
+                            altText: 'Cinnamon Bark Product Image 4',
+                        },
+                    },
+                    {
+                        node: {
+                            url: '/Cinamonbase.png',
+                            altText: 'Cinnamon Bark Base Image',
+                        },
+                    },
+                    {
+                        node: {
+                            url: '/clayblush.png',
+                            altText: 'Clay Blush Product Image 1',
+                        },
+                    },
+                    {
+                        node: {
+                            url: '/clayblush1.png',
+                            altText: 'Clay Blush Product Image 2',
+                        },
+                    },
+                    {
+                        node: {
+                            url: '/clayblush2.png',
+                            altText: 'Clay Blush Product Image 3',
+                        },
+                    },
                 ],
             },
             variants: {

@@ -6,7 +6,7 @@ import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { StoreFooter } from '@/components/store/StoreFooter';
 import { ReviewsSection } from '@/components/ReviewsSection';
 import { WriteReviewDrawer } from '@/components/WriteReviewDrawer';
-import { useCartStore } from '@/stores/cartStore';
+import { useUserCart } from '@/stores/userCartStore';
 import { useFavoritesStore } from '@/stores/favoritesStore';
 import { useCurrency } from '@/hooks/useCurrency';
 import {
@@ -29,7 +29,7 @@ const COLOR_MAP: Record<string, string> = {
   'Desert Whisperer': '/products/linen-duvet-clay.png',
   'Buttermilk': '/products/cotton-quilt-sandstone.png',
   'Clay': '/products/bamboo-sheets-grey.png',
-  'Clay Blush': '/products/lavender-eye-pillow.png',
+  'Clay Blush': '/clayblush.png',
   'Pebble Haze': '/products/sleep-mask-indigo.png',
   'Desert Sand': '/products/midnight-silk.png',
   'Cinnamon Bark': '/products/linen-duvet-clay.png',
@@ -147,6 +147,7 @@ export default function ProductPage() {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [customColorImage, setCustomColorImage] = useState<string | null>(null);
+  const [isAutoSlideshow, setIsAutoSlideshow] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
   const [sizeDrawerPage, setSizeDrawerPage] = useState<1 | 2>(1);
@@ -155,7 +156,7 @@ export default function ProductPage() {
   const [sortBy, setSortBy] = useState('rating');
   const [reviewDrawerOpen, setReviewDrawerOpen] = useState(false);
 
-  const { addItem, isLoading: isCartLoading } = useCartStore();
+  const { addItem, isLoading: isCartLoading } = useUserCart();
   const { addFavorite, removeFavorite, isFavorited } = useFavoritesStore();
   const { formatPrice } = useCurrency();
 
@@ -287,8 +288,62 @@ export default function ProductPage() {
 
     if (selectedColor && COLOR_MAP[selectedColor]) {
       setCustomColorImage(COLOR_MAP[selectedColor]);
+      
+      // Enable auto-slideshow for Cinnamon Bark and Clay Blush
+      if (selectedColor === 'Cinnamon Bark' || selectedColor === 'Clay Blush') {
+        setIsAutoSlideshow(true);
+        // Find the starting index for the specific color's images
+        if (selectedColor === 'Cinnamon Bark') {
+          setSelectedImageIndex(1); // Start with first cinnamon image (index 1)
+        } else if (selectedColor === 'Clay Blush') {
+          // Find the first Clay Blush image index
+          const clayBlushStartIndex = product.images.edges.findIndex(img => 
+            img.node.altText?.includes('Clay Blush Product Image 1')
+          );
+          setSelectedImageIndex(clayBlushStartIndex >= 0 ? clayBlushStartIndex : 6); // Default to index 6 if not found
+        }
+      } else {
+        setIsAutoSlideshow(false);
+        setSelectedImageIndex(0);
+      }
     }
   }, [selectedOptions, product]);
+
+  // Auto-slideshow effect for Cinnamon Bark and Clay Blush
+  useEffect(() => {
+    if (!isAutoSlideshow || !product) return;
+
+    const selectedColor = Object.entries(selectedOptions).find(([key]) =>
+      key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
+    )?.[1];
+
+    let colorImages: typeof product.images.edges = [];
+    
+    if (selectedColor === 'Cinnamon Bark') {
+      colorImages = product.images.edges.slice(1, 5); // Cinnamon images at indices 1-4
+    } else if (selectedColor === 'Clay Blush') {
+      colorImages = product.images.edges.slice(6, 9); // Clay Blush images at indices 6-8
+    }
+
+    if (colorImages.length === 0) return;
+
+    const interval = setInterval(() => {
+      setSelectedImageIndex((prevIndex) => {
+        if (selectedColor === 'Cinnamon Bark') {
+          const currentColorIndex = prevIndex - 1;
+          const nextColorIndex = (currentColorIndex + 1) % colorImages.length;
+          return nextColorIndex + 1;
+        } else if (selectedColor === 'Clay Blush') {
+          const currentColorIndex = prevIndex - 6;
+          const nextColorIndex = (currentColorIndex + 1) % colorImages.length;
+          return nextColorIndex + 6;
+        }
+        return prevIndex;
+      });
+    }, 3000); // Change image every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [isAutoSlideshow, product, selectedOptions]);
 
   const handleOptionChange = (optionName: string, value: string) => {
     setSelectedOptions((prev) => ({
@@ -386,7 +441,7 @@ export default function ProductPage() {
             className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back to store
+            Back to home
           </Link>
         </div>
         <StoreFooter />
@@ -408,7 +463,7 @@ export default function ProductPage() {
           className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors mb-4"
         >
           <ChevronLeft className="h-4 w-4" />
-          Back to store
+          Back to home
         </Link>
       </div>
 
@@ -422,7 +477,17 @@ export default function ProductPage() {
               <AnimatePresence mode="wait">
                 <motion.img
                   key={customColorImage || selectedImageIndex}
-                  src={customColorImage || currentImage?.url}
+                  src={(() => {
+                    const selectedColor = Object.entries(selectedOptions).find(([key]) =>
+                      key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
+                    )?.[1];
+                    
+                    if ((selectedColor === 'Cinnamon Bark' || selectedColor === 'Clay Blush') && selectedImageIndex > 0) {
+                      return product.images.edges[selectedImageIndex]?.node.url;
+                    }
+                    
+                    return customColorImage || currentImage?.url;
+                  })()}
                   alt={product.title}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -432,23 +497,43 @@ export default function ProductPage() {
                 />
               </AnimatePresence>
 
-              {/* Navigation Arrows */}
-              <button
-                onClick={() => setSelectedImageIndex(prev => prev > 0 ? prev - 1 : images.length - 1)}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/90 text-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => setSelectedImageIndex(prev => prev < images.length - 1 ? prev + 1 : 0)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/90 text-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
+              {/* Navigation Arrows - Only show if not auto-slideshow */}
+              {!isAutoSlideshow && (
+                <>
+                  <button
+                    onClick={() => setSelectedImageIndex(prev => prev > 0 ? prev - 1 : images.length - 1)}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/90 text-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => setSelectedImageIndex(prev => prev < images.length - 1 ? prev + 1 : 0)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/90 text-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </>
+              )}
 
               {/* Image Counter */}
               <div className="absolute bottom-6 right-6 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-[10px] font-bold tracking-widest text-gray-900">
-                {selectedImageIndex + 1} / {images.length}
+                {(() => {
+                  const selectedColor = Object.entries(selectedOptions).find(([key]) =>
+                    key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
+                  )?.[1];
+                  
+                  if (selectedColor === 'Cinnamon Bark' && isAutoSlideshow) {
+                    const cinnamonImages = images.slice(1, 5);
+                    const currentCinnamonIndex = selectedImageIndex - 1;
+                    return `${currentCinnamonIndex + 1} / ${cinnamonImages.length}`;
+                  } else if (selectedColor === 'Clay Blush' && isAutoSlideshow) {
+                    const clayBlushImages = images.slice(6, 9);
+                    const currentClayBlushIndex = selectedImageIndex - 6;
+                    return `${currentClayBlushIndex + 1} / ${clayBlushImages.length}`;
+                  }
+                  
+                  return `${selectedImageIndex + 1} / ${images.length}`;
+                })()}
               </div>
             </div>
           </div>

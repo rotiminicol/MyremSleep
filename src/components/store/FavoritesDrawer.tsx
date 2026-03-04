@@ -8,14 +8,14 @@ import {
     SheetTrigger,
 } from '@/components/ui/sheet';
 import { useFavoritesStore } from '@/stores/favoritesStore';
-import { useCartStore } from '@/stores/cartStore';
+import { useUserCart } from '@/stores/userCartStore';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 import { toast } from 'sonner';
 
 export function FavoritesDrawer() {
     const { items, isFavoritesOpen, setFavoritesOpen, removeFavorite } = useFavoritesStore();
-    const { addItem: addToCart } = useCartStore();
+    const { addItem: addToCart } = useUserCart();
     const isMobile = useIsMobile();
 
     const handleAddToCart = async (item: typeof items[0]) => {

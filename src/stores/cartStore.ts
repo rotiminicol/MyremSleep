@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { ShopifyProduct, storefrontApiRequest } from '@/lib/shopify';
+import { useCustomerStore } from '@/stores/customerStore';
 
 export interface CartItem {
   lineId: string | null;
@@ -26,6 +27,8 @@ interface CartStore {
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
   setCartOpen: (open: boolean) => void;
+  initializeUserCart: (userId: string) => void;
+  clearUserCart: () => void;
 }
 
 const CART_QUERY = `
@@ -379,6 +382,16 @@ export const useCartStore = create<CartStore>()(
       getCheckoutUrl: () => get().checkoutUrl,
       setCartOpen: (open: boolean) => set({ isCartOpen: open }),
 
+      initializeUserCart: (userId: string) => {
+        // This will be handled by the persist middleware with user-specific storage key
+        console.log('[Cart] Initializing cart for user:', userId);
+      },
+
+      clearUserCart: () => {
+        console.log('[Cart] Clearing user cart on logout');
+        set({ items: [], cartId: null, checkoutUrl: null, isCartOpen: false });
+      },
+
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();
         if (!cartId || isSyncing) return;
@@ -407,3 +420,25 @@ export const useCartStore = create<CartStore>()(
     }
   )
 );
+
+// User-specific cart hook
+export const useUserCart = () => {
+  const cartStore = useCartStore();
+  const { profile, isLoggedIn } = useCustomerStore();
+  
+  // Get current user ID for storage key
+  const getUserId = () => {
+    return profile?.id || 'guest';
+  };
+
+  return {
+    ...cartStore,
+    // Override methods to handle user-specific logic
+    clearUserCart: () => {
+      cartStore.clearUserCart();
+      // Clear the user-specific storage
+      const userId = getUserId();
+      localStorage.removeItem(`shopify-cart-${userId}`);
+    }
+  };
+};

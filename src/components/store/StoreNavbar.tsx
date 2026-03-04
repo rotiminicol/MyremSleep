@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingCart, Menu, X, Heart, User, ChevronLeft, ChevronRight, Phone, ShoppingBag, Globe, Check, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCartStore } from '@/stores/cartStore';
+import { useUserCart } from '@/stores/userCartStore';
 import { useFavoritesStore } from '@/stores/favoritesStore';
 import { useCurrencyStore } from '@/stores/currencyStore';
+import { useCustomerStore } from '@/stores/customerStore';
 import { FavoritesDrawer } from './FavoritesDrawer';
 import { CartDrawer } from './CartDrawer';
 import { AccountDrawer } from './AccountDrawer';
@@ -57,6 +58,17 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   // Use currency store
   const { selectedCurrency, setSelectedCurrency } = useCurrencyStore();
 
+  // Use customer store
+  const { profile, isLoggedIn } = useCustomerStore();
+
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (!profile) return '';
+    const firstName = profile.first_name || '';
+    const lastName = profile.last_name || '';
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+
   // Define currencies array inside the component
   const currencies = [
     { code: 'USD', symbol: '$', flag: 'https://flagcdn.com/w20/us.png', name: 'US Dollar' },
@@ -96,9 +108,10 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
     { code: 'NGN', symbol: '₦', flag: 'https://flagcdn.com/w20/ng.png', name: 'Nigerian Naira' }
   ];
 
-  const items = useCartStore((state) => state.items);
+  const userCart = useUserCart();
+  const items = userCart.items;
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const { items: favoriteItems, setFavoritesOpen } = useFavoritesStore();
+  const { items: favoriteItems } = useFavoritesStore();
 
   // Filter currencies based on search
   const filteredCurrencies = currencies.filter(currency =>
@@ -163,7 +176,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
 
   const mobileNavLinks = [
     { label: 'Shop Bundle', href: '/product/winter-cloud' },
-    { label: 'Favorites', href: '#', isFavorite: true },
+    { label: 'Favorites', href: '/favorites', isFavorite: true },
     { label: 'About', href: '/about' },
     { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/contact' },
@@ -454,7 +467,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                 </Link>
               </div>
 
-              {/* Right: Icons */}
+              {/* Right: Icons - Removed FavoritesDrawer */}
               <div className="flex items-center gap-5">
                 <AccountDrawer />
                 <CartDrawer />
@@ -491,11 +504,9 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                     {mobileNavLinks.map((link) => (
                       <div key={link.label}>
                         {link.isFavorite ? (
-                          <button
-                            onClick={() => {
-                              setMobileMenuOpen(false);
-                              setFavoritesOpen(true);
-                            }}
+                          <Link
+                            to={link.href}
+                            onClick={() => setMobileMenuOpen(false)}
                             className="w-full flex items-center justify-between px-8 py-6 text-[13px] font-medium tracking-[0.15em] text-[#1c1c1c] uppercase"
                           >
                             <span>{link.label}</span>
@@ -504,7 +515,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                                 {favoriteItems.length}
                               </span>
                             )}
-                          </button>
+                          </Link>
                         ) : (
                           <Link
                             to={link.href}
@@ -601,14 +612,27 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                     </div>
 
                     {/* Sign In */}
-                    <Link
-                      to="/account/login"
-                      className="flex items-center gap-2 group"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <User className="h-5 w-5 text-[#1c1c1c] stroke-[1.5]" />
-                      <span className="text-[12px] font-medium tracking-wider text-[#1c1c1c] uppercase">Sign In</span>
-                    </Link>
+                    {isLoggedIn() ? (
+                      <div className="flex items-center gap-2 group">
+                        <div className="w-8 h-8 bg-[#2D2D2D] text-white rounded-full flex items-center justify-center text-sm font-medium">
+                          {getUserInitials()}
+                        </div>
+                        <span className="text-[12px] font-medium tracking-wider text-[#1c1c1c] uppercase">
+                          {profile?.first_name || 'Account'}
+                        </span>
+                      </div>
+                    ) : (
+                      <button
+                        className="flex items-center gap-2 group"
+                        onClick={() => {
+                          window.dispatchEvent(new CustomEvent('openAccountDrawer', { detail: { view: 'login' } }));
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        <User className="h-5 w-5 text-[#1c1c1c] stroke-[1.5]" />
+                        <span className="text-[12px] font-medium tracking-wider text-[#1c1c1c] uppercase">Sign In</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </motion.div>

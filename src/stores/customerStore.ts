@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { supabase } from '@/integrations/supabase/client';
+import { clearAllCartStores } from '@/stores/userCartStore';
 
 export interface UserProfile {
   id: string;
@@ -23,7 +24,7 @@ interface CustomerStore {
   isLoading: boolean;
   error: string | null;
 
-  signup: (input: { email: string; password: string; firstName: string; lastName: string }) => Promise<boolean>;
+  signup: (input: { email: string; password: string; firstName: string; lastName: string; phone?: string }) => Promise<boolean>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -65,6 +66,7 @@ export const useCustomerStore = create<CustomerStore>()(
               data: {
                 first_name: input.firstName,
                 last_name: input.lastName,
+                phone: input.phone || '',
               },
             },
           });
@@ -117,6 +119,19 @@ export const useCustomerStore = create<CustomerStore>()(
       },
 
       logout: async () => {
+        const { profile } = get();
+        
+        // Clear user-specific cart storage before logout
+        if (profile?.id) {
+          localStorage.removeItem(`shopify-cart-${profile.id}`);
+        }
+        
+        // Clear guest cart as well
+        localStorage.removeItem('shopify-cart-guest');
+        
+        // Clear all cart store instances
+        clearAllCartStores();
+        
         await supabase.auth.signOut();
         set({ profile: null, error: null });
       },

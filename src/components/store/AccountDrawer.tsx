@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, X, Mail, Lock, ArrowRight, Package, LogOut, ChevronRight, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { User, X, Mail, Lock, ArrowRight, Package, LogOut, ChevronRight, Eye, EyeOff, Loader2, Phone } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -23,13 +23,27 @@ export function AccountDrawer() {
         firstName: '',
         lastName: '',
         email: '',
-        password: ''
+        password: '',
+        phone: ''
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const isMobile = useIsMobile();
     const navigate = useNavigate();
 
     const { profile, isLoading, error, login, signup, logout, isLoggedIn, clearError, refreshProfile } = useCustomerStore();
+
+    // Listen for custom events to open the account drawer
+    useEffect(() => {
+        const handleOpenAccountDrawer = (event: CustomEvent) => {
+            setView(event.detail.view || 'login');
+            setIsOpen(true);
+        };
+
+        window.addEventListener('openAccountDrawer', handleOpenAccountDrawer as EventListener);
+        return () => {
+            window.removeEventListener('openAccountDrawer', handleOpenAccountDrawer as EventListener);
+        };
+    }, []);
 
     useEffect(() => {
         if (isOpen && isLoggedIn()) {
@@ -67,6 +81,10 @@ export function AccountDrawer() {
             newErrors.password = 'Password must be at least 6 characters';
         }
         
+        if (formData.phone && !/^[+]?[\d\s\-\(\)]+$/.test(formData.phone)) {
+            newErrors.phone = 'Please enter a valid phone number';
+        }
+        
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -86,7 +104,7 @@ export function AccountDrawer() {
         if (success) {
             toast.success('Welcome back!', { position: 'top-center' });
             setView('profile');
-            setFormData({ firstName: '', lastName: '', email: '', password: '' });
+            setFormData({ firstName: '', lastName: '', email: '', password: '', phone: '' });
         }
     };
 
@@ -99,11 +117,12 @@ export function AccountDrawer() {
             password: formData.password,
             firstName: formData.firstName,
             lastName: formData.lastName,
+            phone: formData.phone,
         });
         if (success) {
             toast.success('Account created successfully!', { position: 'top-center' });
             setView('profile');
-            setFormData({ firstName: '', lastName: '', email: '', password: '' });
+            setFormData({ firstName: '', lastName: '', email: '', password: '', phone: '' });
         }
     };
 
@@ -120,7 +139,13 @@ export function AccountDrawer() {
                     className="text-gray-800 hover:text-gray-600 transition-colors"
                     aria-label="Account"
                 >
-                    <img src="/people (1).png" alt="Account" className="h-5 w-5 object-contain" />
+                    {isLoggedIn() ? (
+                        <div className="w-8 h-8 bg-[#2D2D2D] text-white rounded-full flex items-center justify-center text-sm font-medium">
+                            {profile?.first_name?.charAt(0)}{profile?.last_name?.charAt(0)}
+                        </div>
+                    ) : (
+                        <img src="/people (1).png" alt="Account" className="h-5 w-5 object-contain" />
+                    )}
                 </button>
             </SheetTrigger>
             <SheetContent
@@ -196,8 +221,13 @@ export function AccountDrawer() {
                                     <div className="space-y-3">
                                         <button 
                                             onClick={() => {
-                                                setIsOpen(false);
-                                                navigate('/orders');
+                                                if (!isLoggedIn()) {
+                                                    toast.error('Please log in to view your orders', { position: 'top-center' });
+                                                    setView('login');
+                                                } else {
+                                                    setIsOpen(false);
+                                                    navigate('/orders');
+                                                }
                                             }}
                                             className="w-full flex items-center justify-center gap-3 h-16 bg-[#F8F5F2] hover:bg-[#EBE7E0] border border-[#e0dbd5] transition-colors group"
                                         >
@@ -207,8 +237,13 @@ export function AccountDrawer() {
 
                                         <button 
                                             onClick={() => {
-                                                setIsOpen(false);
-                                                navigate('/profile');
+                                                if (!isLoggedIn()) {
+                                                    toast.error('Please log in to view your profile', { position: 'top-center' });
+                                                    setView('login');
+                                                } else {
+                                                    setIsOpen(false);
+                                                    navigate('/profile');
+                                                }
                                             }}
                                             className="w-full flex items-center justify-center gap-3 h-16 bg-[#F8F5F2] hover:bg-[#EBE7E0] border border-[#e0dbd5] transition-colors group"
                                         >
@@ -285,6 +320,20 @@ export function AccountDrawer() {
                                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                             {errors.email && (
                                                 <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.email}</p>
+                                            )}
+                                        </div>
+                                        <div className="relative">
+                                            <Input
+                                                type="tel"
+                                                value={formData.phone}
+                                                onChange={(e) => handleInputChange('phone', e.target.value)}
+                                                placeholder="Phone Number (Optional)"
+                                                className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.phone ? 'border-red-500' : ''}`}
+                                                style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                            />
+                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                            {errors.phone && (
+                                                <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.phone}</p>
                                             )}
                                         </div>
                                         <div className="relative">
