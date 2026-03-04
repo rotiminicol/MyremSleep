@@ -14,7 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          phone: string | null
+          province: string | null
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string
+          id: string
+          last_name?: string
+          phone?: string | null
+          province?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string | null
+          province?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: []
+      }
+      user_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          product_data: Json
+          product_id: string
+          user_id: string
+          variant_data: Json | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_data: Json
+          product_id: string
+          user_id: string
+          variant_data?: Json | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_data?: Json
+          product_id?: string
+          user_id?: string
+          variant_data?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
-import { Package, Calendar, Truck, Check, X, ArrowRight, ChevronDown, Search, Clock, Star, RotateCcw, ExternalLink, Loader2 } from 'lucide-react';
+import { Package, Calendar, Truck, Check, X, ArrowRight, ChevronDown, Search, Clock, Star, ExternalLink, Loader2, ShoppingBag } from 'lucide-react';
 import { SimpleBackButton } from '../components/SimpleBackButton';
 import { useCustomerStore } from '@/stores/customerStore';
+import { useOrderStore } from '@/stores/orderStore';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useNavigate } from 'react-router-dom';
-import type { ShopifyOrder } from '@/lib/shopify-customer';
 
 // ── 3D Tilt Card ──────────────────────────────────────────────────────────
 function TiltCard({ children, className = '', intensity = 1, glare = true }) {
@@ -51,13 +51,6 @@ function TiltCard({ children, className = '', intensity = 1, glare = true }) {
 }
 
 // ── Status helpers ────────────────────────────────────────────────────────
-function mapShopifyStatus(financialStatus: string, fulfillmentStatus: string | null): 'processing' | 'shipped' | 'delivered' | 'cancelled' {
-  if (financialStatus === 'REFUNDED' || financialStatus === 'VOIDED') return 'cancelled';
-  if (fulfillmentStatus === 'FULFILLED') return 'delivered';
-  if (fulfillmentStatus === 'IN_TRANSIT' || fulfillmentStatus === 'PARTIALLY_FULFILLED') return 'shipped';
-  return 'processing';
-}
-
 const STATUS = {
   processing: {
     label: 'Processing',
@@ -109,7 +102,7 @@ function OrderTimeline({ status }) {
     { label: 'Shipped', icon: Truck },
     { label: 'Delivered', icon: Check },
   ];
-  const activeStep = STATUS[status].timeline;
+  const activeStep = STATUS[status]?.timeline ?? 0;
 
   return (
     <div className="relative flex items-center justify-between px-2 py-6">
@@ -157,16 +150,32 @@ function OrderTimeline({ status }) {
   );
 }
 
+interface LocalOrder {
+  id: string;
+  date: string;
+  status: 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  items: Array<{
+    productTitle: string;
+    quantity: number;
+    price: { amount: string; currencyCode: string };
+    image?: string;
+    selectedOptions: Array<{ name: string; value: string }>;
+  }>;
+  total: number;
+  subtotal: number;
+  shippingCost: number;
+}
+
 // ── Order Card ─────────────────────────────────────────────────────────────
-function OrderCard({ order, index, onClick, formatPrice }: { order: ShopifyOrder; index: number; onClick: () => void; formatPrice: (n: number) => string }) {
-  const status = mapShopifyStatus(order.financialStatus, order.fulfillmentStatus);
+function OrderCard({ order, index, onClick, formatPrice }: { order: LocalOrder; index: number; onClick: () => void; formatPrice: (n: number) => string }) {
+  const status = order.status;
   const cfg = STATUS[status];
   const StatusIcon = cfg.icon;
   
-  const firstItem = order.lineItems.edges[0]?.node;
-  const productTitle = firstItem?.title || 'Product';
-  const productImage = firstItem?.variant?.image?.url || '/placeholder.svg';
-  const itemCount = order.lineItems.edges.length;
+  const firstItem = order.items[0];
+  const productTitle = firstItem?.productTitle || 'Product';
+  const productImage = firstItem?.image || '/placeholder.svg';
+  const itemCount = order.items.length;
 
   return (
     <TiltCard intensity={0.4} className="cursor-pointer group" glare={true}>
@@ -190,7 +199,7 @@ function OrderCard({ order, index, onClick, formatPrice }: { order: ShopifyOrder
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-1.5">
-              <p className="font-serif text-gray-900 text-[15px] font-medium">{order.name}</p>
+              <p className="font-serif text-gray-900 text-[15px] font-medium">{order.id}</p>
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -205,14 +214,14 @@ function OrderCard({ order, index, onClick, formatPrice }: { order: ShopifyOrder
             <div className="flex items-center gap-4 text-xs text-gray-400">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
-                {new Date(order.processedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                {new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
               </span>
               <span>{itemCount} {itemCount === 1 ? 'item' : 'items'}</span>
             </div>
           </div>
 
           <div className="flex flex-col items-end gap-3 flex-shrink-0">
-            <p className="text-xl font-serif text-gray-900">{formatPrice(parseFloat(order.totalPrice.amount))}</p>
+            <p className="text-xl font-serif text-gray-900">{formatPrice(order.total)}</p>
             <motion.div
               className="w-8 h-8 rounded-full bg-[#f0ece7] flex items-center justify-center group-hover:bg-gray-900 transition-colors duration-300"
               whileHover={{ scale: 1.1 }}
@@ -227,13 +236,13 @@ function OrderCard({ order, index, onClick, formatPrice }: { order: ShopifyOrder
 }
 
 // ── Modal ──────────────────────────────────────────────────────────────────
-function OrderModal({ order, onClose, formatPrice }: { order: ShopifyOrder; onClose: () => void; formatPrice: (n: number) => string }) {
-  const status = mapShopifyStatus(order.financialStatus, order.fulfillmentStatus);
+function OrderModal({ order, onClose, formatPrice }: { order: LocalOrder; onClose: () => void; formatPrice: (n: number) => string }) {
+  const status = order.status;
   const cfg = STATUS[status];
 
-  const firstItem = order.lineItems.edges[0]?.node;
-  const productTitle = firstItem?.title || 'Product';
-  const productImage = firstItem?.variant?.image?.url || '/placeholder.svg';
+  const firstItem = order.items[0];
+  const productTitle = firstItem?.productTitle || 'Product';
+  const productImage = firstItem?.image || '/placeholder.svg';
 
   useEffect(() => {
     const fn = (e) => e.key === 'Escape' && onClose();
@@ -269,7 +278,7 @@ function OrderModal({ order, onClose, formatPrice }: { order: ShopifyOrder; onCl
           </button>
           <div className="absolute bottom-4 left-6 right-6">
             <p className="text-white/70 text-xs tracking-[0.3em] uppercase mb-1">Order</p>
-            <p className="text-white text-2xl font-serif">{order.name}</p>
+            <p className="text-white text-2xl font-serif">{order.id}</p>
           </div>
         </div>
 
@@ -295,17 +304,16 @@ function OrderModal({ order, onClose, formatPrice }: { order: ShopifyOrder; onCl
           <div>
             <p className="text-xs tracking-[0.25em] uppercase text-[#8f877d] mb-3 font-medium">Order Details</p>
             <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-white/80 p-5 space-y-4">
-              {/* Line items */}
-              {order.lineItems.edges.map((edge, i) => (
+              {order.items.map((item, i) => (
                 <div key={i} className="flex justify-between items-center text-sm border-b border-[#ede9e4] pb-4">
-                  <span className="text-gray-700">{edge.node.title} × {edge.node.quantity}</span>
-                  <span className="text-gray-900">{edge.node.variant ? formatPrice(parseFloat(edge.node.variant.price.amount) * edge.node.quantity) : '—'}</span>
+                  <span className="text-gray-700">{item.productTitle} × {item.quantity}</span>
+                  <span className="text-gray-900">{formatPrice(parseFloat(item.price.amount) * item.quantity)}</span>
                 </div>
               ))}
               {[
-                { label: 'Subtotal', value: formatPrice(parseFloat(order.subtotalPrice.amount)) },
-                { label: 'Shipping', value: parseFloat(order.totalShippingPrice.amount) === 0 ? 'Free' : formatPrice(parseFloat(order.totalShippingPrice.amount)) },
-                { label: 'Total', value: formatPrice(parseFloat(order.totalPrice.amount)), bold: true },
+                { label: 'Subtotal', value: formatPrice(order.subtotal) },
+                { label: 'Shipping', value: order.shippingCost === 0 ? 'Free' : formatPrice(order.shippingCost) },
+                { label: 'Total', value: formatPrice(order.total), bold: true },
               ].map((row, i) => (
                 <motion.div
                   key={i}
@@ -320,20 +328,6 @@ function OrderModal({ order, onClose, formatPrice }: { order: ShopifyOrder; onCl
               ))}
             </div>
           </div>
-
-          <div className="flex gap-3 pt-1">
-            {order.statusUrl && (
-              <motion.a
-                href={order.statusUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}
-                className="flex-1 py-3.5 bg-gray-900 text-white rounded-xl text-sm font-medium tracking-[0.1em] uppercase hover:bg-black transition-colors shadow-lg flex items-center justify-center gap-2"
-              >
-                <ExternalLink className="w-4 h-4" /> View on Shopify
-              </motion.a>
-            )}
-          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -343,12 +337,12 @@ function OrderModal({ order, onClose, formatPrice }: { order: ShopifyOrder; onCl
 // ── Main ───────────────────────────────────────────────────────────────────
 export default function OrdersPage() {
   const navigate = useNavigate();
-  const { customer, isLoggedIn, refreshCustomer } = useCustomerStore();
+  const { isLoggedIn } = useCustomerStore();
+  const { orders: localOrders } = useOrderStore();
   const { formatPrice } = useCurrency();
-  const [selectedOrder, setSelectedOrder] = useState<ShopifyOrder | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<LocalOrder | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
   const headerY = useTransform(scrollYProgress, [0, 0.2], [0, -30]);
@@ -356,26 +350,37 @@ export default function OrdersPage() {
   useEffect(() => {
     if (!isLoggedIn()) {
       navigate('/store');
-    } else {
-      setIsRefreshing(true);
-      refreshCustomer().finally(() => setIsRefreshing(false));
     }
   }, []);
 
-  const orders = customer?.orders?.edges?.map(e => e.node) || [];
+  // Map local orders to our display format
+  const orders: LocalOrder[] = localOrders.map(o => ({
+    id: o.id,
+    date: o.date,
+    status: o.status,
+    items: o.items.map(item => ({
+      productTitle: item.productTitle,
+      quantity: item.quantity,
+      price: item.price,
+      image: item.image,
+      selectedOptions: item.selectedOptions,
+    })),
+    total: o.total,
+    subtotal: o.subtotal,
+    shippingCost: o.shippingCost,
+  }));
 
   const filteredOrders = orders.filter(order => {
-    const status = mapShopifyStatus(order.financialStatus, order.fulfillmentStatus);
-    const matchesSearch = order.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.lineItems.edges.some(edge => edge.node.title.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesStatus = statusFilter === 'all' || status === statusFilter;
+    const matchesSearch = order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.items.some(item => item.productTitle.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const stats = [
     { label: 'Total Orders', value: orders.length, icon: Package },
-    { label: 'Delivered', value: orders.filter(o => mapShopifyStatus(o.financialStatus, o.fulfillmentStatus) === 'delivered').length, icon: Check },
-    { label: 'Total Spent', value: formatPrice(orders.reduce((s, o) => s + parseFloat(o.totalPrice.amount), 0)), icon: Star },
+    { label: 'Delivered', value: orders.filter(o => o.status === 'delivered').length, icon: Check },
+    { label: 'Total Spent', value: formatPrice(orders.reduce((s, o) => s + o.total, 0)), icon: Star },
   ];
 
   return (
@@ -459,59 +464,53 @@ export default function OrdersPage() {
           </div>
         </motion.div>
 
-        {/* Loading */}
-        {isRefreshing && (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-          </div>
-        )}
-
         {/* Orders */}
-        {!isRefreshing && (
-          <div className="space-y-4">
-            {filteredOrders.length === 0 ? (
+        <div className="space-y-4">
+          {filteredOrders.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="text-center py-20"
+            >
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="text-center py-20"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                >
-                  <Package className="w-20 h-20 text-[#d8d1c8] mx-auto mb-6" strokeWidth={1} />
-                </motion.div>
-                <h2 className="text-3xl font-serif text-gray-900 mb-3">No orders yet</h2>
-                <p className="text-gray-500 max-w-sm mx-auto mb-8">
-                  {orders.length === 0 
-                    ? "When you place your first order, it will appear here."
-                    : "No orders match your search."}
-                </p>
-                {orders.length === 0 && (
-                  <motion.button
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => navigate('/store')}
-                    className="px-8 py-3.5 bg-gray-900 text-white rounded-xl text-sm font-medium tracking-[0.1em] uppercase hover:bg-black transition-colors shadow-xl"
-                  >
-                    Start Shopping
-                  </motion.button>
-                )}
+                <Package className="w-20 h-20 text-[#d8d1c8] mx-auto mb-6" strokeWidth={1} />
               </motion.div>
-            ) : (
-              filteredOrders.map((order, i) => (
-                <OrderCard
-                  key={order.id}
-                  order={order}
-                  index={i}
-                  onClick={() => setSelectedOrder(order)}
-                  formatPrice={formatPrice}
-                />
-              ))
-            )}
-          </div>
-        )}
+              <h2 className="text-3xl font-serif text-gray-900 mb-3">No orders yet</h2>
+              <p className="text-gray-500 max-w-sm mx-auto mb-4">
+                {orders.length === 0 
+                  ? "When you complete a checkout, your orders will appear here."
+                  : "No orders match your search."}
+              </p>
+              <p className="text-sm text-gray-400 max-w-md mx-auto mb-8">
+                Orders are created when you complete checkout through Shopify. Check your email for order confirmations.
+              </p>
+              {orders.length === 0 && (
+                <motion.button
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/store')}
+                  className="px-8 py-3.5 bg-gray-900 text-white rounded-xl text-sm font-medium tracking-[0.1em] uppercase hover:bg-black transition-colors shadow-xl"
+                >
+                  Start Shopping
+                </motion.button>
+              )}
+            </motion.div>
+          ) : (
+            filteredOrders.map((order, i) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                index={i}
+                onClick={() => setSelectedOrder(order)}
+                formatPrice={formatPrice}
+              />
+            ))
+          )}
+        </div>
       </main>
 
       {/* Order Detail Modal */}

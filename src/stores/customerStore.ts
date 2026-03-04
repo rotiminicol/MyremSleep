@@ -1,63 +1,89 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {
-  createCustomer,
-  createAccessToken,
-  deleteAccessToken,
-  fetchCustomer,
-  updateCustomer,
-  type ShopifyCustomer,
-} from '@/lib/shopify-customer';
+import { supabase } from '@/integrations/supabase/client';
+
+export interface UserProfile {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  address_line1: string;
+  address_line2: string;
+  city: string;
+  province: string;
+  zip: string;
+  country: string;
+  created_at: string;
+  updated_at: string;
+}
 
 interface CustomerStore {
-  // State
-  accessToken: string | null;
-  expiresAt: string | null;
-  customer: ShopifyCustomer | null;
+  profile: UserProfile | null;
   isLoading: boolean;
   error: string | null;
 
-  // Actions
   signup: (input: { email: string; password: string; firstName: string; lastName: string }) => Promise<boolean>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
-  refreshCustomer: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
   updateProfile: (input: { firstName?: string; lastName?: string; phone?: string }) => Promise<boolean>;
+  updateAddress: (input: { address_line1?: string; address_line2?: string; city?: string; province?: string; zip?: string; country?: string }) => Promise<boolean>;
   clearError: () => void;
   isLoggedIn: () => boolean;
+  initialize: () => Promise<void>;
 }
 
 export const useCustomerStore = create<CustomerStore>()(
   persist(
     (set, get) => ({
-      accessToken: null,
-      expiresAt: null,
-      customer: null,
+      profile: null,
       isLoading: false,
       error: null,
+
+      initialize: async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const { data } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          if (data) set({ profile: data as UserProfile });
+        } else {
+          set({ profile: null });
+        }
+      },
 
       signup: async (input) => {
         set({ isLoading: true, error: null });
         try {
-          const result = await createCustomer(input);
-          if (!result.success) {
-            set({ error: result.error, isLoading: false });
+          const { data, error } = await supabase.auth.signUp({
+            email: input.email,
+            password: input.password,
+            options: {
+              data: {
+                first_name: input.firstName,
+                last_name: input.lastName,
+              },
+            },
+          });
+
+          if (error) {
+            set({ error: error.message, isLoading: false });
             return false;
           }
-          // Auto-login after signup
-          const tokenResult = await createAccessToken(input.email, input.password);
-          if ('error' in tokenResult) {
-            // Account created but couldn't auto-login (might need email verification)
-            set({ error: 'Account created! Please log in.', isLoading: false });
-            return true;
+
+          if (data.user) {
+            // Wait a moment for the trigger to create the profile
+            await new Promise(r => setTimeout(r, 500));
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', data.user.id)
+              .single();
+            set({ profile: profile as UserProfile, isLoading: false });
           }
-          const customer = await fetchCustomer(tokenResult.accessToken);
-          set({
-            accessToken: tokenResult.accessToken,
-            expiresAt: tokenResult.expiresAt,
-            customer,
-            isLoading: false,
-          });
           return true;
         } catch (err) {
           set({ error: 'Something went wrong. Please try again.', isLoading: false });
@@ -68,18 +94,21 @@ export const useCustomerStore = create<CustomerStore>()(
       login: async (email, password) => {
         set({ isLoading: true, error: null });
         try {
-          const tokenResult = await createAccessToken(email, password);
-          if ('error' in tokenResult) {
-            set({ error: tokenResult.error, isLoading: false });
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+          if (error) {
+            set({ error: error.message, isLoading: false });
             return false;
           }
-          const customer = await fetchCustomer(tokenResult.accessToken);
-          set({
-            accessToken: tokenResult.accessToken,
-            expiresAt: tokenResult.expiresAt,
-            customer,
-            isLoading: false,
-          });
+
+          if (data.user) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', data.user.id)
+              .single();
+            set({ profile: profile as UserProfile, isLoading: false });
+          }
           return true;
         } catch (err) {
           set({ error: 'Something went wrong. Please try again.', isLoading: false });
@@ -88,56 +117,48 @@ export const useCustomerStore = create<CustomerStore>()(
       },
 
       logout: async () => {
-        const { accessToken } = get();
-        if (accessToken) {
-          try {
-            await deleteAccessToken(accessToken);
-          } catch {
-            // Ignore errors during logout
-          }
-        }
-        set({ accessToken: null, expiresAt: null, customer: null, error: null });
+        await supabase.auth.signOut();
+        set({ profile: null, error: null });
       },
 
-      refreshCustomer: async () => {
-        const { accessToken } = get();
-        if (!accessToken) return;
-
-        // Check if token is expired
-        const { expiresAt } = get();
-        if (expiresAt && new Date(expiresAt) < new Date()) {
-          set({ accessToken: null, expiresAt: null, customer: null });
+      refreshProfile: async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+          set({ profile: null });
           return;
         }
-
-        try {
-          const customer = await fetchCustomer(accessToken);
-          if (!customer) {
-            // Token is invalid
-            set({ accessToken: null, expiresAt: null, customer: null });
-            return;
-          }
-          set({ customer });
-        } catch {
-          // Token might be expired
-          set({ accessToken: null, expiresAt: null, customer: null });
-        }
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        if (data) set({ profile: data as UserProfile });
+        else set({ profile: null });
       },
 
       updateProfile: async (input) => {
-        const { accessToken } = get();
-        if (!accessToken) return false;
+        const { profile } = get();
+        if (!profile) return false;
 
         set({ isLoading: true, error: null });
         try {
-          const result = await updateCustomer(accessToken, input);
-          if (!result.success) {
-            set({ error: result.error, isLoading: false });
+          const { error } = await supabase
+            .from('profiles')
+            .update({
+              first_name: input.firstName ?? profile.first_name,
+              last_name: input.lastName ?? profile.last_name,
+              phone: input.phone ?? profile.phone,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', profile.id);
+
+          if (error) {
+            set({ error: error.message, isLoading: false });
             return false;
           }
-          // Refresh customer data
-          const customer = await fetchCustomer(accessToken);
-          set({ customer, isLoading: false });
+
+          await get().refreshProfile();
+          set({ isLoading: false });
           return true;
         } catch {
           set({ error: 'Failed to update profile.', isLoading: false });
@@ -145,21 +166,44 @@ export const useCustomerStore = create<CustomerStore>()(
         }
       },
 
+      updateAddress: async (input) => {
+        const { profile } = get();
+        if (!profile) return false;
+
+        set({ isLoading: true, error: null });
+        try {
+          const { error } = await supabase
+            .from('profiles')
+            .update({
+              ...input,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', profile.id);
+
+          if (error) {
+            set({ error: error.message, isLoading: false });
+            return false;
+          }
+
+          await get().refreshProfile();
+          set({ isLoading: false });
+          return true;
+        } catch {
+          set({ error: 'Failed to update address.', isLoading: false });
+          return false;
+        }
+      },
+
       clearError: () => set({ error: null }),
 
       isLoggedIn: () => {
-        const { accessToken, expiresAt } = get();
-        if (!accessToken) return false;
-        if (expiresAt && new Date(expiresAt) < new Date()) return false;
-        return true;
+        return !!get().profile;
       },
     }),
     {
-      name: 'shopify-customer',
+      name: 'remsleep-customer',
       partialize: (state) => ({
-        accessToken: state.accessToken,
-        expiresAt: state.expiresAt,
-        customer: state.customer,
+        profile: state.profile,
       }),
     }
   )

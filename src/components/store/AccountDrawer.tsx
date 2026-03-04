@@ -29,19 +29,17 @@ export function AccountDrawer() {
     const isMobile = useIsMobile();
     const navigate = useNavigate();
 
-    const { customer, isLoading, error, login, signup, logout, isLoggedIn, clearError, refreshCustomer } = useCustomerStore();
+    const { profile, isLoading, error, login, signup, logout, isLoggedIn, clearError, refreshProfile } = useCustomerStore();
 
-    // Refresh customer data when drawer opens and user is logged in
     useEffect(() => {
         if (isOpen && isLoggedIn()) {
-            refreshCustomer();
+            refreshProfile();
             setView('profile');
         } else if (isOpen && !isLoggedIn()) {
             setView('home');
         }
     }, [isOpen]);
 
-    // Show error from store
     useEffect(() => {
         if (error) {
             toast.error(error, { position: 'top-center' });
@@ -65,8 +63,8 @@ export function AccountDrawer() {
         
         if (!formData.password) {
             newErrors.password = 'Password is required';
-        } else if (formData.password.length < 5) {
-            newErrors.password = 'Password must be at least 5 characters';
+        } else if (formData.password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
         }
         
         setErrors(newErrors);
@@ -159,7 +157,6 @@ export function AccountDrawer() {
 
                 <div className="flex-1 overflow-y-auto px-6 py-8">
                     <AnimatePresence mode="wait">
-                        {/* Home - Not logged in */}
                         {view === 'home' && (
                             <motion.div
                                 key="home"
@@ -223,7 +220,6 @@ export function AccountDrawer() {
                             </motion.div>
                         )}
 
-                        {/* Login / Signup Forms */}
                         {(view === 'login' || view === 'signup') && (
                             <motion.div
                                 key={view}
@@ -346,8 +342,7 @@ export function AccountDrawer() {
                             </motion.div>
                         )}
 
-                        {/* Profile - Logged in */}
-                        {view === 'profile' && customer && (
+                        {view === 'profile' && profile && (
                             <motion.div
                                 key="profile"
                                 initial={{ opacity: 0, scale: 0.95 }}
@@ -360,10 +355,10 @@ export function AccountDrawer() {
                                     </div>
                                     <div>
                                         <h4 className="text-lg text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                                            {customer.firstName} {customer.lastName}
+                                            {profile.first_name} {profile.last_name}
                                         </h4>
                                         <p className="text-xs text-gray-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                                            {customer.email}
+                                            {profile.email}
                                         </p>
                                     </div>
                                 </div>
