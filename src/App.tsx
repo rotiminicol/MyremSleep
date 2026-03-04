@@ -34,21 +34,30 @@ import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import { CookieConsent } from "./components/CookieConsent";
 import { StoreOfferPopup } from "./components/store/StoreOfferPopup";
 import { useCartSync } from "./hooks/useCartSync";
-
 import { useCustomerStore } from "./stores/customerStore";
+import { useFavoritesStore } from "./stores/favoritesStore";
+import { supabase } from "./integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
 function AppProviders({ children }: { children: React.ReactNode }) {
   useCartSync();
-  // Refresh customer session on app load
-  const refreshCustomer = useCustomerStore(state => state.refreshCustomer);
-  const isLoggedIn = useCustomerStore(state => state.isLoggedIn);
-  
+  const initialize = useCustomerStore(state => state.initialize);
+  const syncFavorites = useFavoritesStore(state => state.syncFromDb);
+
   React.useEffect(() => {
-    if (isLoggedIn()) {
-      refreshCustomer();
-    }
+    initialize();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        useCustomerStore.getState().refreshProfile();
+        syncFavorites();
+      } else {
+        useCustomerStore.setState({ profile: null });
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return <>{children}</>;

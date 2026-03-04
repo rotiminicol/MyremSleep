@@ -4,11 +4,12 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import {
   User, Mail, Phone, MapPin, Edit2, Save, X, Check, Lock,
   Bell, Package, Heart, LogOut, ChevronRight,
-  Shield, Eye, EyeOff, Globe, Sparkles, Camera, Loader2
+  Shield, Eye, EyeOff, Globe, Sparkles, Loader2
 } from 'lucide-react';
 import { SimpleBackButton } from '../components/SimpleBackButton';
 import { useCustomerStore } from '@/stores/customerStore';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 // ── 3D Tilt ───────────────────────────────────────────────────────────────
 function TiltCard({ children, className = '', intensity = 1 }) {
@@ -100,17 +101,26 @@ export default function ProfilePage() {
   const [activeSection, setActiveSection] = useState('personal');
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showPw, setShowPw] = useState({ cur: false, new: false, confirm: false });
   const [showPwForm, setShowPwForm] = useState(false);
 
-  const { customer, isLoading, isLoggedIn, logout, updateProfile, refreshCustomer } = useCustomerStore();
+  const { profile, isLoading, isLoggedIn, logout, updateProfile, updateAddress, refreshProfile } = useCustomerStore();
 
   const [draft, setDraft] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
+  });
+  const [addressDraft, setAddressDraft] = useState({
+    address_line1: '',
+    address_line2: '',
+    city: '',
+    province: '',
+    zip: '',
+    country: '',
   });
   const [pw, setPw] = useState({ cur: '', new: '', confirm: '' });
   const [preferences, setPreferences] = useState({ newsletter: true, orderUpdates: true, promotions: false });
@@ -120,21 +130,29 @@ export default function ProfilePage() {
     if (!isLoggedIn()) {
       navigate('/store');
     } else {
-      refreshCustomer();
+      refreshProfile();
     }
   }, []);
 
-  // Sync draft with customer data
+  // Sync draft with profile data
   useEffect(() => {
-    if (customer) {
+    if (profile) {
       setDraft({
-        firstName: customer.firstName || '',
-        lastName: customer.lastName || '',
-        email: customer.email || '',
-        phone: customer.phone || '',
+        firstName: profile.first_name || '',
+        lastName: profile.last_name || '',
+        email: profile.email || '',
+        phone: profile.phone || '',
+      });
+      setAddressDraft({
+        address_line1: profile.address_line1 || '',
+        address_line2: profile.address_line2 || '',
+        city: profile.city || '',
+        province: profile.province || '',
+        zip: profile.zip || '',
+        country: profile.country || '',
       });
     }
-  }, [customer]);
+  }, [profile]);
 
   const triggerSuccess = () => {
     setShowSuccess(true);
@@ -155,13 +173,44 @@ export default function ProfilePage() {
     }
   };
 
+  const handleSaveAddress = async () => {
+    const success = await updateAddress(addressDraft);
+    if (success) {
+      setIsEditingAddress(false);
+      triggerSuccess();
+    } else {
+      toast.error('Failed to update address', { position: 'top-center' });
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pw.new !== pw.confirm) {
+      toast.error('Passwords do not match', { position: 'top-center' });
+      return;
+    }
+    if (pw.new.length < 6) {
+      toast.error('Password must be at least 6 characters', { position: 'top-center' });
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({ password: pw.new });
+    if (error) {
+      toast.error(error.message, { position: 'top-center' });
+    } else {
+      setShowPwForm(false);
+      setPw({ cur: '', new: '', confirm: '' });
+      toast.success('Password updated', { position: 'top-center' });
+    }
+  };
+
   const handleSignOut = async () => {
     await logout();
     setShowSignOutModal(false);
     navigate('/store');
   };
 
-  if (!customer) {
+  if (!profile) {
     return (
       <div className="min-h-screen bg-[#f5f1ed] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
@@ -169,8 +218,8 @@ export default function ProfilePage() {
     );
   }
 
-  const fullName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'User';
-  const address = customer.defaultAddress;
+  const fullName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'User';
+  const hasAddress = profile.address_line1 || profile.city || profile.country;
 
   return (
     <div className="min-h-screen bg-[#f5f1ed] overflow-x-hidden" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -185,7 +234,6 @@ export default function ProfilePage() {
       <SimpleBackButton />
 
       <main className="relative z-10 max-w-[1100px] mx-auto px-6 md:px-10 pt-16 pb-24">
-
         {/* Page header */}
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} className="mb-12">
           <span className="text-[10px] tracking-[0.5em] text-[#8f877d] block mb-3 uppercase font-medium">My Account</span>
@@ -213,10 +261,8 @@ export default function ProfilePage() {
         </AnimatePresence>
 
         <div className="grid lg:grid-cols-[280px_1fr] gap-8 items-start">
-
           {/* ── Sidebar ── */}
           <div className="space-y-4 lg:sticky lg:top-8">
-            {/* Profile card */}
             <TiltCard intensity={0.5}>
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
@@ -229,12 +275,12 @@ export default function ProfilePage() {
                   <Avatar name={fullName} />
                 </div>
                 <h3 className="text-gray-900 text-xl mb-0.5" style={{ transform: 'translateZ(6px)' }}>{fullName}</h3>
-                <p className="text-xs text-[#8f877d]">{customer.email}</p>
+                <p className="text-xs text-[#8f877d]">{profile.email}</p>
 
                 <div className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 bg-[#f0ece7] rounded-full">
                   <Sparkles className="w-3 h-3 text-[#8f877d]" />
                   <span className="text-[11px] text-[#8f877d] font-medium">
-                    Member since {new Date(customer.createdAt).getFullYear()}
+                    Member since {new Date(profile.created_at).getFullYear()}
                   </span>
                 </div>
               </motion.div>
@@ -253,7 +299,7 @@ export default function ProfilePage() {
                 return (
                   <motion.button
                     key={sec.id}
-                    onClick={() => { setActiveSection(sec.id); setIsEditing(false); }}
+                    onClick={() => { setActiveSection(sec.id); setIsEditing(false); setIsEditingAddress(false); }}
                     className={`w-full flex items-center gap-3 px-5 py-4 text-left relative border-b border-[#ede9e4] last:border-0 transition-all duration-200 ${active ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
                     whileHover={{ x: 2 }}
                   >
@@ -338,10 +384,10 @@ export default function ProfilePage() {
                           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                             onClick={() => {
                               setDraft({
-                                firstName: customer.firstName || '',
-                                lastName: customer.lastName || '',
-                                email: customer.email || '',
-                                phone: customer.phone || '',
+                                firstName: profile.first_name || '',
+                                lastName: profile.last_name || '',
+                                email: profile.email || '',
+                                phone: profile.phone || '',
                               });
                               setIsEditing(false);
                             }}
@@ -365,7 +411,7 @@ export default function ProfilePage() {
                           <input className={inputBase} value={draft.firstName}
                             onChange={e => setDraft({ ...draft, firstName: e.target.value })} />
                         ) : (
-                          <div className={inputDisabled}>{customer.firstName || '—'}</div>
+                          <div className={inputDisabled}>{profile.first_name || '—'}</div>
                         )}
                       </FormField>
                       <FormField label="Last Name">
@@ -373,13 +419,13 @@ export default function ProfilePage() {
                           <input className={inputBase} value={draft.lastName}
                             onChange={e => setDraft({ ...draft, lastName: e.target.value })} />
                         ) : (
-                          <div className={inputDisabled}>{customer.lastName || '—'}</div>
+                          <div className={inputDisabled}>{profile.last_name || '—'}</div>
                         )}
                       </FormField>
                       <FormField label="Email Address">
                         <div className={`${inputDisabled} flex items-center gap-2`}>
                           <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          {customer.email}
+                          {profile.email}
                         </div>
                       </FormField>
                       <FormField label="Phone Number">
@@ -392,7 +438,7 @@ export default function ProfilePage() {
                         ) : (
                           <div className={`${inputDisabled} flex items-center gap-2`}>
                             <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            {customer.phone || '—'}
+                            {profile.phone || '—'}
                           </div>
                         )}
                       </FormField>
@@ -403,12 +449,71 @@ export default function ProfilePage() {
                 {/* ── ADDRESS ── */}
                 {activeSection === 'address' && (
                   <div className="space-y-7">
-                    <div>
-                      <h2 className="text-2xl text-gray-900">Shipping Address</h2>
-                      <p className="text-sm text-gray-400 mt-1">Your default delivery address</p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-2xl text-gray-900">Shipping Address</h2>
+                        <p className="text-sm text-gray-400 mt-1">Your default delivery address</p>
+                      </div>
+                      {!isEditingAddress ? (
+                        <motion.button whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}
+                          onClick={() => setIsEditingAddress(true)}
+                          className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#e8e3dc] bg-[#faf9f7] hover:bg-[#f0ece7] text-sm font-medium text-gray-700 transition-all shadow-sm">
+                          <Edit2 className="w-3.5 h-3.5" /> Edit
+                        </motion.button>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                            onClick={() => {
+                              setAddressDraft({
+                                address_line1: profile.address_line1 || '',
+                                address_line2: profile.address_line2 || '',
+                                city: profile.city || '',
+                                province: profile.province || '',
+                                zip: profile.zip || '',
+                                country: profile.country || '',
+                              });
+                              setIsEditingAddress(false);
+                            }}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#e8e3dc] text-sm font-medium text-gray-600 hover:bg-[#f0ece7] transition-all">
+                            <X className="w-3.5 h-3.5" /> Cancel
+                          </motion.button>
+                          <motion.button whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}
+                            onClick={handleSaveAddress}
+                            disabled={isLoading}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-black transition-all shadow-lg disabled:opacity-50">
+                            {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                            Save Address
+                          </motion.button>
+                        </div>
+                      )}
                     </div>
 
-                    {address ? (
+                    {isEditingAddress ? (
+                      <div className="space-y-5">
+                        <FormField label="Street Address">
+                          <input className={inputBase} value={addressDraft.address_line1}
+                            onChange={e => setAddressDraft({ ...addressDraft, address_line1: e.target.value })} placeholder="123 Main Street" />
+                        </FormField>
+                        <FormField label="Address Line 2">
+                          <input className={inputBase} value={addressDraft.address_line2}
+                            onChange={e => setAddressDraft({ ...addressDraft, address_line2: e.target.value })} placeholder="Apt, Suite, etc. (optional)" />
+                        </FormField>
+                        <div className="grid sm:grid-cols-3 gap-5">
+                          <FormField label="City">
+                            <input className={inputBase} value={addressDraft.city}
+                              onChange={e => setAddressDraft({ ...addressDraft, city: e.target.value })} />
+                          </FormField>
+                          <FormField label="Postcode">
+                            <input className={inputBase} value={addressDraft.zip}
+                              onChange={e => setAddressDraft({ ...addressDraft, zip: e.target.value })} />
+                          </FormField>
+                          <FormField label="Country">
+                            <input className={inputBase} value={addressDraft.country}
+                              onChange={e => setAddressDraft({ ...addressDraft, country: e.target.value })} />
+                          </FormField>
+                        </div>
+                      </div>
+                    ) : hasAddress ? (
                       <>
                         <TiltCard intensity={0.4}>
                           <div className="bg-gradient-to-br from-[#faf9f7] to-[#f0ece7] rounded-xl p-6 border border-[#ede9e4]"
@@ -420,39 +525,24 @@ export default function ProfilePage() {
                               </div>
                               <div style={{ transform: 'translateZ(4px)' }}>
                                 <p className="font-medium text-gray-900 mb-0.5">{fullName}</p>
-                                <p className="text-sm text-gray-600">{address.address1}</p>
-                                {address.address2 && <p className="text-sm text-gray-600">{address.address2}</p>}
-                                <p className="text-sm text-gray-600">{address.city}, {address.zip}</p>
-                                <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                                  <Globe className="w-3.5 h-3.5" />{address.country}
-                                </p>
+                                <p className="text-sm text-gray-600">{profile.address_line1}</p>
+                                {profile.address_line2 && <p className="text-sm text-gray-600">{profile.address_line2}</p>}
+                                <p className="text-sm text-gray-600">{profile.city}{profile.zip ? `, ${profile.zip}` : ''}</p>
+                                {profile.country && (
+                                  <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                                    <Globe className="w-3.5 h-3.5" />{profile.country}
+                                  </p>
+                                )}
                               </div>
                             </div>
                           </div>
                         </TiltCard>
-
-                        <div className="space-y-5">
-                          <FormField label="Street Address">
-                            <div className={inputDisabled}>{address.address1}</div>
-                          </FormField>
-                          <div className="grid sm:grid-cols-3 gap-5">
-                            <FormField label="City">
-                              <div className={inputDisabled}>{address.city}</div>
-                            </FormField>
-                            <FormField label="Postcode">
-                              <div className={inputDisabled}>{address.zip}</div>
-                            </FormField>
-                            <FormField label="Country">
-                              <div className={inputDisabled}>{address.country}</div>
-                            </FormField>
-                          </div>
-                        </div>
                       </>
                     ) : (
                       <div className="text-center py-12">
                         <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                         <p className="text-gray-500">No address saved yet</p>
-                        <p className="text-sm text-gray-400 mt-1">Your address will be saved when you place your first order</p>
+                        <p className="text-sm text-gray-400 mt-1">Click Edit to add your shipping address</p>
                       </div>
                     )}
                   </div>
@@ -528,17 +618,11 @@ export default function ProfilePage() {
                         <motion.form
                           key="form"
                           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            setShowPwForm(false);
-                            setPw({ cur: '', new: '', confirm: '' });
-                            toast.success('Password updated', { position: 'top-center' });
-                          }}
+                          onSubmit={handlePasswordChange}
                           className="space-y-5 bg-[#faf9f7] rounded-xl border border-[#e8e3dc] p-6"
                         >
                           <h3 className="text-base text-gray-900">Update Password</h3>
                           {[
-                            { key: 'cur', label: 'Current Password', placeholder: '••••••••' },
                             { key: 'new', label: 'New Password', placeholder: '••••••••' },
                             { key: 'confirm', label: 'Confirm New Password', placeholder: '••••••••' },
                           ].map((field) => (
