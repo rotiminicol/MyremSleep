@@ -420,11 +420,7 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
             <div className={`w-5 h-5 mt-0.5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${data.termsAccepted ? 'bg-gray-900 border-gray-900' : 'border-[#d8d1c8] group-hover:border-gray-400'}`}>
               {data.termsAccepted && <Check className="w-3 h-3 text-white" />}
             </div>
-            <input type="checkbox" name="termsAccepted" checked={data.termsAccepted} onChange={(e) => {
-              const event = { target: { name: 'termsAccepted', value: e.target.checked, type: 'checkbox', checked: e.target.checked } };
-              // We need to pass this up
-              (window as any).__checkoutOnChange?.(event);
-            }} className="sr-only" />
+            <input type="checkbox" name="termsAccepted" checked={data.termsAccepted} onChange={onChange} className="sr-only" />
             <span className="text-[14px] text-gray-600 leading-relaxed" style={{ fontFamily: 'Montserrat, sans-serif' }}>
               I agree to the <a href="/terms" className="underline underline-offset-2 hover:text-gray-900 transition-colors">Terms and Conditions</a> and <a href="/privacy" className="underline underline-offset-2 hover:text-gray-900 transition-colors">Privacy Policy</a>. I understand this order is subject to REMsleep's return policy.
             </span>
