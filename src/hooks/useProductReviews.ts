@@ -26,7 +26,7 @@ export function useProductReviews(productHandle: string, page: number = 1, perPa
   return useQuery({
     queryKey: ['reviews', productHandle, page, perPage],
     queryFn: async (): Promise<ReviewsResponse> => {
-      const apiUrl = `/api/judge.me/api/v1/reviews?shop_domain=${SHOP_DOMAIN}&api_token=${JUDGEME_API_TOKEN}&per_page=${perPage}&page=${page}`;
+      const apiUrl = `https://judge.me/api/v1/reviews?shop_domain=${SHOP_DOMAIN}&api_token=${JUDGEME_API_TOKEN}&per_page=${perPage}&page=${page}`;
 
       const response = await fetch(apiUrl);
 
@@ -60,7 +60,7 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: async (input: CreateReviewInput) => {
-      const response = await fetch('/api/judge.me/api/v1/reviews', {
+      const response = await fetch('https://judge.me/api/v1/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
