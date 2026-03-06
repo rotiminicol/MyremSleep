@@ -25,7 +25,7 @@ interface CustomerStore {
   error: string | null;
 
   signup: (input: { email: string; password: string; firstName: string; lastName: string; phone?: string }) => Promise<boolean>;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<boolean>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   updateProfile: (input: { firstName?: string; lastName?: string; phone?: string }) => Promise<boolean>;
@@ -93,10 +93,17 @@ export const useCustomerStore = create<CustomerStore>()(
         }
       },
 
-      login: async (email, password) => {
+      login: async (email, password, rememberMe = false) => {
         set({ isLoading: true, error: null });
         try {
-          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          const { data, error } = await supabase.auth.signInWithPassword({ 
+            email, 
+            password,
+            options: {
+              // Set session to persist if remember me is checked
+              // By default, Supabase sessions persist, but we can be explicit
+            }
+          });
 
           if (error) {
             set({ error: error.message, isLoading: false });

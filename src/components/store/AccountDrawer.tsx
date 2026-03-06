@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCustomerStore } from '@/stores/customerStore';
 import { toast } from 'sonner';
@@ -19,6 +21,7 @@ export function AccountDrawer() {
     const [isOpen, setIsOpen] = useState(false);
     const [view, setView] = useState<'home' | 'login' | 'signup' | 'profile'>('home');
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -100,11 +103,12 @@ export function AccountDrawer() {
         e.preventDefault();
         if (!validateForm()) return;
         
-        const success = await login(formData.email, formData.password);
+        const success = await login(formData.email, formData.password, rememberMe);
         if (success) {
             toast.success('Welcome back!', { position: 'top-center' });
             setView('profile');
             setFormData({ firstName: '', lastName: '', email: '', password: '', phone: '' });
+            setRememberMe(false);
         }
     };
 
@@ -359,6 +363,24 @@ export function AccountDrawer() {
                                             )}
                                         </div>
                                     </div>
+
+                                    {view === 'login' && (
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="remember-me"
+                                                checked={rememberMe}
+                                                onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                                                className="border-zinc-300 data-[state=checked]:bg-zinc-900 data-[state=checked]:border-zinc-900"
+                                            />
+                                            <Label
+                                                htmlFor="remember-me"
+                                                className="text-sm text-gray-700 cursor-pointer"
+                                                style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                            >
+                                                Remember me
+                                            </Label>
+                                        </div>
+                                    )}
 
                                     <Button
                                         type="submit"
