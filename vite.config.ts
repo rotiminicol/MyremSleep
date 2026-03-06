@@ -14,6 +14,14 @@ export default defineConfig(({ mode }) => {
             hmr: {
                 overlay: false,
             },
+            proxy: {
+                '/api/judge.me': {
+                    target: 'https://judge.me',
+                    changeOrigin: true,
+                    secure: true,
+                    rewrite: (path) => path.replace(/^\/api\/judge\.me/, ''),
+                }
+            }
         },
         plugins: [
             react(),
