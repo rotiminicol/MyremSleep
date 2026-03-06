@@ -585,7 +585,7 @@ export default function CheckoutPage() {
                 </div>
                 {step === 1 && <StepContact data={formData} onChange={handleChange} onNext={() => setStep(2)} />}
                 {step === 2 && <StepShipping data={formData} onChange={handleChange} onNext={() => setStep(3)} onBack={() => setStep(1)} />}
-                {step === 3 && <StepReviewAndPay data={formData} onBack={() => setStep(2)} onPay={handleProceedToPayment} loading={loading} checkoutUrl={checkoutUrl} />}
+                {step === 3 && <StepReviewAndPay data={formData} onChange={handleChange} onBack={() => setStep(2)} onPay={handleProceedToPayment} loading={loading} checkoutUrl={checkoutUrl} />}
               </motion.div>
             </AnimatePresence>
           </div>
