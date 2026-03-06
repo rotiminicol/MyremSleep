@@ -491,11 +491,6 @@ export default function CheckoutPage() {
     }
   }, [items, loading]);
 
-  // Set up the onChange handler for the terms checkbox in StepReviewAndPay
-  useEffect(() => {
-    (window as any).__checkoutOnChange = handleChange;
-    return () => { delete (window as any).__checkoutOnChange; };
-  });
 
   const handleChange = (e: any) => {
     const { name, value, type, checked } = e.target;
