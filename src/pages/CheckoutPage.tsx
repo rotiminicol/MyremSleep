@@ -358,7 +358,7 @@ function StepShipping({ data, onChange, onNext, onBack }: { data: any; onChange:
 }
 
 // ── Step 3: Review & Pay (redirects to Shopify Checkout) ───────────────────
-function StepReviewAndPay({ data, onBack, onPay, loading, checkoutUrl }: { data: any; onBack: () => void; onPay: () => void; loading: boolean; checkoutUrl: string | null }) {
+function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl }: { data: any; onChange: (e: any) => void; onBack: () => void; onPay: () => void; loading: boolean; checkoutUrl: string | null }) {
   return (
     <div className="space-y-6">
       {/* Secure Payment Notice */}
