@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, useSearchParams } from 'react-router-dom';
-import { storefrontApiRequest, ShopifyProduct } from '@/lib/shopify';
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { storefrontApiRequest, ShopifyProduct, fetchProducts } from '@/lib/shopify';
 import { MOCK_PRODUCTS } from '@/lib/mock-products';
 import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { StoreFooter } from '@/components/store/StoreFooter';
@@ -25,72 +25,36 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-const COLOR_MAP: Record<string, string> = {
-  'Winter Cloud': '/products/midnight-silk.png',
-  'Desert Whisperer': '/products/linen-duvet-clay.png',
-  'Buttermilk': '/products/cotton-quilt-sandstone.png',
-  'Clay': '/products/bamboo-sheets-grey.png',
-  'Clay Blush': '/clayblush.png',
-  'Pebble Haze': '/products/sleep-mask-indigo.png',
-  'Desert Sand': '/products/midnight-silk.png',
-  'Cinnamon Bark': '/products/linen-duvet-clay.png',
-  'Chelsea': '/products/midnight-silk.png',
-  'Navy': '/products/midnight-silk.png',
-  'White': '/products/bamboo-sheets-grey.png',
-  'Sand': '/products/cotton-quilt-sandstone.png',
-  'Slate': '/products/bamboo-sheets-grey.png',
-};
-
+// Color hex values for swatches (used when Shopify doesn't provide swatch data)
 const COLOR_HEX: Record<string, string> = {
   'Winter Cloud': '#F5F5F7',
   'Desert Whisperer': '#E5DACE',
   'Buttermilk': '#FFF4D2',
   'Clay': '#D2C4B5',
   'Clay Blush': '#D9A891',
+  'Clayblush Pink': '#D9A891',
   'Pebble Haze': '#A3A3A3',
   'Desert Sand': '#E2CA9D',
   'Cinnamon Bark': '#8B4513',
-  'Chelsea': '#2D3B4E',
-  'Navy': '#1B263B',
-  'White': '#FFFFFF',
-  'Sand': '#D2B48C',
-  'Slate': '#4A5568',
 };
 
-const COLOR_DESCRIPTIONS: Record<string, { title: string; description: string }> = {
-  'Winter Cloud': {
-    title: 'Winter Cloud — Crisp white. Soft glow. Always polished.',
-    description: 'A bright, clean white with a hotel-fresh finish. In sateen it looks luminous (never flat) and makes every room feel lighter.'
-  },
-  'Buttermilk': {
-    title: 'Buttermilk — Warm cream. Quiet luxury.',
-    description: 'A creamy off-white with a gentle warmth. Sateen makes it look rich and smooth—like classic white, upgraded.'
-  },
-  'Desert Whisperer': {
-    title: 'Desert Whisperer — Sun-washed nude. Calm, not sweet.',
-    description: 'A blush-sand neutral that warms a room without stealing focus. Sateen adds a refined, clean sheen.'
-  },
-  'Desert Sand': {
-    title: 'Desert Sand — The anchor neutral. Effortlessly styled.',
-    description: 'A modern beige with balance and depth—made for layering. Always looks intentional, even on low-effort days.'
-  },
-  'Clay Blush': {
-    title: 'Clayblush Pink — Muted blush. Modern and grown.',
-    description: 'A dusty rose-clay neutral—soft, earthy, quietly romantic. In sateen it reads smooth and elevated, not shiny.'
-  },
-  'Pebble Haze': {
-    title: 'Pebble Haze — Cool grey. Clean calm.',
-    description: 'A mid-grey with an architectural feel. Sateen gives it depth and softness—minimal, but never cold.'
-  },
-  'Cinnamon Bark': {
-    title: 'Cinnamon Bark — Deep brown. Grounded. Inviting.',
-    description: 'A rich, earthy brown that makes the room feel intentional. Sateen adds a soft sheen and tailored drape.'
-  },
-  'Clay': {
-    title: 'Clay — Soft clay. Lightly sun-warmed. Calm and clean.',
-    description: 'A pale clay with no pink in it—just a quiet warmth that feels natural and modern. It brightens the room without turning cold.'
+// Map product title keywords to a color name for swatch matching
+function extractColorFromTitle(title: string): string | null {
+  const colorNames = Object.keys(COLOR_HEX);
+  for (const color of colorNames) {
+    if (title.toLowerCase().includes(color.toLowerCase())) return color;
   }
-};
+  // Also check partial matches
+  if (title.toLowerCase().includes('winter cloud')) return 'Winter Cloud';
+  if (title.toLowerCase().includes('buttermilk')) return 'Buttermilk';
+  if (title.toLowerCase().includes('desert whisperer')) return 'Desert Whisperer';
+  if (title.toLowerCase().includes('desert sand')) return 'Desert Sand';
+  if (title.toLowerCase().includes('clay blush') || title.toLowerCase().includes('clayblush')) return 'Clay Blush';
+  if (title.toLowerCase().includes('pebble haze')) return 'Pebble Haze';
+  if (title.toLowerCase().includes('cinnamon bark')) return 'Cinnamon Bark';
+  if (title.toLowerCase().includes('clay') && !title.toLowerCase().includes('blush')) return 'Clay';
+  return null;
+}
 
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
@@ -98,6 +62,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
       id
       title
       description
+      descriptionHtml
       handle
       priceRange {
         minVariantPrice {
@@ -138,23 +103,17 @@ const PRODUCT_BY_HANDLE_QUERY = `
   }
 `;
 
-const COLORS_WITH_MULTIPLE_IMAGES = ['Cinnamon Bark', 'Clay Blush'];
-
-const COLOR_IMAGE_RANGES: Record<string, { start: number; end: number; count: number }> = {
-  'Cinnamon Bark': { start: 1, end: 5, count: 5 },
-  'Clay Blush': { start: 6, end: 8, count: 3 },
-};
-
 export default function ProductPage() {
   const { handle } = useParams<{ handle: string }>();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<ShopifyProduct['node'] | null>(null);
+  const [allProducts, setAllProducts] = useState<ShopifyProduct[]>([]);
   const [recommendedProducts, setRecommendedProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState<ShopifyProduct['node']['variants']['edges'][0]['node'] | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [customColorImage, setCustomColorImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
   const [sizeDrawerPage, setSizeDrawerPage] = useState<1 | 2>(1);
@@ -167,33 +126,36 @@ export default function ProductPage() {
   const { addFavorite, removeFavorite, isFavorited } = useFavoritesStore();
   const { formatPrice } = useCurrency();
 
+  // Fetch the product and all products (for color navigation)
   useEffect(() => {
     async function loadProduct() {
       if (!handle) return;
+      setLoading(true);
+      setSelectedImageIndex(0);
       try {
-        const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
-        const productData = data?.data?.productByHandle;
+        // Fetch current product and all products in parallel
+        const [productData, allProductsData] = await Promise.all([
+          storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle }),
+          fetchProducts(20),
+        ]);
 
-        if (productData) {
-          setProduct(productData);
-          const colorParam = searchParams.get('color');
+        const shopifyProduct = productData?.data?.productByHandle;
+
+        if (shopifyProduct) {
+          setProduct(shopifyProduct);
+          setAllProducts(allProductsData || []);
+
           let defaultOptions: Record<string, string> = {};
-          const firstVariant = productData.variants.edges[0]?.node;
+          const firstVariant = shopifyProduct.variants.edges[0]?.node;
           if (firstVariant) {
             setSelectedVariant(firstVariant);
             firstVariant.selectedOptions.forEach((opt: { name: string; value: string }) => {
               defaultOptions[opt.name] = opt.value;
             });
           }
-          if (colorParam) {
-            const colorOption = productData.options.find(option =>
-              option.name.toLowerCase().includes('color') || option.name.toLowerCase().includes('colour')
-            );
-            if (colorOption && colorOption.values.includes(colorParam)) {
-              defaultOptions[colorOption.name] = colorParam;
-            }
-          }
           setSelectedOptions(defaultOptions);
+
+          // Fetch recommendations
           try {
             const recs = await storefrontApiRequest(`
               query GetRecommendations($productId: ID!) {
@@ -203,37 +165,30 @@ export default function ProductPage() {
                   images(first: 1) { edges { node { url altText } } }
                 }
               }
-            `, { productId: productData.id });
-            if (recs?.data?.productRecommendations) {
+            `, { productId: shopifyProduct.id });
+            if (recs?.data?.productRecommendations?.length > 0) {
               setRecommendedProducts(recs.data.productRecommendations.map((p: any) => ({ node: p })));
             } else {
-              setRecommendedProducts(MOCK_PRODUCTS.slice(0, 4));
+              // Use other products as recommendations
+              setRecommendedProducts(allProductsData?.filter((p: ShopifyProduct) => p.node.handle !== handle).slice(0, 4) || []);
             }
-          } catch (e) {
-            setRecommendedProducts(MOCK_PRODUCTS.slice(0, 4));
+          } catch {
+            setRecommendedProducts(allProductsData?.filter((p: ShopifyProduct) => p.node.handle !== handle).slice(0, 4) || []);
           }
         } else {
+          // Fallback to mock
           const mockProduct = MOCK_PRODUCTS.find(p => p.node.handle === handle);
           if (mockProduct) {
             setProduct(mockProduct.node);
-            const colorParam = searchParams.get('color');
-            let defaultOptions: Record<string, string> = {};
             const firstVariant = mockProduct.node.variants.edges[0]?.node;
             if (firstVariant) {
               setSelectedVariant(firstVariant);
+              let defaultOptions: Record<string, string> = {};
               firstVariant.selectedOptions.forEach((opt: { name: string; value: string }) => {
                 defaultOptions[opt.name] = opt.value;
               });
+              setSelectedOptions(defaultOptions);
             }
-            if (colorParam) {
-              const colorOption = mockProduct.node.options.find(option =>
-                option.name.toLowerCase().includes('color') || option.name.toLowerCase().includes('colour')
-              );
-              if (colorOption && colorOption.values.includes(colorParam)) {
-                defaultOptions[colorOption.name] = colorParam;
-              }
-            }
-            setSelectedOptions(defaultOptions);
             setRecommendedProducts(MOCK_PRODUCTS.filter(p => p.node.handle !== handle).slice(0, 4));
           }
         }
@@ -244,8 +199,9 @@ export default function ProductPage() {
       }
     }
     loadProduct();
-  }, [handle, searchParams]);
+  }, [handle]);
 
+  // Match variant when options change
   useEffect(() => {
     if (!product) return;
     const matchingVariant = product.variants.edges.find((v) =>
@@ -254,24 +210,8 @@ export default function ProductPage() {
     if (matchingVariant) setSelectedVariant(matchingVariant.node);
   }, [selectedOptions, product]);
 
-  useEffect(() => {
-    if (!product) return;
-    const selectedColor = Object.entries(selectedOptions).find(([key]) =>
-      key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-    )?.[1];
-    if (selectedColor && COLOR_MAP[selectedColor]) {
-      setCustomColorImage(COLOR_MAP[selectedColor]);
-      if (selectedColor === 'Cinnamon Bark') setSelectedImageIndex(1);
-      else if (selectedColor === 'Clay Blush') setSelectedImageIndex(6);
-      else setSelectedImageIndex(0);
-    }
-  }, [selectedOptions, product]);
-
   const handleOptionChange = (optionName: string, value: string) => {
     setSelectedOptions((prev) => ({ ...prev, [optionName]: value }));
-    if (optionName.toLowerCase().includes('color') || optionName.toLowerCase().includes('colour')) {
-      setCustomColorImage(COLOR_MAP[value] || null);
-    }
   };
 
   const handleAddToCart = async () => {
@@ -309,52 +249,22 @@ export default function ProductPage() {
 
   const handlePreviousImage = () => {
     if (!product) return;
-    const selectedColor = Object.entries(selectedOptions).find(([key]) =>
-      key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-    )?.[1];
-    if (selectedColor && COLORS_WITH_MULTIPLE_IMAGES.includes(selectedColor)) {
-      const range = COLOR_IMAGE_RANGES[selectedColor];
-      setSelectedImageIndex(prev => prev > range.start ? prev - 1 : range.end);
-    } else {
-      setSelectedImageIndex(prev => prev > 0 ? prev - 1 : product.images.edges.length - 1);
-    }
+    const total = product.images.edges.length;
+    setSelectedImageIndex(prev => prev > 0 ? prev - 1 : total - 1);
   };
 
   const handleNextImage = () => {
     if (!product) return;
-    const selectedColor = Object.entries(selectedOptions).find(([key]) =>
-      key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-    )?.[1];
-    if (selectedColor && COLORS_WITH_MULTIPLE_IMAGES.includes(selectedColor)) {
-      const range = COLOR_IMAGE_RANGES[selectedColor];
-      setSelectedImageIndex(prev => prev < range.end ? prev + 1 : range.start);
-    } else {
-      setSelectedImageIndex(prev => prev < product.images.edges.length - 1 ? prev + 1 : 0);
-    }
+    const total = product.images.edges.length;
+    setSelectedImageIndex(prev => prev < total - 1 ? prev + 1 : 0);
   };
 
-  const getVisibleImages = () => {
-    if (!product) return [];
-    const selectedColor = Object.entries(selectedOptions).find(([key]) =>
-      key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-    )?.[1];
-    if (selectedColor && COLORS_WITH_MULTIPLE_IMAGES.includes(selectedColor)) {
-      const range = COLOR_IMAGE_RANGES[selectedColor];
-      return product.images.edges.slice(range.start, range.end + 1);
-    }
-    return [product.images.edges[0]];
-  };
+  // Get current color name from product title
+  const currentColorName = product ? extractColorFromTitle(product.title) : null;
 
-  const getCurrentImageSrc = () => {
-    if (!product) return '';
-    const selectedColor = Object.entries(selectedOptions).find(([key]) =>
-      key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-    )?.[1];
-    if (selectedColor && COLORS_WITH_MULTIPLE_IMAGES.includes(selectedColor)) {
-      return product.images.edges[selectedImageIndex]?.node.url;
-    }
-    if (selectedColor && COLOR_MAP[selectedColor]) return COLOR_MAP[selectedColor];
-    return product.images.edges[0]?.node.url;
+  // Navigate to another color product
+  const handleColorNavigation = (targetHandle: string) => {
+    navigate(`/product/${targetHandle}`);
   };
 
   if (loading) {
@@ -385,20 +295,15 @@ export default function ProductPage() {
   }
 
   const images = product.images.edges;
-  const visibleImages = getVisibleImages();
-  const selectedColor = Object.entries(selectedOptions).find(([key]) =>
-    key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
-  )?.[1];
-  const hasMultipleImages = selectedColor && COLORS_WITH_MULTIPLE_IMAGES.includes(selectedColor);
+  const hasMultipleImages = images.length > 1;
+  const currentImage = images[selectedImageIndex]?.node;
 
   return (
     <div className="min-h-screen bg-[#f5f1ed]">
       <StoreNavbar hideOnScroll />
 
-
-
       <main className="max-w-[1600px] mx-auto">
-        {/* Main Product Grid — image left, info right, NO outer padding so image bleeds full */}
+        {/* Main Product Grid — image left, info right */}
         <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] min-h-[90vh]">
 
           {/* ── LEFT: Gallery ── */}
@@ -406,33 +311,30 @@ export default function ProductPage() {
             {/* Thumbnails — vertical strip on the left edge */}
             {hasMultipleImages && (
               <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 flex flex-col gap-2">
-                {visibleImages.map((image, idx) => {
-                  const actualIndex = selectedColor === 'Cinnamon Bark' ? idx + 1 : idx + 6;
-                  return (
-                    <button
-                      key={actualIndex}
-                      onClick={() => setSelectedImageIndex(actualIndex)}
-                      className={cn(
-                        "w-14 h-14 overflow-hidden border-2 transition-all bg-white",
-                        selectedImageIndex === actualIndex
-                          ? "border-gray-900 opacity-100"
-                          : "border-white/60 opacity-50 hover:opacity-80 hover:border-gray-300"
-                      )}
-                    >
-                      <img src={image.node.url} alt="" className="w-full h-full object-contain p-1" />
-                    </button>
-                  );
-                })}
+                {images.map((image, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImageIndex(idx)}
+                    className={cn(
+                      "w-14 h-14 overflow-hidden border-2 transition-all bg-white",
+                      selectedImageIndex === idx
+                        ? "border-gray-900 opacity-100"
+                        : "border-white/60 opacity-50 hover:opacity-80 hover:border-gray-300"
+                    )}
+                  >
+                    <img src={image.node.url} alt="" className="w-full h-full object-contain p-1" />
+                  </button>
+                ))}
               </div>
             )}
 
-            {/* Main image — true full fill, no crop, no distort */}
+            {/* Main image */}
             <div className="relative w-full lg:h-screen overflow-hidden group">
               <AnimatePresence mode="wait">
                 <motion.img
-                  key={selectedImageIndex + (getCurrentImageSrc() || '')}
-                  src={getCurrentImageSrc()}
-                  alt={product.title}
+                  key={selectedImageIndex + (currentImage?.url || '')}
+                  src={currentImage?.url || ''}
+                  alt={currentImage?.altText || product.title}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -461,9 +363,7 @@ export default function ProductPage() {
                   </button>
                   {/* Counter */}
                   <div className="absolute bottom-8 right-6 text-[10px] font-bold tracking-widest text-white/80 uppercase">
-                    {selectedColor === 'Cinnamon Bark'
-                      ? `${selectedImageIndex} / 5`
-                      : `${selectedImageIndex - 5} / 3`}
+                    {selectedImageIndex + 1} / {images.length}
                   </div>
                 </>
               )}
@@ -480,22 +380,20 @@ export default function ProductPage() {
               <span>Sateen Bundle Set</span>
             </div>
 
-            {/* Color-driven title */}
+            {/* Product title from Shopify */}
             <h1 className="font-serif text-[26px] md:text-[30px] leading-tight text-gray-900 tracking-tight">
-              {selectedColor && COLOR_DESCRIPTIONS[selectedColor]
-                ? COLOR_DESCRIPTIONS[selectedColor].title
-                : product.title}
+              {product.title}
             </h1>
 
-            {/* Price — directly under title */}
+            {/* Price from Shopify */}
             <p className="text-[20px] font-medium text-gray-900 mt-3">
-              {formatPrice(parseFloat(selectedVariant?.price.amount || '0'))}
+              {formatPrice(parseFloat(selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount || '0'))}
             </p>
 
-            {/* Color description */}
-            {selectedColor && COLOR_DESCRIPTIONS[selectedColor] && (
+            {/* Product description from Shopify */}
+            {product.description && (
               <p className="text-sm text-gray-600 leading-relaxed mt-3">
-                {COLOR_DESCRIPTIONS[selectedColor].description}
+                {product.description}
               </p>
             )}
 
@@ -517,25 +415,18 @@ export default function ProductPage() {
                   {item}
                 </div>
               ))}
-              <p className="text-[12px] text-gray-500 italic pt-2 leading-relaxed">
-                This is your "exhale" bedding, woven for a clean drape and a smooth hand-feel. It looks crisp. It feels indulgent — no extras needed.
-              </p>
             </div>
 
             {/* Divider */}
             <div className="h-px bg-[#e0dbd5] my-6" />
 
-            {/* Options — Size first, then Color */}
+            {/* Options from Shopify (Size, etc.) — skip "Title" option with single "Default Title" */}
             <div className="space-y-6">
-              {/* Render non-color options first (Size), then color */}
-              {[
-                ...product.options.filter(o => !o.name.toLowerCase().includes('color') && !o.name.toLowerCase().includes('colour')),
-                ...product.options.filter(o => o.name.toLowerCase().includes('color') || o.name.toLowerCase().includes('colour')),
-              ].map((option) => {
-                const isColor = option.name.toLowerCase().includes('color') || option.name.toLowerCase().includes('colour');
-                return (
+              {product.options
+                .filter(o => !(o.name === 'Title' && o.values.length === 1 && o.values[0] === 'Default Title'))
+                .filter(o => !o.name.toLowerCase().includes('color') && !o.name.toLowerCase().includes('colour'))
+                .map((option) => (
                   <div key={option.name}>
-                    {/* Option label row */}
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">{option.name}</span>
                       {option.name.toLowerCase().includes('size') && (
@@ -547,57 +438,83 @@ export default function ProductPage() {
                         </button>
                       )}
                     </div>
-
-                    {isColor ? (
-                      /* Color swatches — rectangular like original */
-                      <div className="flex flex-wrap gap-2">
-                        {option.values.map((value) => {
-                          const isSelected = selectedOptions[option.name] === value;
-                          return (
-                            <button
-                              key={value}
-                              onClick={() => handleOptionChange(option.name, value)}
-                              title={value}
-                              className={cn(
-                                "h-8 w-11 border-2 transition-all relative",
-                                isSelected
-                                  ? "border-gray-900 ring-1 ring-gray-900 ring-offset-2"
-                                  : "border-gray-200 hover:border-gray-400"
-                              )}
-                              style={{ backgroundColor: COLOR_HEX[value] || '#ccc' }}
-                            />
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      /* Size buttons */
-                      <div className="flex flex-wrap gap-2">
-                        {option.values.map((value) => {
-                          const isSelected = selectedOptions[option.name] === value;
-                          return (
-                            <button
-                              key={value}
-                              onClick={() => handleOptionChange(option.name, value)}
-                              className={cn(
-                                "px-5 py-2.5 text-[12px] font-medium tracking-wide transition-all border",
-                                isSelected
-                                  ? "border-gray-900 bg-gray-900 text-white"
-                                  : "border-[#e0dbd5] text-gray-500 hover:border-gray-400 hover:text-gray-900 bg-transparent"
-                              )}
-                            >
-                              {value}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {option.values.map((value) => {
+                        const isSelected = selectedOptions[option.name] === value;
+                        return (
+                          <button
+                            key={value}
+                            onClick={() => handleOptionChange(option.name, value)}
+                            className={cn(
+                              "px-5 py-2.5 text-[12px] font-medium tracking-wide transition-all border",
+                              isSelected
+                                ? "border-gray-900 bg-gray-900 text-white"
+                                : "border-[#e0dbd5] text-gray-500 hover:border-gray-400 hover:text-gray-900 bg-transparent"
+                            )}
+                          >
+                            {value}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                );
-              })}
+                ))}
+
+              {/* Color navigation between products */}
+              {allProducts.length > 1 && (
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">
+                      Colour{currentColorName ? ` — ${currentColorName}` : ''}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {allProducts.map((p) => {
+                      const colorName = extractColorFromTitle(p.node.title);
+                      const isActive = p.node.handle === handle;
+                      const hex = colorName ? COLOR_HEX[colorName] : '#ccc';
+                      return (
+                        <button
+                          key={p.node.id}
+                          onClick={() => !isActive && handleColorNavigation(p.node.handle)}
+                          title={colorName || p.node.title}
+                          className={cn(
+                            "h-8 w-11 border-2 transition-all relative",
+                            isActive
+                              ? "border-gray-900 ring-1 ring-gray-900 ring-offset-2"
+                              : "border-gray-200 hover:border-gray-400"
+                          )}
+                          style={{ backgroundColor: hex || '#ccc' }}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Divider */}
             <div className="h-px bg-[#e0dbd5] my-6" />
+
+            {/* Quantity selector */}
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">Quantity</span>
+              <div className="flex items-center border border-[#e0dbd5]">
+                <button
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  className="w-10 h-10 flex items-center justify-center hover:bg-[#ede9e3] transition-colors"
+                >
+                  <Minus className="h-3 w-3" />
+                </button>
+                <span className="w-10 text-center text-sm font-medium">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(q => q + 1)}
+                  className="w-10 h-10 flex items-center justify-center hover:bg-[#ede9e3] transition-colors"
+                >
+                  <Plus className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
 
             {/* Add to Cart + Favourite */}
             <div className="flex gap-3">
@@ -677,6 +594,34 @@ export default function ProductPage() {
         </div>
       </div>
 
+      {/* Recommended Products */}
+      {recommendedProducts.length > 0 && (
+        <div className="bg-[#f5f1ed] py-16">
+          <div className="max-w-[1400px] mx-auto px-6">
+            <h2 className="text-2xl font-serif text-gray-900 text-center mb-10">You May Also Like</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+              {recommendedProducts.slice(0, 4).map((rec, idx) => (
+                <Link key={rec.node.id} to={`/product/${rec.node.handle}`} className="group block">
+                  <div className="relative aspect-[3/4] bg-[#EBE7E0] overflow-hidden md:rounded-sm shadow-sm group-hover:shadow-md transition-shadow duration-700">
+                    <img
+                      src={rec.node.images.edges[0]?.node.url}
+                      alt={rec.node.images.edges[0]?.node.altText || rec.node.title}
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="mt-4 space-y-1 text-center">
+                    <h3 className="text-sm font-medium text-gray-900 font-serif tracking-wide">{rec.node.title}</h3>
+                    <p className="text-xs text-gray-500 tracking-wider">
+                      {formatPrice(parseFloat(rec.node.priceRange.minVariantPrice.amount))}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── DRAWER ── */}
       <AnimatePresence>
         {openDrawer && (
@@ -713,7 +658,7 @@ export default function ProductPage() {
                   </button>
                 </div>
 
-                {/* Drawer content — identical to original */}
+                {/* Drawer content */}
                 <div className="space-y-6">
                   {openDrawer === 'why-you-will-love-it' && (
                     <div className="space-y-8">
