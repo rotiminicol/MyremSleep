@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useUserCart } from '@/stores/userCartStore';
+import { useCartStore } from '@/stores/cartStore';
 
 export function useCartSync() {
-  const { syncCart } = useUserCart();
+  const syncCart = useCartStore((state) => state.syncCart);
 
   useEffect(() => {
     syncCart(); // Sync on initial page load

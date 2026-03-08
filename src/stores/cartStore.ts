@@ -394,7 +394,12 @@ export const useCartStore = create<CartStore>()(
 
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();
-        if (!cartId || isSyncing) return;
+        if (!cartId || isSyncing || cartId === 'local-mock-cart') return;
+
+        if (!cartId.startsWith('gid://shopify/Cart/')) {
+          clearCart();
+          return;
+        }
 
         set({ isSyncing: true });
         try {
@@ -403,6 +408,10 @@ export const useCartStore = create<CartStore>()(
           const cart = data?.data?.cart;
           if (!cart || cart.totalQuantity === 0) clearCart();
         } catch (error) {
+          if (error instanceof Error && error.message.includes('Variable $id of type ID! was provided invalid value')) {
+            clearCart();
+            return;
+          }
           console.error('Failed to sync cart with Shopify:', error);
         } finally {
           set({ isSyncing: false });
