@@ -87,6 +87,11 @@ export function normalizeShopifyCheckoutUrl(checkoutUrl: string): string {
 
   try {
     const url = new URL(normalized);
+    // Always rewrite to the permanent Shopify domain so checkout
+    // doesn't resolve to the Lovable app's custom domain
+    if (url.hostname !== SHOPIFY_STORE_PERMANENT_DOMAIN) {
+      url.hostname = SHOPIFY_STORE_PERMANENT_DOMAIN;
+    }
     url.searchParams.set('channel', 'online_store');
     return url.toString();
   } catch {
