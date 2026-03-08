@@ -4,6 +4,7 @@ import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, X } from 'luc
 import { useUserCart } from '@/stores/userCartStore';
 import { normalizeShopifyCheckoutUrl } from '@/lib/shopify';
 import { useCustomerStore } from '@/stores/customerStore';
+import { useCurrency } from '@/hooks/useCurrency';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Sheet,

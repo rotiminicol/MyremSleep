@@ -9,6 +9,7 @@ import { normalizeShopifyCheckoutUrl } from '@/lib/shopify';
 import { useCurrency } from '@/hooks/useCurrency';
 import { validatePostalCode } from '@/utils/postalCodeValidation';
 import { StoreNavbar } from '@/components/store/StoreNavbar';
+import { toast } from 'sonner';
 
 const COLOR_DESCRIPTIONS: Record<string, { title: string; description: string }> = {
   'Winter Cloud': { title: 'Winter Cloud — Crisp white. Soft glow. Always polished.', description: '' },
