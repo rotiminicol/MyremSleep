@@ -373,7 +373,10 @@ export const useCartStore = create<CartStore>()(
       },
 
       clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
-      getCheckoutUrl: () => get().checkoutUrl,
+      getCheckoutUrl: () => {
+        const current = get().checkoutUrl;
+        return current ? formatCheckoutUrl(current) : null;
+      },
       setCartOpen: (open: boolean) => set({ isCartOpen: open }),
 
       initializeUserCart: (userId: string) => {

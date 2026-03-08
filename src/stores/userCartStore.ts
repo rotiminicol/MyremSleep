@@ -347,7 +347,10 @@ const createUserCartStore = (userId: string) => {
         },
 
         clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, isCartOpen: false }),
-        getCheckoutUrl: () => get().checkoutUrl,
+        getCheckoutUrl: () => {
+          const current = get().checkoutUrl;
+          return current ? formatCheckoutUrl(current) : null;
+        },
         setCartOpen: (open: boolean) => set({ isCartOpen: open }),
 
         syncCart: async () => {
