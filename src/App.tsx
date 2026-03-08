@@ -41,12 +41,37 @@ import { supabase } from "./integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
+// One-time migration: rewrite any cached checkout URLs that use the custom domain
+function migrateStaleCheckoutUrls() {
+  const SHOPIFY_PERMANENT = 'zr4ktm-7m.myshopify.com';
+  const CUSTOM_DOMAIN = 'www.myremsleep.com';
+
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith('shopify-cart')) continue;
+
+      const raw = localStorage.getItem(key);
+      if (!raw || !raw.includes(CUSTOM_DOMAIN)) continue;
+
+      const fixed = raw.split(CUSTOM_DOMAIN).join(SHOPIFY_PERMANENT);
+      localStorage.setItem(key, fixed);
+      console.log(`[Cart Migration] Fixed stale checkout URL in ${key}`);
+    }
+  } catch (e) {
+    // Non-critical — ignore storage access errors
+  }
+}
+
 function AppProviders({ children }: { children: React.ReactNode }) {
   useCartSync();
   const initialize = useCustomerStore(state => state.initialize);
   const syncFavorites = useFavoritesStore(state => state.syncFromDb);
 
   React.useEffect(() => {
+    // Fix any stale checkout URLs cached from before the domain fix
+    migrateStaleCheckoutUrls();
+
     initialize();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {

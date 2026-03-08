@@ -423,6 +423,15 @@ export const useCartStore = create<CartStore>()(
         cartId: state.cartId,
         checkoutUrl: state.checkoutUrl,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Migrate any stale checkout URLs that still point to the custom domain
+        if (state?.checkoutUrl) {
+          const fixed = normalizeShopifyCheckoutUrl(state.checkoutUrl);
+          if (fixed !== state.checkoutUrl) {
+            state.checkoutUrl = fixed;
+          }
+        }
+      },
     }
   )
 );
