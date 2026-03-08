@@ -65,7 +65,7 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: async (input: CreateReviewInput) => {
-      const { data, error } = await supabase.functions.invoke('judge-me-proxy', {
+      const { data, error } = await supabase.functions.invoke('judgeme-reviews', {
         body: {
           action: 'create',
           shopDomain: SHOP_DOMAIN,
