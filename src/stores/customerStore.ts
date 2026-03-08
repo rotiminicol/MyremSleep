@@ -70,90 +70,49 @@ export const useCustomerStore = create<CustomerStore>()(
               },
             },
           });
-
-          if (error) {
-            set({ error: error.message, isLoading: false });
-            return false;
-          }
-
+          if (error) { set({ error: error.message, isLoading: false }); return false; }
           if (data.user) {
-            // Wait a moment for the trigger to create the profile
             await new Promise(r => setTimeout(r, 500));
             const { data: profile } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', data.user.id)
-              .single();
+              .from('profiles').select('*').eq('id', data.user.id).single();
             set({ profile: profile as UserProfile, isLoading: false });
           }
           return true;
-        } catch (err) {
+        } catch {
           set({ error: 'Something went wrong. Please try again.', isLoading: false });
           return false;
         }
       },
 
-      login: async (email, password, rememberMe = false) => {
+      login: async (email, password) => {
         set({ isLoading: true, error: null });
         try {
-          const { data, error } = await supabase.auth.signInWithPassword({ 
-            email, 
-            password,
-            options: {
-              // Set session to persist if remember me is checked
-              // By default, Supabase sessions persist, but we can be explicit
-            }
-          });
-
-          if (error) {
-            set({ error: error.message, isLoading: false });
-            return false;
-          }
-
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) { set({ error: error.message, isLoading: false }); return false; }
           if (data.user) {
             const { data: profile } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', data.user.id)
-              .single();
+              .from('profiles').select('*').eq('id', data.user.id).single();
             set({ profile: profile as UserProfile, isLoading: false });
           }
           return true;
-        } catch (err) {
+        } catch {
           set({ error: 'Something went wrong. Please try again.', isLoading: false });
           return false;
         }
       },
 
       logout: async () => {
-        const { profile } = get();
-        
-        // Clear user-specific cart storage before logout
-        if (profile?.id) {
-          localStorage.removeItem(`shopify-cart-${profile.id}`);
-        }
-        
-        // Clear guest cart as well
-        localStorage.removeItem('shopify-cart-guest');
-        
-        // Clear all cart store instances
+        // Clear all in-memory cart store instances
         clearAllCartStores();
-        
         await supabase.auth.signOut();
         set({ profile: null, error: null });
       },
 
       refreshProfile: async () => {
         const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user) {
-          set({ profile: null });
-          return;
-        }
+        if (!session?.user) { set({ profile: null }); return; }
         const { data } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
+          .from('profiles').select('*').eq('id', session.user.id).single();
         if (data) set({ profile: data as UserProfile });
         else set({ profile: null });
       },
@@ -161,24 +120,15 @@ export const useCustomerStore = create<CustomerStore>()(
       updateProfile: async (input) => {
         const { profile } = get();
         if (!profile) return false;
-
         set({ isLoading: true, error: null });
         try {
-          const { error } = await supabase
-            .from('profiles')
-            .update({
-              first_name: input.firstName ?? profile.first_name,
-              last_name: input.lastName ?? profile.last_name,
-              phone: input.phone ?? profile.phone,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', profile.id);
-
-          if (error) {
-            set({ error: error.message, isLoading: false });
-            return false;
-          }
-
+          const { error } = await supabase.from('profiles').update({
+            first_name: input.firstName ?? profile.first_name,
+            last_name: input.lastName ?? profile.last_name,
+            phone: input.phone ?? profile.phone,
+            updated_at: new Date().toISOString(),
+          }).eq('id', profile.id);
+          if (error) { set({ error: error.message, isLoading: false }); return false; }
           await get().refreshProfile();
           set({ isLoading: false });
           return true;
@@ -191,22 +141,13 @@ export const useCustomerStore = create<CustomerStore>()(
       updateAddress: async (input) => {
         const { profile } = get();
         if (!profile) return false;
-
         set({ isLoading: true, error: null });
         try {
-          const { error } = await supabase
-            .from('profiles')
-            .update({
-              ...input,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', profile.id);
-
-          if (error) {
-            set({ error: error.message, isLoading: false });
-            return false;
-          }
-
+          const { error } = await supabase.from('profiles').update({
+            ...input,
+            updated_at: new Date().toISOString(),
+          }).eq('id', profile.id);
+          if (error) { set({ error: error.message, isLoading: false }); return false; }
           await get().refreshProfile();
           set({ isLoading: false });
           return true;
@@ -217,16 +158,11 @@ export const useCustomerStore = create<CustomerStore>()(
       },
 
       clearError: () => set({ error: null }),
-
-      isLoggedIn: () => {
-        return !!get().profile;
-      },
+      isLoggedIn: () => !!get().profile,
     }),
     {
       name: 'remsleep-customer',
-      partialize: (state) => ({
-        profile: state.profile,
-      }),
+      partialize: (state) => ({ profile: state.profile }),
     }
   )
 );

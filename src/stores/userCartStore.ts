@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import { ShopifyProduct, storefrontApiRequest, normalizeShopifyCheckoutUrl } from '@/lib/shopify';
 import { useCustomerStore } from '@/stores/customerStore';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface CartItem {
   lineId: string | null;
@@ -27,7 +27,10 @@ interface UserCartStore {
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
   setCartOpen: (open: boolean) => void;
+  loadFromDb: () => Promise<void>;
 }
+
+// ── Shopify GraphQL ──────────────────────────────────────────────
 
 const CART_QUERY = `
   query cart($id: ID!) {
@@ -102,335 +105,283 @@ async function createShopifyCart(
   const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
     input: { lines: [{ quantity: item.quantity, merchandiseId: item.variantId }] },
   });
-
   if (data?.data?.cartCreate?.userErrors?.length > 0) {
     console.error('Cart creation failed:', data.data.cartCreate.userErrors);
     return null;
   }
-
   const cart = data?.data?.cartCreate?.cart;
   if (!cart?.checkoutUrl) return null;
-
   const lineId = cart.lines.edges[0]?.node?.id;
   if (!lineId) return null;
-
   return { cartId: cart.id, checkoutUrl: formatCheckoutUrl(cart.checkoutUrl), lineId };
 }
 
 async function addLineToShopifyCart(
-  cartId: string,
-  item: CartItem
+  cartId: string, item: CartItem
 ): Promise<{ success: boolean; lineId?: string; cartNotFound?: boolean }> {
   const data = await storefrontApiRequest(CART_LINES_ADD_MUTATION, {
-    cartId,
-    lines: [{ quantity: item.quantity, merchandiseId: item.variantId }],
+    cartId, lines: [{ quantity: item.quantity, merchandiseId: item.variantId }],
   });
-
   const userErrors = data?.data?.cartLinesAdd?.userErrors || [];
   if (isCartNotFoundError(userErrors)) return { success: false, cartNotFound: true };
-  if (userErrors.length > 0) {
-    console.error('Add line failed:', userErrors);
-    return { success: false };
-  }
-
+  if (userErrors.length > 0) { console.error('Add line failed:', userErrors); return { success: false }; }
   const lines = data?.data?.cartLinesAdd?.cart?.lines?.edges || [];
   const newLine = lines.find(
-    (l: { node: { id: string; merchandise: { id: string } } }) =>
-      l.node.merchandise.id === item.variantId
+    (l: { node: { id: string; merchandise: { id: string } } }) => l.node.merchandise.id === item.variantId
   );
   return { success: true, lineId: newLine?.node?.id };
 }
 
 async function updateShopifyCartLine(
-  cartId: string,
-  lineId: string,
-  quantity: number
+  cartId: string, lineId: string, quantity: number
 ): Promise<{ success: boolean; cartNotFound?: boolean }> {
-  const data = await storefrontApiRequest(CART_LINES_UPDATE_MUTATION, {
-    cartId,
-    lines: [{ id: lineId, quantity }],
-  });
-
+  const data = await storefrontApiRequest(CART_LINES_UPDATE_MUTATION, { cartId, lines: [{ id: lineId, quantity }] });
   const userErrors = data?.data?.cartLinesUpdate?.userErrors || [];
   if (isCartNotFoundError(userErrors)) return { success: false, cartNotFound: true };
-  if (userErrors.length > 0) {
-    console.error('Update line failed:', userErrors);
-    return { success: false };
-  }
+  if (userErrors.length > 0) { console.error('Update line failed:', userErrors); return { success: false }; }
   return { success: true };
 }
 
 async function removeLineFromShopifyCart(
-  cartId: string,
-  lineId: string
+  cartId: string, lineId: string
 ): Promise<{ success: boolean; cartNotFound?: boolean }> {
-  const data = await storefrontApiRequest(CART_LINES_REMOVE_MUTATION, {
-    cartId,
-    lineIds: [lineId],
-  });
-
+  const data = await storefrontApiRequest(CART_LINES_REMOVE_MUTATION, { cartId, lineIds: [lineId] });
   const userErrors = data?.data?.cartLinesRemove?.userErrors || [];
   if (isCartNotFoundError(userErrors)) return { success: false, cartNotFound: true };
-  if (userErrors.length > 0) {
-    console.error('Remove line failed:', userErrors);
-    return { success: false };
-  }
+  if (userErrors.length > 0) { console.error('Remove line failed:', userErrors); return { success: false }; }
   return { success: true };
 }
 
-// Create a factory function to create user-specific cart stores
+// ── Database persistence helpers ─────────────────────────────────
+
+async function saveCartToDb(userId: string, state: { items: CartItem[]; cartId: string | null; checkoutUrl: string | null }) {
+  if (userId === 'guest') return;
+  try {
+    await supabase.from('user_carts').upsert({
+      user_id: userId,
+      items: JSON.parse(JSON.stringify(state.items)), // ensure plain JSON
+      cart_id: state.cartId,
+      checkout_url: state.checkoutUrl,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' });
+  } catch (e) {
+    console.error('[Cart] Failed to save to DB:', e);
+  }
+}
+
+async function loadCartFromDb(userId: string): Promise<{ items: CartItem[]; cartId: string | null; checkoutUrl: string | null } | null> {
+  if (userId === 'guest') return null;
+  try {
+    const { data, error } = await supabase
+      .from('user_carts')
+      .select('items, cart_id, checkout_url')
+      .eq('user_id', userId)
+      .single();
+    if (error || !data) return null;
+    return {
+      items: (data.items as unknown as CartItem[]) || [],
+      cartId: data.cart_id,
+      checkoutUrl: data.checkout_url ? formatCheckoutUrl(data.checkout_url) : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function deleteCartFromDb(userId: string) {
+  if (userId === 'guest') return;
+  try {
+    await supabase.from('user_carts').delete().eq('user_id', userId);
+  } catch (e) {
+    console.error('[Cart] Failed to delete from DB:', e);
+  }
+}
+
+// ── Store factory ────────────────────────────────────────────────
+
 const createUserCartStore = (userId: string) => {
   return create<UserCartStore>()(
-    persist(
-      (set, get) => ({
-        items: [],
-        cartId: null,
-        checkoutUrl: null,
-        isLoading: false,
-        isSyncing: false,
-        isCartOpen: false,
+    (set, get) => ({
+      items: [],
+      cartId: null,
+      checkoutUrl: null,
+      isLoading: false,
+      isSyncing: false,
+      isCartOpen: false,
 
-        addItem: async (item) => {
-          const { items, cartId, clearCart } = get();
-          const existingItem = items.find((i) => i.variantId === item.variantId);
+      loadFromDb: async () => {
+        const dbCart = await loadCartFromDb(userId);
+        if (dbCart) {
+          set({ items: dbCart.items, cartId: dbCart.cartId, checkoutUrl: dbCart.checkoutUrl });
+        }
+      },
 
-          console.log(`[Cart-${userId}] Adding item:`, item);
+      addItem: async (item) => {
+        const { items, cartId, clearCart } = get();
+        const existingItem = items.find((i) => i.variantId === item.variantId);
 
-          // Check if this is a mock product
-          const isMockProduct = item.variantId.match(/^gid:\/\/shopify\/ProductVariant\/\d+-/);
+        const isMockProduct = item.variantId.match(/^gid:\/\/shopify\/ProductVariant\/\d+-/);
+        if (isMockProduct) {
+          if (existingItem) {
+            const newItems = items.map((i) =>
+              i.variantId === item.variantId ? { ...i, quantity: i.quantity + item.quantity } : i
+            );
+            set({ items: newItems, isCartOpen: true });
+          } else {
+            const newItems = [...items, { ...item, lineId: null }];
+            set({ items: newItems, cartId: 'local-mock-cart', checkoutUrl: null, isCartOpen: true });
+          }
+          saveCartToDb(userId, get());
+          return;
+        }
 
-          if (isMockProduct) {
-            console.log(`[Cart-${userId}] Mock product detected - using local-only cart mode`);
-            if (existingItem) {
-              const newQuantity = existingItem.quantity + item.quantity;
-              set({
-                items: items.map((i) =>
-                  i.variantId === item.variantId ? { ...i, quantity: newQuantity } : i
-                ),
-                isCartOpen: true,
-              });
-            } else {
-              set({
-                items: [...items, { ...item, lineId: null }],
-                cartId: 'local-mock-cart',
-                checkoutUrl: null,
-                isCartOpen: true,
-              });
+        set({ isLoading: true });
+        try {
+          if (!cartId) {
+            const result = await createShopifyCart({ ...item, lineId: null });
+            if (result) {
+              set({ cartId: result.cartId, checkoutUrl: result.checkoutUrl, items: [{ ...item, lineId: result.lineId }], isCartOpen: true });
             }
-            return;
-          }
-
-          // Real Shopify products
-          set({ isLoading: true });
-          try {
-            if (!cartId) {
-              const result = await createShopifyCart({ ...item, lineId: null });
-              if (result) {
-                set({
-                  cartId: result.cartId,
-                  checkoutUrl: result.checkoutUrl,
-                  items: [{ ...item, lineId: result.lineId }],
-                  isCartOpen: true,
-                });
-              }
-            } else if (existingItem) {
-              const newQuantity = existingItem.quantity + item.quantity;
-              if (!existingItem.lineId) return;
-              const result = await updateShopifyCartLine(cartId, existingItem.lineId, newQuantity);
-              if (result.success) {
-                const currentItems = get().items;
-                set({
-                  items: currentItems.map((i) =>
-                    i.variantId === item.variantId ? { ...i, quantity: newQuantity } : i
-                  ),
-                  isCartOpen: true,
-                });
-              } else if (result.cartNotFound) {
-                clearCart();
-              }
-            } else {
-              const result = await addLineToShopifyCart(cartId, { ...item, lineId: null });
-              if (result.success) {
-                const currentItems = get().items;
-                set({
-                  items: [...currentItems, { ...item, lineId: result.lineId ?? null }],
-                  isCartOpen: true,
-                });
-              } else if (result.cartNotFound) {
-                clearCart();
-              }
-            }
-          } catch (error) {
-            console.error('Failed to add item:', error);
-          } finally {
-            set({ isLoading: false });
-          }
-        },
-
-        updateQuantity: async (variantId, quantity) => {
-          if (quantity <= 0) {
-            await get().removeItem(variantId);
-            return;
-          }
-
-          const { items, cartId, clearCart } = get();
-          const item = items.find((i) => i.variantId === variantId);
-          if (!item) return;
-
-          const isMockProduct = cartId === 'local-mock-cart' || variantId.match(/^gid:\/\/shopify\/ProductVariant\/\d+-/);
-
-          if (isMockProduct) {
-            set({
-              items: items.map((i) =>
-                i.variantId === variantId ? { ...i, quantity } : i
-              ),
-            });
-            return;
-          }
-
-          if (!item.lineId || !cartId) return;
-
-          set({ isLoading: true });
-          try {
-            const result = await updateShopifyCartLine(cartId, item.lineId, quantity);
+          } else if (existingItem) {
+            const newQuantity = existingItem.quantity + item.quantity;
+            if (!existingItem.lineId) return;
+            const result = await updateShopifyCartLine(cartId, existingItem.lineId, newQuantity);
             if (result.success) {
-              const currentItems = get().items;
-              set({
-                items: currentItems.map((i) =>
-                  i.variantId === variantId ? { ...i, quantity } : i
-                ),
-              });
-            } else if (result.cartNotFound) {
-              clearCart();
-            }
-          } catch (error) {
-            console.error('Failed to update quantity:', error);
-          } finally {
-            set({ isLoading: false });
-          }
-        },
-
-        removeItem: async (variantId) => {
-          const { items, cartId, clearCart } = get();
-          const item = items.find((i) => i.variantId === variantId);
-          if (!item) return;
-
-          const isMockProduct = cartId === 'local-mock-cart' || variantId.match(/^gid:\/\/shopify\/ProductVariant\/\d+-/);
-
-          if (isMockProduct) {
-            const newItems = items.filter((i) => i.variantId !== variantId);
-            if (newItems.length === 0) {
-              clearCart();
-            } else {
-              set({ items: newItems });
-            }
-            return;
-          }
-
-          if (!item.lineId || !cartId) return;
-
-          set({ isLoading: true });
-          try {
-            const result = await removeLineFromShopifyCart(cartId, item.lineId);
+              set({ items: get().items.map((i) => i.variantId === item.variantId ? { ...i, quantity: newQuantity } : i), isCartOpen: true });
+            } else if (result.cartNotFound) { clearCart(); }
+          } else {
+            const result = await addLineToShopifyCart(cartId, { ...item, lineId: null });
             if (result.success) {
-              const currentItems = get().items;
-              const newItems = currentItems.filter((i) => i.variantId !== variantId);
-              newItems.length === 0 ? clearCart() : set({ items: newItems });
-            } else if (result.cartNotFound) {
-              clearCart();
-            }
-          } catch (error) {
-            console.error('Failed to remove item:', error);
-          } finally {
-            set({ isLoading: false });
+              set({ items: [...get().items, { ...item, lineId: result.lineId ?? null }], isCartOpen: true });
+            } else if (result.cartNotFound) { clearCart(); }
           }
-        },
+          saveCartToDb(userId, get());
+        } catch (error) {
+          console.error('Failed to add item:', error);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
 
-        clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, isCartOpen: false }),
-        getCheckoutUrl: () => {
-          const current = get().checkoutUrl;
-          return current ? formatCheckoutUrl(current) : null;
-        },
-        setCartOpen: (open: boolean) => set({ isCartOpen: open }),
+      updateQuantity: async (variantId, quantity) => {
+        if (quantity <= 0) { await get().removeItem(variantId); return; }
+        const { items, cartId, clearCart } = get();
+        const item = items.find((i) => i.variantId === variantId);
+        if (!item) return;
 
-        syncCart: async () => {
-          const { cartId, isSyncing, clearCart, checkoutUrl } = get();
-          if (!cartId || isSyncing || cartId === 'local-mock-cart') return;
+        const isMockProduct = cartId === 'local-mock-cart' || variantId.match(/^gid:\/\/shopify\/ProductVariant\/\d+-/);
+        if (isMockProduct) {
+          set({ items: items.map((i) => i.variantId === variantId ? { ...i, quantity } : i) });
+          saveCartToDb(userId, get());
+          return;
+        }
 
-          if (!cartId.startsWith('gid://shopify/Cart/')) {
-            clearCart();
-            return;
+        if (!item.lineId || !cartId) return;
+        set({ isLoading: true });
+        try {
+          const result = await updateShopifyCartLine(cartId, item.lineId, quantity);
+          if (result.success) {
+            set({ items: get().items.map((i) => i.variantId === variantId ? { ...i, quantity } : i) });
+          } else if (result.cartNotFound) { clearCart(); }
+          saveCartToDb(userId, get());
+        } catch (error) {
+          console.error('Failed to update quantity:', error);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      removeItem: async (variantId) => {
+        const { items, cartId, clearCart } = get();
+        const item = items.find((i) => i.variantId === variantId);
+        if (!item) return;
+
+        const isMockProduct = cartId === 'local-mock-cart' || variantId.match(/^gid:\/\/shopify\/ProductVariant\/\d+-/);
+        if (isMockProduct) {
+          const newItems = items.filter((i) => i.variantId !== variantId);
+          newItems.length === 0 ? clearCart() : set({ items: newItems });
+          saveCartToDb(userId, get());
+          return;
+        }
+
+        if (!item.lineId || !cartId) return;
+        set({ isLoading: true });
+        try {
+          const result = await removeLineFromShopifyCart(cartId, item.lineId);
+          if (result.success) {
+            const newItems = get().items.filter((i) => i.variantId !== variantId);
+            newItems.length === 0 ? clearCart() : set({ items: newItems });
+          } else if (result.cartNotFound) { clearCart(); }
+          saveCartToDb(userId, get());
+        } catch (error) {
+          console.error('Failed to remove item:', error);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      clearCart: () => {
+        set({ items: [], cartId: null, checkoutUrl: null, isCartOpen: false });
+        deleteCartFromDb(userId);
+      },
+
+      getCheckoutUrl: () => {
+        const current = get().checkoutUrl;
+        return current ? formatCheckoutUrl(current) : null;
+      },
+
+      setCartOpen: (open: boolean) => set({ isCartOpen: open }),
+
+      syncCart: async () => {
+        const { cartId, isSyncing, clearCart, checkoutUrl } = get();
+        if (!cartId || isSyncing || cartId === 'local-mock-cart') return;
+        if (!cartId.startsWith('gid://shopify/Cart/')) { clearCart(); return; }
+
+        set({ isSyncing: true });
+        try {
+          const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
+          if (!data) return;
+          const cart = data?.data?.cart;
+          if (!cart || cart.totalQuantity === 0) { clearCart(); return; }
+          if (cart.checkoutUrl) {
+            const formattedCheckoutUrl = formatCheckoutUrl(cart.checkoutUrl);
+            if (formattedCheckoutUrl !== checkoutUrl) {
+              set({ checkoutUrl: formattedCheckoutUrl });
+              saveCartToDb(userId, get());
+            }
           }
-
-          set({ isSyncing: true });
-          try {
-            const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
-            if (!data) return;
-
-            const cart = data?.data?.cart;
-            if (!cart || cart.totalQuantity === 0) {
-              clearCart();
-              return;
-            }
-
-            if (cart.checkoutUrl) {
-              const formattedCheckoutUrl = formatCheckoutUrl(cart.checkoutUrl);
-              if (formattedCheckoutUrl !== checkoutUrl) {
-                set({ checkoutUrl: formattedCheckoutUrl });
-              }
-            }
-          } catch (error) {
-            if (isInvalidCartIdError(error)) {
-              clearCart();
-              return;
-            }
-            console.error('Failed to sync cart with Shopify:', error);
-          } finally {
-            set({ isSyncing: false });
-          }
-        },
-      }),
-      {
-        name: `shopify-cart-${userId}`,
-        storage: createJSONStorage(() => localStorage),
-        partialize: (state) => ({
-          items: state.items,
-          cartId: state.cartId,
-          checkoutUrl: state.checkoutUrl,
-        }),
-        onRehydrateStorage: () => (state) => {
-          // Migrate any stale checkout URLs that still point to the custom domain
-          if (state?.checkoutUrl) {
-            const fixed = normalizeShopifyCheckoutUrl(state.checkoutUrl);
-            if (fixed !== state.checkoutUrl) {
-              state.checkoutUrl = fixed;
-            }
-          }
-        },
-      }
-    )
+        } catch (error) {
+          if (isInvalidCartIdError(error)) { clearCart(); return; }
+          console.error('Failed to sync cart with Shopify:', error);
+        } finally {
+          set({ isSyncing: false });
+        }
+      },
+    })
   );
 };
 
-// Store instances for different users
+// ── Store instances ──────────────────────────────────────────────
+
 const cartStores = new Map<string, ReturnType<typeof createUserCartStore>>();
 
-// Hook to get the current user's cart store
 export const useUserCart = () => {
-  const { profile, isLoggedIn } = useCustomerStore();
+  const { profile } = useCustomerStore();
   const userId = profile?.id || 'guest';
 
-  // Get or create store for this user
   let cartStore = cartStores.get(userId);
   if (!cartStore) {
     cartStore = createUserCartStore(userId);
     cartStores.set(userId, cartStore);
+    // Load cart from DB for logged-in users
+    if (userId !== 'guest') {
+      cartStore.getState().loadFromDb();
+    }
   }
 
   return cartStore();
 };
 
-// Clear all cart stores (useful for testing or cleanup)
 export const clearAllCartStores = () => {
   cartStores.clear();
 };
