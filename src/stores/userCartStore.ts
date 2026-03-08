@@ -179,7 +179,7 @@ async function loadCartFromDb(userId: string): Promise<{ items: CartItem[]; cart
       .single();
     if (error || !data) return null;
     return {
-      items: (data.items as CartItem[]) || [],
+      items: (data.items as unknown as CartItem[]) || [],
       cartId: data.cart_id,
       checkoutUrl: data.checkout_url ? formatCheckoutUrl(data.checkout_url) : null,
     };
