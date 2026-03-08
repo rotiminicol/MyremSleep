@@ -471,7 +471,7 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
 type StepType = 1 | 2 | 3;
 
 export default function CheckoutPage() {
-  const { items, getCheckoutUrl, clearCart } = useUserCart();
+  const { items, getCheckoutUrl, clearCart, syncCart } = useUserCart();
   const { formatPrice } = useCurrency();
   const [step, setStep] = useState<StepType>(1);
   const [loading, setLoading] = useState(false);
@@ -491,31 +491,52 @@ export default function CheckoutPage() {
     }
   }, [items, loading]);
 
+  const isValidCheckoutUrl = (url: string | null) => {
+    if (!url) return false;
+    try {
+      const parsed = new URL(url);
+      return parsed.pathname.includes('/cart/c/') || parsed.pathname.includes('/checkouts/');
+    } catch {
+      return false;
+    }
+  };
+
+  const ensureCheckoutUrl = async () => {
+    let nextCheckoutUrl = getCheckoutUrl();
+    if (isValidCheckoutUrl(nextCheckoutUrl)) return nextCheckoutUrl;
+
+    await syncCart();
+    nextCheckoutUrl = getCheckoutUrl();
+
+    return isValidCheckoutUrl(nextCheckoutUrl) ? nextCheckoutUrl : null;
+  };
 
   const handleChange = (e: any) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
-  const handleExpressCheckout = (_method: string) => {
+  const handleExpressCheckout = async (_method: string) => {
     // All express checkout methods redirect to Shopify checkout
     // Shopify's checkout page handles Shop Pay, Apple Pay, Google Pay natively
-    if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
+    const nextCheckoutUrl = await ensureCheckoutUrl();
+    if (nextCheckoutUrl) {
+      window.open(nextCheckoutUrl, '_blank');
     } else {
-      toast.error('No checkout available. Please add items to your cart first.', { position: 'top-center' });
+      toast.error('No checkout available. Please add an item to cart again.', { position: 'top-center' });
     }
   };
 
-  const handleProceedToPayment = () => {
-    if (!checkoutUrl) {
-      toast.error('No checkout available. Please try again.', { position: 'top-center' });
+  const handleProceedToPayment = async () => {
+    const nextCheckoutUrl = await ensureCheckoutUrl();
+    if (!nextCheckoutUrl) {
+      toast.error('No checkout available. Please add an item to cart again.', { position: 'top-center' });
       return;
     }
     setLoading(true);
     // Small delay for UX, then redirect to Shopify checkout
     setTimeout(() => {
-      window.open(checkoutUrl, '_blank');
+      window.open(nextCheckoutUrl, '_blank');
       setLoading(false);
       toast.success('Redirected to secure checkout. Complete your payment there.', { position: 'top-center', duration: 5000 });
     }, 800);

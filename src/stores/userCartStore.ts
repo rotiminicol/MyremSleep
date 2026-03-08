@@ -31,7 +31,7 @@ interface UserCartStore {
 
 const CART_QUERY = `
   query cart($id: ID!) {
-    cart(id: $id) { id totalQuantity }
+    cart(id: $id) { id totalQuantity checkoutUrl }
   }
 `;
 
@@ -96,6 +96,10 @@ function isCartNotFoundError(
       e.message.toLowerCase().includes('cart not found') ||
       e.message.toLowerCase().includes('does not exist')
   );
+}
+
+function isInvalidCartIdError(error: unknown): boolean {
+  return error instanceof Error && error.message.includes('Variable $id of type ID! was provided invalid value');
 }
 
 async function createShopifyCart(
@@ -353,16 +357,36 @@ const createUserCartStore = (userId: string) => {
         setCartOpen: (open: boolean) => set({ isCartOpen: open }),
 
         syncCart: async () => {
-          const { cartId, isSyncing, clearCart } = get();
-          if (!cartId || isSyncing) return;
+          const { cartId, isSyncing, clearCart, checkoutUrl } = get();
+          if (!cartId || isSyncing || cartId === 'local-mock-cart') return;
+
+          if (!cartId.startsWith('gid://shopify/Cart/')) {
+            clearCart();
+            return;
+          }
 
           set({ isSyncing: true });
           try {
             const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
             if (!data) return;
+
             const cart = data?.data?.cart;
-            if (!cart || cart.totalQuantity === 0) clearCart();
+            if (!cart || cart.totalQuantity === 0) {
+              clearCart();
+              return;
+            }
+
+            if (cart.checkoutUrl) {
+              const formattedCheckoutUrl = formatCheckoutUrl(cart.checkoutUrl);
+              if (formattedCheckoutUrl !== checkoutUrl) {
+                set({ checkoutUrl: formattedCheckoutUrl });
+              }
+            }
           } catch (error) {
+            if (isInvalidCartIdError(error)) {
+              clearCart();
+              return;
+            }
             console.error('Failed to sync cart with Shopify:', error);
           } finally {
             set({ isSyncing: false });
