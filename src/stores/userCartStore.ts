@@ -98,6 +98,10 @@ function isCartNotFoundError(
   );
 }
 
+function isInvalidCartIdError(error: unknown): boolean {
+  return error instanceof Error && error.message.includes('Variable $id of type ID! was provided invalid value');
+}
+
 async function createShopifyCart(
   item: CartItem
 ): Promise<{ cartId: string; checkoutUrl: string; lineId: string } | null> {
