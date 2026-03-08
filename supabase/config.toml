@@ -5,6 +5,3 @@ verify_jwt = false
 
 [functions.judgeme-reviews]
 verify_jwt = false
-
-[functions.reviews-proxy]
-verify_jwt = false
