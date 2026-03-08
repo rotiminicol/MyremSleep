@@ -1,6 +1,6 @@
 // Shopify Storefront API Configuration
-const SHOPIFY_API_VERSION = '2025-07';
-const SHOPIFY_STORE_PERMANENT_DOMAIN = 'zr4ktm-7m.myshopify.com';
+export const SHOPIFY_API_VERSION = '2025-07';
+export const SHOPIFY_STORE_PERMANENT_DOMAIN = 'zr4ktm-7m.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '7c93b616232464ab54268c555d84f141';
 
