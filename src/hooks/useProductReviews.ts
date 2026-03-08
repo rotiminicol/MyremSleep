@@ -22,22 +22,41 @@ interface ReviewsResponse {
   per_page: number;
 }
 
+async function invokeReviewsFunction(body: Record<string, unknown>) {
+  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+  const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+  const res = await fetch(
+    `https://${projectId}.supabase.co/functions/v1/judgeme-reviews`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': anonKey,
+        'Authorization': `Bearer ${anonKey}`,
+      },
+      body: JSON.stringify(body),
+    }
+  );
+
+  if (!res.ok) {
+    const errBody = await res.text();
+    throw new Error(errBody || `Function returned ${res.status}`);
+  }
+
+  return res.json();
+}
+
 export function useProductReviews(productHandle: string, page: number = 1, perPage: number = 10) {
   return useQuery({
     queryKey: ['reviews', productHandle, page, perPage],
     queryFn: async (): Promise<ReviewsResponse> => {
-      const { data, error } = await supabase.functions.invoke('judgeme-reviews', {
-        body: {
-          action: 'list',
-          shopDomain: SHOP_DOMAIN,
-          page,
-          perPage,
-        },
+      const data = await invokeReviewsFunction({
+        action: 'list',
+        shopDomain: SHOP_DOMAIN,
+        page,
+        perPage,
       });
-
-      if (error) {
-        throw new Error(error.message || 'Failed to fetch reviews');
-      }
 
       return {
         reviews: data?.reviews || [],
