@@ -127,6 +127,8 @@ const App = () => (
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
+            {/* Shopify checkout redirect — catches /cart/c/* before the catch-all */}
+            <Route path="/cart/c/*" element={<ShopifyCheckoutRedirect />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
