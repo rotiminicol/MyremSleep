@@ -521,7 +521,7 @@ export default function CheckoutPage() {
     // Shopify's checkout page handles Shop Pay, Apple Pay, Google Pay natively
     const nextCheckoutUrl = await ensureCheckoutUrl();
     if (nextCheckoutUrl) {
-      window.open(nextCheckoutUrl, '_blank');
+      window.open(normalizeShopifyCheckoutUrl(nextCheckoutUrl), '_blank', 'noopener,noreferrer');
     } else {
       toast.error('No checkout available. Please add an item to cart again.', { position: 'top-center' });
     }
