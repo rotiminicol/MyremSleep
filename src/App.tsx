@@ -54,7 +54,7 @@ function migrateStaleCheckoutUrls() {
       const raw = localStorage.getItem(key);
       if (!raw || !raw.includes(CUSTOM_DOMAIN)) continue;
 
-      const fixed = raw.replaceAll(CUSTOM_DOMAIN, SHOPIFY_PERMANENT);
+      const fixed = raw.split(CUSTOM_DOMAIN).join(SHOPIFY_PERMANENT);
       localStorage.setItem(key, fixed);
       console.log(`[Cart Migration] Fixed stale checkout URL in ${key}`);
     }
