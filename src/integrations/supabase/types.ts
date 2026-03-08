@@ -26,6 +26,7 @@ export type Database = {
           id: string
           last_name: string
           phone: string | null
+          preferred_currency: string | null
           province: string | null
           updated_at: string
           zip: string | null
@@ -41,6 +42,7 @@ export type Database = {
           id: string
           last_name?: string
           phone?: string | null
+          preferred_currency?: string | null
           province?: string | null
           updated_at?: string
           zip?: string | null
@@ -56,9 +58,37 @@ export type Database = {
           id?: string
           last_name?: string
           phone?: string | null
+          preferred_currency?: string | null
           province?: string | null
           updated_at?: string
           zip?: string | null
+        }
+        Relationships: []
+      }
+      user_carts: {
+        Row: {
+          cart_id: string | null
+          checkout_url: string | null
+          id: string
+          items: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cart_id?: string | null
+          checkout_url?: string | null
+          id?: string
+          items?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cart_id?: string | null
+          checkout_url?: string | null
+          id?: string
+          items?: Json
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
