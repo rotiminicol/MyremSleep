@@ -84,22 +84,16 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: async (input: CreateReviewInput) => {
-      const { data, error } = await supabase.functions.invoke('judgeme-reviews', {
-        body: {
-          action: 'create',
-          shopDomain: SHOP_DOMAIN,
-          productId: input.productId,
-          name: input.name,
-          email: input.email,
-          rating: input.rating,
-          title: input.title,
-          reviewBody: input.reviewBody,
-        },
+      const data = await invokeReviewsFunction({
+        action: 'create',
+        shopDomain: SHOP_DOMAIN,
+        productId: input.productId,
+        name: input.name,
+        email: input.email,
+        rating: input.rating,
+        title: input.title,
+        reviewBody: input.reviewBody,
       });
-
-      if (error) {
-        throw new Error(error.message || 'Failed to submit review');
-      }
 
       if (data?.error) {
         throw new Error(data.error);
