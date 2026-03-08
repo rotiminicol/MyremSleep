@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, X } from 'lucide-react';
 import { useUserCart } from '@/stores/userCartStore';
+import { normalizeShopifyCheckoutUrl } from '@/lib/shopify';
 import { useCustomerStore } from '@/stores/customerStore';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -116,7 +117,8 @@ export function CartDrawer() {
     
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
+      const safeCheckoutUrl = normalizeShopifyCheckoutUrl(checkoutUrl);
+      window.open(safeCheckoutUrl, '_blank', 'noopener,noreferrer');
       setCartOpen(false);
     } else {
       // Fallback to custom checkout page

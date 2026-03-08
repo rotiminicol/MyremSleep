@@ -5,6 +5,7 @@ import {
   Check, Lock, Package, ChevronDown, Zap, AlertCircle, ExternalLink, Loader2
 } from 'lucide-react';
 import { useUserCart } from '@/stores/userCartStore';
+import { normalizeShopifyCheckoutUrl } from '@/lib/shopify';
 import { useCurrency } from '@/hooks/useCurrency';
 import { validatePostalCode } from '@/utils/postalCodeValidation';
 import { StoreNavbar } from '@/components/store/StoreNavbar';
@@ -521,7 +522,7 @@ export default function CheckoutPage() {
     // Shopify's checkout page handles Shop Pay, Apple Pay, Google Pay natively
     const nextCheckoutUrl = await ensureCheckoutUrl();
     if (nextCheckoutUrl) {
-      window.open(nextCheckoutUrl, '_blank');
+      window.open(normalizeShopifyCheckoutUrl(nextCheckoutUrl), '_blank', 'noopener,noreferrer');
     } else {
       toast.error('No checkout available. Please add an item to cart again.', { position: 'top-center' });
     }
@@ -536,7 +537,7 @@ export default function CheckoutPage() {
     setLoading(true);
     // Small delay for UX, then redirect to Shopify checkout
     setTimeout(() => {
-      window.open(nextCheckoutUrl, '_blank');
+      window.open(normalizeShopifyCheckoutUrl(nextCheckoutUrl), '_blank', 'noopener,noreferrer');
       setLoading(false);
       toast.success('Redirected to secure checkout. Complete your payment there.', { position: 'top-center', duration: 5000 });
     }, 800);

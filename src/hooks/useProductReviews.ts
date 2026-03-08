@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-const JUDGEME_API_TOKEN = import.meta.env.VITE_JUDGEME_API_TOKEN;
 const SHOP_DOMAIN = 'zr4ktm-7m.myshopify.com';
 
 export interface Review {
@@ -26,22 +26,27 @@ export function useProductReviews(productHandle: string, page: number = 1, perPa
   return useQuery({
     queryKey: ['reviews', productHandle, page, perPage],
     queryFn: async (): Promise<ReviewsResponse> => {
-      const apiUrl = `https://judge.me/api/v1/reviews?shop_domain=${SHOP_DOMAIN}&api_token=${JUDGEME_API_TOKEN}&per_page=${perPage}&page=${page}`;
+      const { data, error } = await supabase.functions.invoke('judgeme-reviews', {
+        body: {
+          action: 'list',
+          shopDomain: SHOP_DOMAIN,
+          page,
+          perPage,
+        },
+      });
 
-      const response = await fetch(apiUrl);
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch reviews');
+      if (error) {
+        throw new Error(error.message || 'Failed to fetch reviews');
       }
 
-      const result = await response.json();
       return {
-        reviews: result.reviews || [],
-        current_page: result.current_page || page,
-        total_count: result.total_count || 0,
-        per_page: result.per_page || perPage,
+        reviews: data?.reviews || [],
+        current_page: data?.current_page || page,
+        total_count: data?.total_count || 0,
+        per_page: data?.per_page || perPage,
       };
     },
+    retry: 1,
     staleTime: 2 * 60 * 1000,
   });
 }
@@ -60,35 +65,28 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: async (input: CreateReviewInput) => {
-      const response = await fetch('https://judge.me/api/v1/reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const { data, error } = await supabase.functions.invoke('judgeme-reviews', {
+        body: {
+          action: 'create',
+          shopDomain: SHOP_DOMAIN,
+          productId: input.productId,
+          name: input.name,
+          email: input.email,
+          rating: input.rating,
+          title: input.title,
+          reviewBody: input.reviewBody,
         },
-        body: JSON.stringify({
-          shop_domain: SHOP_DOMAIN,
-          api_token: JUDGEME_API_TOKEN,
-          platform: 'shopify',
-          id: input.productId,
-          url: SHOP_DOMAIN,
-          review: {
-            rating: input.rating,
-            title: input.title,
-            body: input.reviewBody,
-            reviewer: {
-              name: input.name,
-              email: input.email || `${input.name.replace(/\s/g, '').toLowerCase()}@review.local`,
-            },
-          },
-        }),
       });
 
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || 'Failed to submit review');
+      if (error) {
+        throw new Error(error.message || 'Failed to submit review');
       }
 
-      return response.json();
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews'] });
