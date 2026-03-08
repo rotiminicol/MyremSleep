@@ -536,7 +536,7 @@ export default function CheckoutPage() {
     setLoading(true);
     // Small delay for UX, then redirect to Shopify checkout
     setTimeout(() => {
-      window.open(nextCheckoutUrl, '_blank');
+      window.open(normalizeShopifyCheckoutUrl(nextCheckoutUrl), '_blank', 'noopener,noreferrer');
       setLoading(false);
       toast.success('Redirected to secure checkout. Complete your payment there.', { position: 'top-center', duration: 5000 });
     }, 800);

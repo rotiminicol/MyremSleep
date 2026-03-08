@@ -116,7 +116,8 @@ export function CartDrawer() {
     
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
+      const safeCheckoutUrl = normalizeShopifyCheckoutUrl(checkoutUrl);
+      window.open(safeCheckoutUrl, '_blank', 'noopener,noreferrer');
       setCartOpen(false);
     } else {
       // Fallback to custom checkout page
