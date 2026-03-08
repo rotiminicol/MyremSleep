@@ -72,6 +72,28 @@ export interface ShopifyProduct {
   };
 }
 
+export function normalizeShopifyCheckoutUrl(checkoutUrl: string): string {
+  const raw = checkoutUrl.trim();
+  if (!raw) return checkoutUrl;
+
+  let normalized = raw;
+  if (raw.startsWith('//')) {
+    normalized = `https:${raw}`;
+  } else if (raw.startsWith('/')) {
+    normalized = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}${raw}`;
+  } else if (!/^https?:\/\//i.test(raw)) {
+    normalized = `https://${raw}`;
+  }
+
+  try {
+    const url = new URL(normalized);
+    url.searchParams.set('channel', 'online_store');
+    return url.toString();
+  } catch {
+    return normalized;
+  }
+}
+
 // Storefront API helper function
 export async function storefrontApiRequest(query: string, variables: Record<string, unknown> = {}) {
   const response = await fetch(SHOPIFY_STOREFRONT_URL, {
