@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { ShopifyProduct, storefrontApiRequest } from '@/lib/shopify';
+import { ShopifyProduct, storefrontApiRequest, normalizeShopifyCheckoutUrl } from '@/lib/shopify';
 import { useCustomerStore } from '@/stores/customerStore';
 
 export interface CartItem {
@@ -81,13 +81,7 @@ const CART_LINES_REMOVE_MUTATION = `
 `;
 
 function formatCheckoutUrl(checkoutUrl: string): string {
-  try {
-    const url = new URL(checkoutUrl);
-    url.searchParams.set('channel', 'online_store');
-    return url.toString();
-  } catch {
-    return checkoutUrl;
-  }
+  return normalizeShopifyCheckoutUrl(checkoutUrl);
 }
 
 function isCartNotFoundError(
@@ -379,7 +373,10 @@ export const useCartStore = create<CartStore>()(
       },
 
       clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
-      getCheckoutUrl: () => get().checkoutUrl,
+      getCheckoutUrl: () => {
+        const current = get().checkoutUrl;
+        return current ? formatCheckoutUrl(current) : null;
+      },
       setCartOpen: (open: boolean) => set({ isCartOpen: open }),
 
       initializeUserCart: (userId: string) => {
