@@ -26,7 +26,7 @@ export function useProductReviews(productHandle: string, page: number = 1, perPa
   return useQuery({
     queryKey: ['reviews', productHandle, page, perPage],
     queryFn: async (): Promise<ReviewsResponse> => {
-      const { data, error } = await supabase.functions.invoke('judge-me-proxy', {
+      const { data, error } = await supabase.functions.invoke('judgeme-reviews', {
         body: {
           action: 'list',
           shopDomain: SHOP_DOMAIN,
