@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, X } from 'lucide-react';
 import { useUserCart } from '@/stores/userCartStore';
 import { normalizeShopifyCheckoutUrl } from '@/lib/shopify';
-import { useCustomerStore } from '@/stores/customerStore';
+
 import { useCurrency } from '@/hooks/useCurrency';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
@@ -73,7 +73,7 @@ export function CartDrawer() {
   const { items, isLoading, isSyncing, isCartOpen, updateQuantity, removeItem, getCheckoutUrl, syncCart, setCartOpen } =
     useUserCart();
   const { formatPrice } = useCurrency();
-  const { isLoggedIn } = useCustomerStore();
+  
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
@@ -104,24 +104,12 @@ export function CartDrawer() {
   }, [isCartOpen, syncCart]);
 
   const handleCheckout = () => {
-    if (!isLoggedIn()) {
-      toast.error('Please log in to proceed to checkout', { position: 'top-center' });
-      
-      // Dispatch custom event to open account drawer with login view
-      window.dispatchEvent(new CustomEvent('openAccountDrawer', { detail: { view: 'login' } }));
-      
-      // Close cart drawer
-      setCartOpen(false);
-      return;
-    }
-    
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
       const safeCheckoutUrl = normalizeShopifyCheckoutUrl(checkoutUrl);
-      window.open(safeCheckoutUrl, '_blank', 'noopener,noreferrer');
-      setCartOpen(false);
+      // Navigate in same tab so user can press back to return
+      window.location.href = safeCheckoutUrl;
     } else {
-      // Fallback to custom checkout page
       navigate('/checkout');
       setCartOpen(false);
     }
