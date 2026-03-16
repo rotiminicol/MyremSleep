@@ -63,12 +63,16 @@ Deno.serve(async (req) => {
 
     const page = Number(body?.page || 1);
     const perPage = Number(body?.perPage || 10);
+    const handle = body?.handle;
 
     const url = new URL(JUDGE_ME_API_URL);
     url.searchParams.set('shop_domain', shopDomain);
     url.searchParams.set('api_token', token);
     url.searchParams.set('page', String(page));
     url.searchParams.set('per_page', String(perPage));
+    if (handle) {
+      url.searchParams.set('handle', handle);
+    }
 
     const response = await fetch(url.toString(), {
       method: 'GET',
