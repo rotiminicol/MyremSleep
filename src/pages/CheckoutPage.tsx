@@ -517,12 +517,21 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
+  const buildCheckoutNavigationUrl = (rawCheckoutUrl: string) => {
+    const baseUrl = normalizeShopifyCheckoutUrl(rawCheckoutUrl);
+    const url = new URL(baseUrl);
+    const failedReturnUrl = `${window.location.origin}/checkout/failed`;
+
+    url.searchParams.set('return_url', failedReturnUrl);
+    url.searchParams.set('channel', 'online_store');
+
+    return url.toString();
+  };
+
   const handleExpressCheckout = async (_method: string) => {
-    // All express checkout methods redirect to Shopify checkout
-    // Shopify's checkout page handles Shop Pay, Apple Pay, Google Pay natively
     const nextCheckoutUrl = await ensureCheckoutUrl();
     if (nextCheckoutUrl) {
-      window.open(normalizeShopifyCheckoutUrl(nextCheckoutUrl), '_blank', 'noopener,noreferrer');
+      window.location.href = buildCheckoutNavigationUrl(nextCheckoutUrl);
     } else {
       toast.error('No checkout available. Please add an item to cart again.', { position: 'top-center' });
     }
@@ -534,10 +543,10 @@ export default function CheckoutPage() {
       toast.error('No checkout available. Please add an item to cart again.', { position: 'top-center' });
       return;
     }
+
     setLoading(true);
-    // Small delay for UX, then redirect to Shopify checkout
     setTimeout(() => {
-      window.open(normalizeShopifyCheckoutUrl(nextCheckoutUrl), '_blank', 'noopener,noreferrer');
+      window.location.href = buildCheckoutNavigationUrl(nextCheckoutUrl);
       setLoading(false);
       toast.success('Redirected to secure checkout. Complete your payment there.', { position: 'top-center', duration: 5000 });
     }, 800);
