@@ -76,6 +76,7 @@ interface CreateReviewInput {
   title: string;
   reviewBody: string;
   productId: string;
+  productHandle?: string;
   email?: string;
 }
 
@@ -88,6 +89,7 @@ export function useCreateReview() {
         action: 'create',
         shopDomain: SHOP_DOMAIN,
         productId: input.productId,
+        handle: input.productHandle,
         name: input.name,
         email: input.email,
         rating: input.rating,
