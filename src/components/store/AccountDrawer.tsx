@@ -70,6 +70,9 @@ export function AccountDrawer() {
         if (view === 'signup') {
             if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
             if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+            if (formData.phone && !/^[+]?[\d\s\-\(\)]+$/.test(formData.phone)) {
+                newErrors.phone = 'Please enter a valid phone number';
+            }
         }
         
         if (!formData.email.trim()) {
@@ -82,10 +85,6 @@ export function AccountDrawer() {
             newErrors.password = 'Password is required';
         } else if (formData.password.length < 6) {
             newErrors.password = 'Password must be at least 6 characters';
-        }
-        
-        if (formData.phone && !/^[+]?[\d\s\-\(\)]+$/.test(formData.phone)) {
-            newErrors.phone = 'Please enter a valid phone number';
         }
         
         setErrors(newErrors);
@@ -326,20 +325,22 @@ export function AccountDrawer() {
                                                 <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.email}</p>
                                             )}
                                         </div>
-                                        <div className="relative">
-                                            <Input
-                                                type="tel"
-                                                value={formData.phone}
-                                                onChange={(e) => handleInputChange('phone', e.target.value)}
-                                                placeholder="Phone Number (Optional)"
-                                                className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.phone ? 'border-red-500' : ''}`}
-                                                style={{ fontFamily: 'Montserrat, sans-serif' }}
-                                            />
-                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                            {errors.phone && (
-                                                <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.phone}</p>
-                                            )}
-                                        </div>
+                                        {view === 'signup' && (
+                                            <div className="relative">
+                                                <Input
+                                                    type="tel"
+                                                    value={formData.phone}
+                                                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                                                    placeholder="Phone Number (Optional)"
+                                                    className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.phone ? 'border-red-500' : ''}`}
+                                                    style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                                />
+                                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                                {errors.phone && (
+                                                    <p className="absolute -bottom-5 left-0 text-xs text-red-500">{errors.phone}</p>
+                                                )}
+                                            </div>
+                                        )}
                                         <div className="relative">
                                             <Input
                                                 type={showPassword ? "text" : "password"}
