@@ -34,6 +34,7 @@ export function WriteReviewDrawer({ open, onClose, productId, productHandle }: W
         title: headline,
         reviewBody: review,
         productId: productId || '',
+        productHandle: productHandle || undefined,
       });
 
       toast.success('Review submitted!', {
