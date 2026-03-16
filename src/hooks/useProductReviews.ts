@@ -50,20 +50,29 @@ export function useProductReviews(productHandle: string, page: number = 1, perPa
   return useQuery({
     queryKey: ['reviews', productHandle, page, perPage],
     queryFn: async (): Promise<ReviewsResponse> => {
-      const data = await invokeReviewsFunction({
-        action: 'list',
-        shopDomain: SHOP_DOMAIN,
-        handle: productHandle,
-        page,
-        perPage,
-      });
+      try {
+        const data = await invokeReviewsFunction({
+          action: 'list',
+          shopDomain: SHOP_DOMAIN,
+          handle: productHandle,
+          page,
+          perPage,
+        });
 
-      return {
-        reviews: data?.reviews || [],
-        current_page: data?.current_page || page,
-        total_count: data?.total_count || 0,
-        per_page: data?.per_page || perPage,
-      };
+        return {
+          reviews: data?.reviews || [],
+          current_page: data?.current_page || page,
+          total_count: data?.total_count || 0,
+          per_page: data?.per_page || perPage,
+        };
+      } catch {
+        return {
+          reviews: [],
+          current_page: page,
+          total_count: 0,
+          per_page: perPage,
+        };
+      }
     },
     retry: 1,
     staleTime: 2 * 60 * 1000,
@@ -76,6 +85,7 @@ interface CreateReviewInput {
   title: string;
   reviewBody: string;
   productId: string;
+  productHandle?: string;
   email?: string;
 }
 
@@ -88,6 +98,7 @@ export function useCreateReview() {
         action: 'create',
         shopDomain: SHOP_DOMAIN,
         productId: input.productId,
+        handle: input.productHandle,
         name: input.name,
         email: input.email,
         rating: input.rating,

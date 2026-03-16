@@ -103,12 +103,21 @@ export function CartDrawer() {
     if (isCartOpen) syncCart();
   }, [isCartOpen, syncCart]);
 
+  const buildCheckoutNavigationUrl = (rawCheckoutUrl: string) => {
+    const baseUrl = normalizeShopifyCheckoutUrl(rawCheckoutUrl);
+    const url = new URL(baseUrl);
+    const failedReturnUrl = `${window.location.origin}/checkout/failed`;
+
+    url.searchParams.set('return_url', failedReturnUrl);
+    url.searchParams.set('channel', 'online_store');
+
+    return url.toString();
+  };
+
   const handleCheckout = () => {
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
-      const safeCheckoutUrl = normalizeShopifyCheckoutUrl(checkoutUrl);
-      // Navigate in same tab so user can press back to return
-      window.location.href = safeCheckoutUrl;
+      window.location.href = buildCheckoutNavigationUrl(checkoutUrl);
     } else {
       navigate('/checkout');
       setCartOpen(false);

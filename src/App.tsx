@@ -28,6 +28,8 @@ import SustainabilityPage from "./pages/SustainabilityPage";
 import ContactPage from "./pages/ContactPage";
 import HelpCenterPage from "./pages/HelpCenterPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import CheckoutSuccessPage from "./pages/CheckoutSuccessPage";
+import CheckoutFailedPage from "./pages/CheckoutFailedPage";
 import OrdersPage from "./pages/OrdersPage";
 import ProfilePage from "./pages/ProfilePage";
 import FavoritesPage from "./pages/FavoritesPage";
@@ -98,6 +100,8 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/help" element={<HelpCenterPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
+            <Route path="/checkout/failed" element={<CheckoutFailedPage />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
