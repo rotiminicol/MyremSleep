@@ -53,6 +53,7 @@ export function useProductReviews(productHandle: string, page: number = 1, perPa
       const data = await invokeReviewsFunction({
         action: 'list',
         shopDomain: SHOP_DOMAIN,
+        handle: productHandle,
         page,
         perPage,
       });

@@ -365,6 +365,9 @@ const createUserCartStore = (userId: string) => {
 
 const cartStores = new Map<string, ReturnType<typeof createUserCartStore>>();
 
+// Track whether we've already merged guest cart for a given user
+const mergedUsers = new Set<string>();
+
 export const useUserCart = () => {
   const { profile } = useCustomerStore();
   const userId = profile?.id || 'guest';
@@ -373,9 +376,27 @@ export const useUserCart = () => {
   if (!cartStore) {
     cartStore = createUserCartStore(userId);
     cartStores.set(userId, cartStore);
-    // Load cart from DB for logged-in users
+
     if (userId !== 'guest') {
-      cartStore.getState().loadFromDb();
+      // Load user cart from DB, then merge any guest items
+      const store = cartStore;
+      store.getState().loadFromDb().then(async () => {
+        if (mergedUsers.has(userId)) return;
+        mergedUsers.add(userId);
+
+        const guestStore = cartStores.get('guest');
+        if (!guestStore) return;
+        const guestItems = guestStore.getState().items;
+        if (guestItems.length === 0) return;
+
+        // Add each guest item into the user's cart
+        for (const item of guestItems) {
+          const { lineId, ...rest } = item;
+          await store.getState().addItem(rest);
+        }
+        // Clear guest cart after merge
+        guestStore.getState().clearCart();
+      });
     }
   }
 
@@ -384,4 +405,5 @@ export const useUserCart = () => {
 
 export const clearAllCartStores = () => {
   cartStores.clear();
+  mergedUsers.clear();
 };
