@@ -73,7 +73,7 @@ export function CartDrawer() {
   const { items, isLoading, isSyncing, isCartOpen, updateQuantity, removeItem, getCheckoutUrl, syncCart, setCartOpen } =
     useUserCart();
   const { formatPrice } = useCurrency();
-  const { isLoggedIn } = useCustomerStore();
+  
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
