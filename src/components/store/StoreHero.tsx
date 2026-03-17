@@ -123,7 +123,7 @@ export function StoreHero() {
       {/* Desktop Design (>= md) - Original Implementation */}
       <div className="hidden md:grid grid-cols-2 gap-4 px-6">
         {/* Left Item - Organic Forms */}
-        <div className="group cursor-pointer">
+        <Link to="/product/winter-cloud" className="group cursor-pointer">
           <div className="relative aspect-[4/5] overflow-hidden mb-3">
             <img
               src="/image1.png"
@@ -131,11 +131,10 @@ export function StoreHero() {
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
           </div>
-
-        </div>
+        </Link>
 
         {/* Right Item - Chain Collection */}
-        <div className="group cursor-pointer">
+        <Link to="/product/winter-cloud" className="group cursor-pointer">
           <div className="relative aspect-[4/5] overflow-hidden mb-3">
             <img
               src="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?w=1200&auto=format&fit=crop&q=80"
@@ -143,8 +142,7 @@ export function StoreHero() {
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
           </div>
-
-        </div>
+        </Link>
       </div>
 
       {/* Review Slider Section */}

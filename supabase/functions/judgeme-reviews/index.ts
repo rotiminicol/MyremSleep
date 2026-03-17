@@ -5,19 +5,6 @@ const corsHeaders = {
 
 const JUDGE_ME_API_URL = 'https://judge.me/api/v1/reviews';
 
-function toNumericShopifyId(value: unknown): string | null {
-  if (typeof value !== 'string' && typeof value !== 'number') return null;
-  const raw = String(value).trim();
-  if (!raw) return null;
-
-  if (/^\d+$/.test(raw)) return raw;
-
-  const gidMatch = raw.match(/\/(\d+)(?:\D*)$/);
-  if (gidMatch?.[1]) return gidMatch[1];
-
-  return null;
-}
-
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -43,83 +30,84 @@ Deno.serve(async (req) => {
       });
     }
 
+    // === CREATE REVIEW ===
     if (action === 'create') {
       const name = String(body?.name || '').trim();
-      const title = String(body?.title || '').trim();
+      const email = String(body?.email || '').trim();
       const reviewBody = String(body?.reviewBody || '').trim();
       const rating = Number(body?.rating || 0);
-      const productId = toNumericShopifyId(body?.productId);
-      const fallbackEmailLocal = String(body?.name || 'reviewer').replace(/\s/g, '').toLowerCase();
-      const email = String(body?.email || `${fallbackEmailLocal}@review.local`).trim();
+      const title = String(body?.title || '').trim();
+      const productId = body?.productId;
 
-      if (!name || !title || !reviewBody || !productId || Number.isNaN(rating) || rating < 1 || rating > 5) {
-        return new Response(JSON.stringify({ error: 'Missing required review fields' }), {
+      if (!name || !email || !reviewBody || !rating || rating < 1 || rating > 5) {
+        return new Response(JSON.stringify({ error: 'Missing required review fields (name, email, body, rating 1-5)' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
+      // Extract numeric Shopify product ID from GID format
+      let externalId: number | undefined;
+      if (productId) {
+        const raw = String(productId);
+        const match = raw.match(/(\d+)/);
+        if (match) externalId = parseInt(match[1], 10);
+      }
+
+      // Judge.me Create endpoint format (public, no auth needed)
+      const createPayload: Record<string, unknown> = {
+        shop_domain: shopDomain,
+        platform: 'shopify',
+        name,
+        email,
+        rating,
+        body: reviewBody,
+      };
+      if (title) createPayload.title = title;
+      if (externalId) createPayload.id = externalId;
+
+      console.log('Creating review with payload:', JSON.stringify(createPayload));
+
       const response = await fetch(JUDGE_ME_API_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          shop_domain: shopDomain,
-          api_token: token,
-          platform: 'shopify',
-          id: productId,
-          url: `https://${shopDomain}`,
-          name,
-          email,
-          rating,
-          title,
-          body: reviewBody,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(createPayload),
       });
 
-      const responseData = await response.json();
+      const responseText = await response.text();
+      console.log('Judge.me create response:', response.status, responseText);
+
+      let responseData;
+      try { responseData = JSON.parse(responseText); } catch { responseData = { raw: responseText }; }
+
       return new Response(JSON.stringify(responseData), {
         status: response.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
+    // === LIST REVIEWS ===
     const page = Number(body?.page || 1);
     const perPage = Number(body?.perPage || 10);
-    const handle = typeof body?.handle === 'string' ? body.handle.trim() : '';
 
     const url = new URL(JUDGE_ME_API_URL);
     url.searchParams.set('shop_domain', shopDomain);
     url.searchParams.set('api_token', token);
     url.searchParams.set('page', String(page));
     url.searchParams.set('per_page', String(perPage));
-    if (handle) {
-      url.searchParams.set('handle', handle);
-    }
 
-    let response = await fetch(url.toString(), {
+    console.log('Fetching reviews:', url.toString());
+
+    const response = await fetch(url.toString(), {
       method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
+      headers: { Accept: 'application/json' },
     });
 
-    if (response.status === 422 && handle) {
-      const fallbackUrl = new URL(JUDGE_ME_API_URL);
-      fallbackUrl.searchParams.set('shop_domain', shopDomain);
-      fallbackUrl.searchParams.set('api_token', token);
-      fallbackUrl.searchParams.set('page', String(page));
-      fallbackUrl.searchParams.set('per_page', String(perPage));
-      response = await fetch(fallbackUrl.toString(), {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-        },
-      });
-    }
+    const responseText = await response.text();
+    console.log('Judge.me list response:', response.status, responseText.substring(0, 500));
 
-    const responseData = await response.json();
+    let responseData;
+    try { responseData = JSON.parse(responseText); } catch { responseData = { reviews: [] }; }
 
     return new Response(JSON.stringify(responseData), {
       status: response.status,
@@ -127,6 +115,7 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unexpected proxy error';
+    console.error('Edge function error:', message);
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

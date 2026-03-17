@@ -64,7 +64,7 @@ export function WriteReviewDrawer({ open, onClose, productId, productHandle }: W
     }
   };
 
-  const isValid = rating > 0 && headline.trim() && review.trim() && name.trim();
+  const isValid = rating > 0 && headline.trim() && review.trim() && name.trim() && email.trim();
 
   return (
     <AnimatePresence>
