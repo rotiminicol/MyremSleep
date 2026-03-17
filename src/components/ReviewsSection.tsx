@@ -32,11 +32,12 @@ export function ReviewsSection({
   reviewDrawerOpen,
   setReviewDrawerOpen,
 }: ReviewsSectionProps) {
-  const { data, isLoading } = useProductReviews(productHandle, reviewPage, 10);
+  const REVIEWS_PER_PAGE = 5;
+  const { data, isLoading } = useProductReviews(productHandle, reviewPage, REVIEWS_PER_PAGE);
 
   const reviews = data?.reviews || [];
   const totalCount = data?.total_count || 0;
-  const totalPages = Math.max(1, Math.ceil(totalCount / 10));
+  const totalPages = Math.max(1, Math.ceil(totalCount / REVIEWS_PER_PAGE));
   const averageRating = reviews.length > 0
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
     : '0';

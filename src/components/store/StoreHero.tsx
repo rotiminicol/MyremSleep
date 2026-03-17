@@ -92,7 +92,7 @@ export function StoreHero() {
 
           <div className="w-full">
             <Link
-              to="/product/winter-cloud"
+              to="/product/winter-cloud-crisp-white-soft-glow-always-polished"
               className="inline-block bg-white text-gray-900 px-8 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase rounded-sm hover:bg-gray-100 transition-all duration-300"
             >
               Shop Bundle
@@ -104,7 +104,7 @@ export function StoreHero() {
       {/* Desktop Design (>= md) - Original Implementation */}
       <div className="hidden md:grid grid-cols-2 gap-4 px-6">
         {/* Left Item - Organic Forms */}
-        <Link to="/product/winter-cloud" className="group cursor-pointer">
+        <Link to="/product/winter-cloud-crisp-white-soft-glow-always-polished" className="group cursor-pointer">
           <div className="relative aspect-[4/5] overflow-hidden mb-3">
             <img
               src="/image1.png"
@@ -115,7 +115,7 @@ export function StoreHero() {
         </Link>
 
         {/* Right Item - Chain Collection */}
-        <Link to="/product/winter-cloud" className="group cursor-pointer">
+        <Link to="/product/winter-cloud-crisp-white-soft-glow-always-polished" className="group cursor-pointer">
           <div className="relative aspect-[4/5] overflow-hidden mb-3">
             <img
               src="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?w=1200&auto=format&fit=crop&q=80"
