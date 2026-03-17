@@ -9,6 +9,7 @@ import { WriteReviewDrawer } from '@/components/WriteReviewDrawer';
 import { useUserCart } from '@/stores/userCartStore';
 import { useFavoritesStore } from '@/stores/favoritesStore';
 import { useCurrency } from '@/hooks/useCurrency';
+import { useProductReviews } from '@/hooks/useProductReviews';
 import {
   Loader2,
   ChevronLeft,
@@ -125,6 +126,18 @@ export default function ProductPage() {
   const { addItem, isLoading: isCartLoading } = useUserCart();
   const { addFavorite, removeFavorite, isFavorited } = useFavoritesStore();
   const { formatPrice } = useCurrency();
+
+  const { data: reviewsData, isLoading: isReviewsLoading } = useProductReviews(handle || '', 1, 10);
+  const reviews = reviewsData?.reviews || [];
+  const totalCount = reviewsData?.total_count || 0;
+  const averageRating = reviews.length > 0
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    : '0';
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
+  };
 
   // Fetch the product and all products (for color navigation)
   useEffect(() => {
@@ -751,60 +764,59 @@ export default function ProductPage() {
                       <div className="space-y-6">
                         <div className="flex items-center justify-between">
                           <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-3xl font-serif text-gray-900">4.9</span>
-                              <div className="flex gap-0.5 ml-1">
-                                {[1,2,3,4,5].map(s => (
-                                  <svg key={s} width="14" height="14" viewBox="0 0 24 24" fill={s <= 4 ? "#1a1a1a" : "none"} stroke="#1a1a1a" strokeWidth="1.5">
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                  </svg>
-                                ))}
-                              </div>
-                            </div>
-                            <p className="text-[11px] text-gray-400 uppercase tracking-wide">Based on 128 reviews</p>
+                            {reviews.length > 0 ? (
+                              <>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-3xl font-serif text-gray-900">{averageRating}</span>
+                                  <div className="flex gap-0.5 ml-1">
+                                    {[1,2,3,4,5].map(s => (
+                                      <svg key={s} width="14" height="14" viewBox="0 0 24 24" fill={s <= Math.round(Number(averageRating)) ? "#1a1a1a" : "none"} stroke="#1a1a1a" strokeWidth="1.5">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                      </svg>
+                                    ))}
+                                  </div>
+                                </div>
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wide">Based on {totalCount} review{totalCount !== 1 ? 's' : ''}</p>
+                              </>
+                            ) : (
+                              <p className="text-sm text-gray-500 font-sans italic">No reviews yet.</p>
+                            )}
                           </div>
                           <button onClick={() => { setOpenDrawer(null); setReviewDrawerOpen(true); }}
                             className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 border-b border-gray-900 pb-0.5 hover:opacity-60 transition-opacity">
                             Write a Review
                           </button>
                         </div>
-                        <div className="space-y-2 pt-2">
-                          {[5, 4, 3, 2, 1].map(r => (
-                            <div key={r} className="flex items-center gap-3">
-                              <span className="text-[10px] font-bold text-gray-700 w-3">{r}</span>
-                              <div className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
-                                <div className="h-full bg-gray-900" style={{ width: `${r === 5 ? 92 : r === 4 ? 6 : 2}%` }} />
-                              </div>
-                              <span className="text-[10px] text-gray-400 w-8 text-right">{r === 5 ? '92%' : r === 4 ? '6%' : '2%'}</span>
-                            </div>
-                          ))}
-                        </div>
                       </div>
                       <div className="border-t border-gray-100" />
                       <div className="space-y-10">
-                        {[
-                          { name: "Sarah M.", date: "Feb 12, 2026", rating: 5, headline: "Unbelievable comfort, it truly stays put!", text: "I was skeptical about the 'stays put' claim, but this fitted sheet is a game changer. No more waking up with the sheet bunched up under me. The fabric is incredibly soft and has a lovely subtle sheen." },
-                          { name: "James T.", date: "Jan 28, 2026", rating: 5, headline: "Premium feel, worth every penny.", text: "The quality is evident as soon as you open the box. The tailoring is precise, and the 300TC sateen feels much more luxurious than other high-count sheets I've tried. Highly recommend the bundle." },
-                          { name: "Elena R.", date: "Jan 15, 2026", rating: 4, headline: "Beautiful color, very smooth.", text: "The Winter Cloud color is exactly what I was looking for. The sateen finish is very smooth and cool to the touch. Docked one star only because shipping took a day longer than expected, but the product itself is perfect." },
-                        ].map((rev, i) => (
-                          <div key={i} className="space-y-3">
-                            <div className="flex items-center justify-between">
-                              <div className="flex gap-0.5">
-                                {[1,2,3,4,5].map(s => (
-                                  <svg key={s} width="11" height="11" viewBox="0 0 24 24" fill={s <= rev.rating ? "#1a1a1a" : "none"} stroke="#1a1a1a" strokeWidth="1.5">
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                  </svg>
-                                ))}
-                              </div>
-                              <span className="text-[10px] text-gray-400">{rev.date}</span>
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-1">{rev.headline}</h4>
-                              <p className="text-[13px] text-gray-600 leading-relaxed">{rev.text}</p>
-                            </div>
-                            <p className="text-[11px] font-bold text-gray-900 uppercase tracking-widest">{rev.name}</p>
+                        {isReviewsLoading ? (
+                          <div className="flex justify-center py-8">
+                            <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
                           </div>
-                        ))}
+                        ) : reviews.length > 0 ? (
+                          reviews.slice(0, 5).map((rev) => (
+                            <div key={rev.id} className="space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex gap-0.5">
+                                  {[1,2,3,4,5].map(s => (
+                                    <svg key={s} width="11" height="11" viewBox="0 0 24 24" fill={s <= rev.rating ? "#1a1a1a" : "none"} stroke="#1a1a1a" strokeWidth="1.5">
+                                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                    </svg>
+                                  ))}
+                                </div>
+                                <span className="text-[10px] text-gray-400">{formatDate(rev.created_at)}</span>
+                              </div>
+                              <div>
+                                <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-1">{rev.title}</h4>
+                                <p className="text-[13px] text-gray-600 leading-relaxed">{rev.body}</p>
+                              </div>
+                              <p className="text-[11px] font-bold text-gray-900 uppercase tracking-widest">{rev.reviewer?.name || 'Anonymous'}</p>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-gray-500 font-sans italic py-4">No reviews yet — be the first to share your experience.</p>
+                        )}
                       </div>
                       <div className="sticky bottom-0 py-6 border-t border-gray-100 bg-white">
                         <button className="w-full bg-gray-900 text-white py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all" onClick={() => setOpenDrawer(null)}>
