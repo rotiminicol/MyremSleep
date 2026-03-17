@@ -1,4 +1,4 @@
-import { SimpleBackButton } from '@/components/SimpleBackButton';
+import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { StoreFooter } from '@/components/store/StoreFooter';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
@@ -70,7 +70,7 @@ export default function AboutPage() {
 
     return (
         <div ref={containerRef} className="min-h-screen bg-[#f5f1ed] flex flex-col">
-            <SimpleBackButton />
+            <StoreNavbar />
 
             <main className="flex-grow pt-8 pb-16 relative">
                 {/* Animated background elements */}

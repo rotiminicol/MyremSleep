@@ -1,7 +1,7 @@
+import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, User, MessageSquare, Feather } from 'lucide-react';
-import { SimpleBackButton } from '@/components/SimpleBackButton';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -57,7 +57,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-[#f5f1ed] flex flex-col relative overflow-x-hidden">
-      <SimpleBackButton />
+      <StoreNavbar />
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

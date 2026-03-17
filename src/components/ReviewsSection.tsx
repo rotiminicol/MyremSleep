@@ -1,6 +1,6 @@
 import { Star, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useProductReviews, Review } from '@/hooks/useProductReviews';
+import { useProductReviews, useAllReviews, Review } from '@/hooks/useProductReviews';
 
 const REVIEW_TOPICS = ['INSTRUCTIONS', 'SIZE', 'FABRIC', 'COLOUR', 'FIT', 'COMFORT', 'FINISH', 'SHEET'];
 
@@ -34,12 +34,16 @@ export function ReviewsSection({
 }: ReviewsSectionProps) {
   const REVIEWS_PER_PAGE = 5;
   const { data, isLoading } = useProductReviews(productHandle, reviewPage, REVIEWS_PER_PAGE);
+  const { data: allReviewsData } = useAllReviews(1, 1000); // Fetch all reviews for accurate average
 
   const reviews = data?.reviews || [];
-  const totalCount = data?.total_count || 0;
+  const allReviews = allReviewsData?.reviews || [];
+  const totalCount = allReviewsData?.total_count || allReviews.length || 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / REVIEWS_PER_PAGE));
-  const averageRating = reviews.length > 0
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+  
+  // Calculate average from ALL reviews, not just current page
+  const averageRating = allReviews.length > 0
+    ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length).toFixed(1)
     : '0';
 
   return (
@@ -49,7 +53,7 @@ export function ReviewsSection({
         <h2 className="font-serif text-4xl text-gray-900 mb-8">Customer Reviews</h2>
 
         <div className="flex flex-col items-center gap-3">
-          {reviews.length > 0 ? (
+          {allReviews.length > 0 ? (
             <>
               <div className="flex items-baseline gap-4">
                 <span className="font-serif text-5xl text-gray-900">{averageRating}</span>
@@ -182,38 +186,29 @@ export function ReviewsSection({
       )}
 
       {/* ── Pagination ── */}
-      {!isLoading && totalPages > 1 && (
-        <div className="max-w-4xl mx-auto flex items-center justify-center gap-1 pt-10">
+      {!isLoading && reviews.length > 0 && (
+        <div className="max-w-4xl mx-auto flex items-center justify-between pt-10">
           <button
             onClick={() => setReviewPage((p) => Math.max(1, p - 1))}
             disabled={reviewPage === 1}
-            className="w-9 h-9 flex items-center justify-center border border-[#e0dbd5] text-gray-500 hover:border-gray-900 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-2 px-6 py-3 border border-[#e0dbd5] text-gray-700 hover:border-gray-900 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-[12px] font-medium"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="15 18 9 12 15 6" />
             </svg>
+            Previous
           </button>
 
-          {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => setReviewPage(page)}
-              className={cn(
-                'w-9 h-9 flex items-center justify-center text-[12px] font-bold transition-colors border',
-                reviewPage === page
-                  ? 'bg-[#2D2D2D] text-white border-[#2D2D2D]'
-                  : 'border-[#e0dbd5] text-gray-600 hover:border-gray-900 hover:text-gray-900'
-              )}
-            >
-              {page}
-            </button>
-          ))}
+          <span className="text-[12px] text-gray-500 font-medium">
+            {totalPages > 1 ? `Page ${reviewPage} of ${totalPages}` : `${reviews.length} Review${reviews.length !== 1 ? 's' : ''}`}
+          </span>
 
           <button
             onClick={() => setReviewPage((p) => Math.min(totalPages, p + 1))}
-            disabled={reviewPage === totalPages}
-            className="w-9 h-9 flex items-center justify-center border border-[#e0dbd5] text-gray-500 hover:border-gray-900 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            disabled={reviewPage === totalPages || totalPages === 1}
+            className="flex items-center gap-2 px-6 py-3 border border-[#e0dbd5] text-gray-700 hover:border-gray-900 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-[12px] font-medium"
           >
+            Next
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="9 18 15 12 9 6" />
             </svg>
