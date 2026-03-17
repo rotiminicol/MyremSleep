@@ -1,49 +1,33 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useAllReviews } from '@/hooks/useProductReviews';
 
-const reviews = [
-  {
-    name: "Amara Okafor",
-    review: "The quality is absolutely incredible. I've never slept better!"
-  },
-  {
-    name: "James Chen",
-    review: "Worth every penny. The fabric feels like luxury hotel bedding."
-  },
-  {
-    name: "Nia Johnson",
-    review: "My sleep has improved dramatically since switching to Remsleep."
-  },
-  {
-    name: "Kwame Asante",
-    review: "The attention to detail is amazing. Best bedding purchase I've made."
-  },
-  {
-    name: "Olivia Williams",
-    review: "Silky smooth and so comfortable. I look forward to bedtime now!"
-  },
-  {
-    name: "Zara Patel",
-    review: "Exceptional quality and fast shipping. Highly recommend!"
-  },
-  {
-    name: "Thabo Mbeki",
-    review: "Transformed my bedroom into a luxury retreat. Love it!"
-  },
-  {
-    name: "Ryan Foster",
-    review: "The perfect investment for better sleep. Absolutely thrilled!"
-  }
+const fallbackReviews = [
+  { name: "Amara Okafor", review: "The quality is absolutely incredible. I've never slept better!" },
+  { name: "James Chen", review: "Worth every penny. The fabric feels like luxury hotel bedding." },
+  { name: "Nia Johnson", review: "My sleep has improved dramatically since switching to Remsleep." },
+  { name: "Kwame Asante", review: "The attention to detail is amazing. Best bedding purchase I've made." },
+  { name: "Olivia Williams", review: "Silky smooth and so comfortable. I look forward to bedtime now!" },
+  { name: "Zara Patel", review: "Exceptional quality and fast shipping. Highly recommend!" },
+  { name: "Thabo Mbeki", review: "Transformed my bedroom into a luxury retreat. Love it!" },
+  { name: "Ryan Foster", review: "The perfect investment for better sleep. Absolutely thrilled!" },
 ];
 
 function ReviewSlider() {
-  const [duplicatedReviews, setDuplicatedReviews] = useState(reviews);
+  const { data } = useAllReviews(1, 20);
 
-  useEffect(() => {
-    // Duplicate reviews for seamless infinite scroll
-    setDuplicatedReviews([...reviews, ...reviews]);
-  }, []);
+  const displayReviews = useMemo(() => {
+    if (data?.reviews && data.reviews.length > 0) {
+      return data.reviews.map(r => ({
+        name: r.reviewer?.name || 'Customer',
+        review: r.body || r.title || '',
+      }));
+    }
+    return fallbackReviews;
+  }, [data]);
+
+  const duplicated = useMemo(() => [...displayReviews, ...displayReviews], [displayReviews]);
 
   return (
     <div className="w-full bg-[#f5f1ed] py-4 overflow-hidden">
@@ -51,7 +35,7 @@ function ReviewSlider() {
         <motion.div
           className="flex gap-6 px-4"
           animate={{
-            x: [0, -40 * 16] // 40px per review * 8 reviews
+            x: [0, -40 * displayReviews.length]
           }}
           transition={{
             x: {
@@ -62,11 +46,8 @@ function ReviewSlider() {
             }
           }}
         >
-          {duplicatedReviews.map((review, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0"
-            >
+          {duplicated.map((review, index) => (
+            <div key={index} className="flex-shrink-0">
               <p className="text-gray-700 text-sm font-sans italic">
                 "{review.review}" — <span className="font-semibold not-italic">{review.name}</span>
               </p>
