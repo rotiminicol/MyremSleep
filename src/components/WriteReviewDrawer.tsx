@@ -64,7 +64,7 @@ export function WriteReviewDrawer({ open, onClose, productId, productHandle }: W
     }
   };
 
-  const isValid = rating > 0 && headline.trim() && review.trim() && name.trim();
+  const isValid = rating > 0 && headline.trim() && review.trim() && name.trim() && email.trim();
 
   return (
     <AnimatePresence>
@@ -195,7 +195,7 @@ export function WriteReviewDrawer({ open, onClose, productId, productHandle }: W
                 {/* Email */}
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">
-                    Your Email <span className="text-gray-400 font-normal">(optional)</span>
+                    Your Email <span className="text-gray-400">*</span>
                   </label>
                   <input
                     type="email"

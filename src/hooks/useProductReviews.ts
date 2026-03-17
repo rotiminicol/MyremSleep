@@ -12,6 +12,9 @@ export interface Review {
   };
   created_at: string;
   verified: string;
+  product_handle?: string;
+  product_title?: string;
+  product_external_id?: number;
 }
 
 interface ReviewsResponse {
@@ -46,15 +49,15 @@ async function invokeReviewsFunction(body: Record<string, unknown>) {
   return res.json();
 }
 
-export function useProductReviews(productHandle: string, page: number = 1, perPage: number = 10) {
+// Fetch all reviews for the shop (Judge.me Index doesn't support handle filtering)
+export function useProductReviews(_productHandle: string, page: number = 1, perPage: number = 10) {
   return useQuery({
-    queryKey: ['reviews', productHandle, page, perPage],
+    queryKey: ['reviews', page, perPage],
     queryFn: async (): Promise<ReviewsResponse> => {
       try {
         const data = await invokeReviewsFunction({
           action: 'list',
           shopDomain: SHOP_DOMAIN,
-          handle: productHandle,
           page,
           perPage,
         });
@@ -79,6 +82,39 @@ export function useProductReviews(productHandle: string, page: number = 1, perPa
   });
 }
 
+// Fetch all reviews (for store page hero slider etc.)
+export function useAllReviews(page: number = 1, perPage: number = 20) {
+  return useQuery({
+    queryKey: ['all-reviews', page, perPage],
+    queryFn: async (): Promise<ReviewsResponse> => {
+      try {
+        const data = await invokeReviewsFunction({
+          action: 'list',
+          shopDomain: SHOP_DOMAIN,
+          page,
+          perPage,
+        });
+
+        return {
+          reviews: data?.reviews || [],
+          current_page: data?.current_page || page,
+          total_count: data?.total_count || 0,
+          per_page: data?.per_page || perPage,
+        };
+      } catch {
+        return {
+          reviews: [],
+          current_page: page,
+          total_count: 0,
+          per_page: perPage,
+        };
+      }
+    },
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 interface CreateReviewInput {
   name: string;
   rating: number;
@@ -94,11 +130,14 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: async (input: CreateReviewInput) => {
+      if (!input.email) {
+        throw new Error('Email is required to submit a review');
+      }
+
       const data = await invokeReviewsFunction({
         action: 'create',
         shopDomain: SHOP_DOMAIN,
         productId: input.productId,
-        handle: input.productHandle,
         name: input.name,
         email: input.email,
         rating: input.rating,
@@ -114,6 +153,7 @@ export function useCreateReview() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews'] });
+      queryClient.invalidateQueries({ queryKey: ['all-reviews'] });
     },
   });
 }
