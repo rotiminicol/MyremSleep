@@ -11,7 +11,7 @@ import { CartDrawer } from './CartDrawer';
 import { AccountDrawer } from './AccountDrawer';
 
 const announcements = [
-  'Sign up for 10% and new letter',
+  'Sign up for 10% and Newsletter',
   'Free Shipping over £99',
   'Launch Bundles: duvet cover + fitted sheet + 4 pillowcases.',
   '300 thread count Egyptian cotton sateen bundles.'
