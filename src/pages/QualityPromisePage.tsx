@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'fram
 import { useRef, useEffect, useState } from 'react';
 import { ArrowRight, Award, CheckCircle } from 'lucide-react';
 import { StoreFooter } from '@/components/store/StoreFooter';
-import { SimpleBackButton } from '@/components/SimpleBackButton';
+import { StoreNavbar } from '@/components/store/StoreNavbar';
 
 
 function TiltCard({ children, className = '', intensity = 1 }) {
@@ -56,12 +56,12 @@ export default function QualityPromisePage() {
   const blob2Y = useTransform(scrollYProgress, [0, 1], [0, -130]);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#f5f1ed] flex flex-col overflow-x-hidden font-['Georgia',serif]">
+    <div ref={containerRef} className="min-h-screen bg-[#f2e9dc] flex flex-col overflow-x-hidden font-['Georgia',serif]">
+      <StoreNavbar />
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <motion.div className="absolute top-0 left-0 w-[700px] h-[700px] bg-[#e8e3dc] rounded-full blur-[120px] opacity-35" style={{ y: blob1Y }} animate={{ x: [0, 80, 0], scale: [1, 1.1, 1] }} transition={{ duration: 30, repeat: Infinity, ease: 'easeInOut' }} />
         <motion.div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#d4ccc3] rounded-full blur-[100px] opacity-30" style={{ y: blob2Y }} animate={{ x: [0, -100, 0], scale: [1, 1.08, 1] }} transition={{ duration: 36, repeat: Infinity, ease: 'easeInOut', delay: 5 }} />
       </div>
-        <SimpleBackButton/>
       <main className="flex-grow relative z-10">
 
         {/* ── HERO ── */}
@@ -204,7 +204,7 @@ export default function QualityPromisePage() {
         </section>
       </main>
 
-      <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#f5f1ed]">
+      <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#f2e9dc]">
         <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
       </footer>
 

@@ -282,7 +282,7 @@ export default function ProductPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f5f1ed]">
+      <div className="min-h-screen bg-[#f2e9dc]">
         <StoreNavbar />
         <div className="flex items-center justify-center py-40">
           <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
@@ -294,7 +294,7 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-[#f5f1ed]">
+      <div className="min-h-screen bg-[#f2e9dc]">
         <StoreNavbar />
         <div className="max-w-[1400px] mx-auto px-6 py-20 text-center">
           <h1 className="text-2xl font-medium text-gray-800 mb-4">Product not found</h1>
@@ -312,7 +312,7 @@ export default function ProductPage() {
   const currentImage = images[selectedImageIndex]?.node;
 
   return (
-    <div className="min-h-screen bg-[#f5f1ed]">
+    <div className="min-h-screen bg-[#f2e9dc]">
       <StoreNavbar hideOnScroll />
 
       <main className="max-w-[1600px] mx-auto">
@@ -384,7 +384,7 @@ export default function ProductPage() {
           </div>
 
           {/* ── RIGHT: Product Info ── */}
-          <div className="flex flex-col justify-start py-10 px-8 lg:px-12 xl:px-14 overflow-y-auto lg:max-h-[100vh] bg-[#f5f1ed] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex flex-col justify-start py-10 px-8 lg:px-12 xl:px-14 overflow-y-auto lg:max-h-[100vh] bg-[#f2e9dc] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
             {/* Brand + Category label */}
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-5">
@@ -591,7 +591,7 @@ export default function ProductPage() {
       </main>
 
       {/* Reviews section below the fold */}
-      <div className="bg-[#f5f1ed]">
+      <div className="bg-[#f2e9dc]">
         <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16">
           <ReviewsSection
             productHandle={handle || ''}
@@ -609,7 +609,7 @@ export default function ProductPage() {
 
       {/* Recommended Products */}
       {recommendedProducts.length > 0 && (
-        <div className="bg-[#f5f1ed] py-16">
+        <div className="bg-[#f2e9dc] py-16">
           <div className="max-w-[1400px] mx-auto px-6">
             <h2 className="text-2xl font-serif text-gray-900 text-center mb-10">You May Also Like</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">

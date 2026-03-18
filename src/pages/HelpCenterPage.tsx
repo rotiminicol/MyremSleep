@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'fram
 import { useRef, useState, useEffect } from 'react';
 import { ChevronDown, Package, Truck, RotateCcw, Heart, Shield } from 'lucide-react';
 import { StoreFooter } from '@/components/store/StoreFooter';
-import { SimpleBackButton } from '@/components/SimpleBackButton';
+import { StoreNavbar } from '@/components/store/StoreNavbar';
 
 // ── Tilt Card ──────────────────────────────────────────────────────────────
 function TiltCard({ children, className = '', intensity = 1 }) {
@@ -296,7 +296,8 @@ export default function HelpCenterPage() {
   ];
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#f5f1ed] flex flex-col overflow-x-hidden font-['Georgia',serif]">
+    <div ref={containerRef} className="min-h-screen bg-[#f2e9dc] flex flex-col overflow-x-hidden font-['Georgia',serif]">
+      <StoreNavbar />
 
       {/* Ambient background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -313,7 +314,6 @@ export default function HelpCenterPage() {
           transition={{ duration: 34, repeat: Infinity, ease: 'easeInOut', delay: 6 }}
         />
       </div>
-      <SimpleBackButton/>
 
       <main className="flex-grow relative z-10">
 
@@ -409,7 +409,7 @@ export default function HelpCenterPage() {
       </main>
 
       {/* Footer stub */}
-      <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#f5f1ed]">
+      <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#f2e9dc]">
         <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
       </footer>
 

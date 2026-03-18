@@ -43,7 +43,7 @@ const features = [
 
 export function StoreFeatures() {
     return (
-        <section className="py-6 md:py-12 px-6 bg-[#f5f1ed]">
+        <section className="py-6 md:py-12 px-6 bg-[#f2e9dc]">
             <div className="flex flex-col items-center text-center mb-10 md:mb-16">
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}

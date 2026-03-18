@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'fram
 import { useRef, useEffect, useState } from 'react';
 import { Leaf, Package, Users, CheckCircle, ArrowRight } from 'lucide-react';
 import { StoreFooter } from '@/components/store/StoreFooter';
-import { SimpleBackButton } from '@/components/SimpleBackButton';
+import { StoreNavbar } from '@/components/store/StoreNavbar';
 
 
 // ── Tilt Card ──────────────────────────────────────────────────────────────
@@ -85,7 +85,8 @@ export default function SustainabilityPage() {
   const blob2Y     = useTransform(scrollYProgress, [0, 1], [0, -130]);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#f5f1ed] flex flex-col overflow-x-hidden font-['Georgia',serif]">
+    <div ref={containerRef} className="min-h-screen bg-[#f2e9dc] flex flex-col overflow-x-hidden font-['Georgia',serif]">
+      <StoreNavbar />
 
       {/* ── Ambient Background ── */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -102,7 +103,6 @@ export default function SustainabilityPage() {
           transition={{ duration: 38, repeat: Infinity, ease: 'easeInOut', delay: 6 }}
         />
       </div>
-      <SimpleBackButton/>
       <main className="flex-grow relative z-10">
 
         {/* ══════════════════════════════════════════
@@ -396,7 +396,7 @@ export default function SustainabilityPage() {
       </main>
 
       {/* Footer stub */}
-      <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#f5f1ed]">
+      <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#f2e9dc]">
         <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
       </footer>
       <StoreFooter/>

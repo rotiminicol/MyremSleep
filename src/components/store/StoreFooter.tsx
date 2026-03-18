@@ -98,7 +98,7 @@ export function StoreFooter() {
   ];
 
   return (
-    <footer className="bg-[#f5f1ed] border-t border-[#e0dbd5] pt-16 pb-8" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+    <footer className="bg-[#f2e9dc] border-t border-[#e0dbd5] pt-16 pb-8" style={{ fontFamily: 'Montserrat, sans-serif' }}>
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 mb-16">
           {/* Newsletter Section */}

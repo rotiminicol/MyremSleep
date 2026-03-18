@@ -84,7 +84,7 @@ export function WriteReviewDrawer({ open, onClose, productId, productHandle }: W
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-[#f5f1ed] shadow-xl z-50 flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-md bg-[#f2e9dc] shadow-xl z-50 flex flex-col"
           >
             <div className="flex-1 overflow-y-auto scrollbar-hide">
               <div className="p-6 space-y-7">
@@ -209,7 +209,7 @@ export function WriteReviewDrawer({ open, onClose, productId, productHandle }: W
             </div>
 
             {/* Footer */}
-            <div className="border-t border-[#e0dbd5] px-6 py-4 bg-[#f5f1ed] flex items-center justify-between flex-shrink-0">
+            <div className="border-t border-[#e0dbd5] px-6 py-4 bg-[#f2e9dc] flex items-center justify-between flex-shrink-0">
               <p className="text-[11px] text-gray-400 font-sans">* required fields</p>
               <button
                 onClick={handleSubmit}

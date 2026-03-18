@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { ContactForm } from '@/components/ContactForm';
+import { StoreNavbar } from '@/components/store/StoreNavbar';
 
 const terms = [
   {
@@ -57,21 +58,8 @@ export default function TermsPage() {
   const [showContactForm, setShowContactForm] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#f5f1ed]">
-      {/* Header */}
-      <header className="border-b border-gray-200 bg-[#f5f1ed]">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-center">
-            <a href="/" className="hover:opacity-80 transition-opacity">
-              <img
-                src="/logo5.png"
-                alt="REMsleep Logo"
-                className="h-12 w-auto"
-              />
-            </a>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#f2e9dc]">
+      <StoreNavbar />
 
       {/* Hero Section */}
       <div className="max-w-4xl mx-auto px-6 pt-16 pb-12 text-center">

@@ -70,7 +70,7 @@ export function ProductGrid() {
   const activeColorName = extractColorFromTitle(activeProduct.node.title);
 
   return (
-    <section className="pb-8 md:pb-12 md:px-6 bg-[#f5f1ed]">
+    <section className="pb-8 md:pb-12 md:px-6 bg-[#f2e9dc]">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

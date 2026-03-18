@@ -30,7 +30,7 @@ function ReviewSlider() {
   const duplicated = useMemo(() => [...displayReviews, ...displayReviews], [displayReviews]);
 
   return (
-    <div className="w-full bg-[#f5f1ed] py-4 overflow-hidden">
+    <div className="w-full bg-[#f2e9dc] py-4 overflow-hidden">
       <div className="relative">
         <motion.div
           className="flex gap-6 px-4"
