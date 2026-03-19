@@ -564,9 +564,9 @@ export default function ProductPage() {
               {[
                 { id: 'why-you-will-love-it', label: 'Why You Will Love It' },
                 { id: 'care', label: 'Care' },
-                { id: 'specifications', label: 'Specifications +' },
-                { id: 'returns', label: 'Return and Delivery +' },
-                { id: 'reviews', label: 'REVIEWS +' },
+                { id: 'specifications', label: 'Specifications ' },
+                { id: 'returns', label: 'Return and Delivery ' },
+                { id: 'reviews', label: 'REVIEWS ' },
               ].map((item, i, arr) => (
                 <button
                   key={item.id}

@@ -1,6 +1,7 @@
-import { Star, Loader2 } from 'lucide-react';
+import { Star, Loader2, ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useProductReviews, useAllReviews, Review } from '@/hooks/useProductReviews';
+import { useState, useRef, useEffect } from 'react';
 
 const REVIEW_TOPICS = ['INSTRUCTIONS', 'SIZE', 'FABRIC', 'COLOUR', 'FIT', 'COMFORT', 'FINISH', 'SHEET'];
 
@@ -16,9 +17,170 @@ interface ReviewsSectionProps {
   setReviewDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const SORT_OPTIONS = [
+  { value: 'rating_desc', label: 'Highest Rated' },
+  { value: 'rating_asc', label: 'Lowest Rated' },
+  { value: 'newest', label: 'Newest First' },
+  { value: 'oldest', label: 'Oldest First' },
+];
+
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
+}
+
+function sortReviews(reviews: Review[], sortBy: string): Review[] {
+  return [...reviews].sort((a, b) => {
+    switch (sortBy) {
+      case 'rating_desc':
+        return b.rating - a.rating;
+      case 'rating_asc':
+        return a.rating - b.rating;
+      case 'newest':
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      case 'oldest':
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      default:
+        return 0;
+    }
+  });
+}
+
+/** Bespoke animated dropdown — replaces the native <select> */
+function SortDropdown({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = SORT_OPTIONS.find((o) => o.value === value) ?? SORT_OPTIONS[0];
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative inline-block select-none">
+      {/* Trigger */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={cn(
+          'group flex items-center gap-3 px-5 py-3 border transition-all duration-200 focus:outline-none',
+          'bg-white text-gray-900 text-[11px] font-bold tracking-[0.16em] uppercase',
+          open
+            ? 'border-gray-900 shadow-[inset_0_0_0_1px_#111]'
+            : 'border-[#e0dbd5] hover:border-gray-400'
+        )}
+      >
+        <span className="text-[10px] text-gray-400 font-sans font-normal tracking-[0.1em] uppercase mr-1">
+          Sort
+        </span>
+        <span>{selected.label}</span>
+        <ChevronDown
+          className={cn(
+            'h-3.5 w-3.5 text-gray-400 transition-transform duration-200 ml-1',
+            open && 'rotate-180'
+          )}
+          strokeWidth={2.5}
+        />
+      </button>
+
+      {/* Panel */}
+      <div
+        className={cn(
+          'absolute left-0 top-full mt-1 z-50 min-w-full bg-white border border-gray-900',
+          'shadow-[4px_4px_0px_0px_#2D2D2D] overflow-hidden',
+          'transition-all duration-150 origin-top',
+          open ? 'opacity-100 scale-y-100 pointer-events-auto' : 'opacity-0 scale-y-95 pointer-events-none'
+        )}
+        role="listbox"
+      >
+        {SORT_OPTIONS.map((option, i) => {
+          const isActive = option.value === value;
+          return (
+            <button
+              key={option.value}
+              role="option"
+              aria-selected={isActive}
+              onClick={() => {
+                onChange(option.value);
+                setOpen(false);
+              }}
+              className={cn(
+                'w-full flex items-center justify-between gap-6 px-5 py-3',
+                'text-[11px] font-bold tracking-[0.16em] uppercase text-left',
+                'transition-colors duration-100',
+                i !== SORT_OPTIONS.length - 1 && 'border-b border-[#f0ece8]',
+                isActive
+                  ? 'bg-[#2D2D2D] text-white'
+                  : 'text-gray-700 hover:bg-[#f7f4f1]'
+              )}
+            >
+              <span>{option.label}</span>
+              {isActive && (
+                <Check className="h-3 w-3 flex-shrink-0" strokeWidth={3} />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** Star rating filter pills */
+function RatingFilter({
+  value,
+  onChange,
+}: {
+  value: string | null;
+  onChange: (v: string | null) => void;
+}) {
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <span className="text-[10px] text-gray-400 font-sans tracking-[0.1em] uppercase mr-1">Filter</span>
+      {[5, 4, 3, 2, 1].map((star) => {
+        const key = String(star);
+        const isActive = value === key;
+        return (
+          <button
+            key={star}
+            onClick={() => onChange(isActive ? null : key)}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-2 border text-[10px] font-bold tracking-[0.14em] uppercase transition-all duration-150',
+              isActive
+                ? 'bg-[#2D2D2D] border-[#2D2D2D] text-white shadow-[2px_2px_0px_0px_#555]'
+                : 'border-[#e0dbd5] text-gray-600 hover:border-gray-400 bg-white'
+            )}
+          >
+            <Star
+              className="h-2.5 w-2.5"
+              fill={isActive ? 'white' : '#9CA3AF'}
+              stroke={isActive ? 'white' : '#9CA3AF'}
+            />
+            {star}
+          </button>
+        );
+      })}
+      {value && (
+        <button
+          onClick={() => onChange(null)}
+          className="text-[10px] text-gray-400 hover:text-gray-700 font-sans underline underline-offset-2 transition-colors ml-1"
+        >
+          Clear
+        </button>
+      )}
+    </div>
+  );
 }
 
 export function ReviewsSection({
@@ -34,17 +196,39 @@ export function ReviewsSection({
 }: ReviewsSectionProps) {
   const REVIEWS_PER_PAGE = 5;
   const { data, isLoading } = useProductReviews(productHandle, reviewPage, REVIEWS_PER_PAGE);
-  const { data: allReviewsData } = useAllReviews(1, 1000); // Fetch all reviews for accurate average
+  const { data: allReviewsData } = useAllReviews(1, 1000);
 
-  const reviews = data?.reviews || [];
+  const rawReviews = data?.reviews || [];
   const allReviews = allReviewsData?.reviews || [];
   const totalCount = allReviewsData?.total_count || allReviews.length || 0;
-  const totalPages = Math.max(1, Math.ceil(totalCount / REVIEWS_PER_PAGE));
-  
-  // Calculate average from ALL reviews, not just current page
-  const averageRating = allReviews.length > 0
-    ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length).toFixed(1)
-    : '0';
+
+  // Apply filter then sort on the current page's reviews
+  const filteredReviews = reviewFilter
+    ? rawReviews.filter((r) => r.rating === Number(reviewFilter))
+    : rawReviews;
+
+  const reviews = sortReviews(filteredReviews, sortBy);
+
+  // For pagination, derive total from filtered set when filtering
+  const displayTotal = reviewFilter
+    ? allReviews.filter((r) => r.rating === Number(reviewFilter)).length
+    : totalCount;
+  const totalPages = Math.max(1, Math.ceil(displayTotal / REVIEWS_PER_PAGE));
+
+  const averageRating =
+    allReviews.length > 0
+      ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length).toFixed(1)
+      : '0';
+
+  // Reset to page 1 when filter or sort changes
+  const handleFilterChange = (v: string | null) => {
+    setReviewFilter(v);
+    setReviewPage(1);
+  };
+  const handleSortChange = (v: string) => {
+    setSortBy(v);
+    setReviewPage(1);
+  };
 
   return (
     <section className="mt-0 py-16 px-4 md:px-0 border-t border-[#e0dbd5]">
@@ -74,7 +258,7 @@ export function ReviewsSection({
             </>
           ) : (
             <p className="text-sm text-gray-500 font-sans italic">
-              {isLoading ? 'Loading reviews...' : 'No reviews yet — be the first to share your experience.'}
+              {isLoading ? 'Loading reviews…' : 'No reviews yet — be the first to share your experience.'}
             </p>
           )}
 
@@ -87,44 +271,12 @@ export function ReviewsSection({
         </div>
       </div>
 
-      {/* ── Filters ── */}
-      {reviews.length > 0 && (
-        <div className="max-w-4xl mx-auto space-y-5 mb-10">
-          <div className="relative inline-block">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="border border-[#e0dbd5] bg-white text-[12px] text-gray-700 px-4 py-2.5 pr-10 font-sans appearance-none cursor-pointer focus:outline-none focus:border-gray-900 transition-colors"
-            >
-              <option value="rating">Rating</option>
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-            </select>
-            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
-          </div>
-
-          <div className="space-y-2.5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Popular Topics</p>
-            <div className="flex flex-wrap gap-2">
-              {REVIEW_TOPICS.map((topic) => (
-                <button
-                  key={topic}
-                  onClick={() => setReviewFilter(reviewFilter === topic ? null : topic)}
-                  className={cn(
-                    'px-4 py-1.5 text-[11px] font-bold tracking-[0.12em] border transition-colors',
-                    reviewFilter === topic
-                      ? 'bg-[#2D2D2D] text-white border-[#2D2D2D]'
-                      : 'bg-white text-gray-700 border-[#e0dbd5] hover:border-gray-500'
-                  )}
-                >
-                  {topic}
-                </button>
-              ))}
-            </div>
+      {/* ── Controls: Sort + Filter ── */}
+      {rawReviews.length > 0 && (
+        <div className="max-w-4xl mx-auto mb-10 flex flex-col sm:flex-row sm:items-center gap-4">
+          <SortDropdown value={sortBy} onChange={handleSortChange} />
+          <div className="sm:border-l sm:border-[#e0dbd5] sm:pl-5">
+            <RatingFilter value={reviewFilter} onChange={handleFilterChange} />
           </div>
         </div>
       )}
@@ -133,6 +285,21 @@ export function ReviewsSection({
       {isLoading && (
         <div className="flex justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+        </div>
+      )}
+
+      {/* ── Empty filtered state ── */}
+      {!isLoading && rawReviews.length > 0 && reviews.length === 0 && (
+        <div className="max-w-4xl mx-auto py-16 text-center">
+          <p className="text-sm text-gray-500 font-sans italic">
+            No {reviewFilter}-star reviews on this page.
+          </p>
+          <button
+            onClick={() => handleFilterChange(null)}
+            className="mt-4 text-[11px] font-bold tracking-[0.16em] uppercase text-gray-700 underline underline-offset-2 hover:text-gray-900 transition-colors"
+          >
+            Clear filter
+          </button>
         </div>
       )}
 
@@ -152,7 +319,13 @@ export function ReviewsSection({
                   <div className="flex items-center gap-1.5">
                     <div className="w-3.5 h-3.5 rounded-full bg-[#2D2D2D] flex items-center justify-center flex-shrink-0">
                       <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                        <path d="M1.5 4L3.5 6L6.5 2" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path
+                          d="M1.5 4L3.5 6L6.5 2"
+                          stroke="white"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     </div>
                     <span className="text-[11px] text-gray-500 font-sans">Verified Buyer</span>
@@ -200,7 +373,9 @@ export function ReviewsSection({
           </button>
 
           <span className="text-[12px] text-gray-500 font-medium">
-            {totalPages > 1 ? `Page ${reviewPage} of ${totalPages}` : `${reviews.length} Review${reviews.length !== 1 ? 's' : ''}`}
+            {totalPages > 1
+              ? `Page ${reviewPage} of ${totalPages}`
+              : `${reviews.length} Review${reviews.length !== 1 ? 's' : ''}`}
           </span>
 
           <button
