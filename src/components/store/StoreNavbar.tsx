@@ -210,7 +210,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
     <>
       {/* Announcement Bar */}
       {announcementVisible && (
-        <div className="bg-primary text-white py-2 px-4 flex items-center justify-between text-[11px] font-medium tracking-[0.15em] uppercase">
+        <div className="bg-primary text-white py-2 px-4 flex items-center justify-between text-[12px] font-medium tracking-[0.1em] font-body">
           {/* Left: Empty for centering or carousel controls */}
           <div className="hidden md:flex flex-1"></div>
 

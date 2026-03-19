@@ -227,7 +227,7 @@ export default function HelpCenterPage() {
       items: [
         {
           question: "What are your delivery options?",
-          answer: "Every REMsleep order is packed with care and shipped with trusted carriers.\n\nExpress Delivery (UK) — £6.95\nOrders placed before 12pm (Mon–Fri) are dispatched the same day via DPD (express, tracked). Limited to UK mainland addresses.\n\nStandard Delivery (UK) — Free on orders over £99\nPlease allow 3–5 working days. Ships via DPD, Royal Mail, or Evri. Most deliveries include tracking with advance notification.\n\nNorthern Ireland & Channel Islands — £9.95\n\nEU & International\nDelivery charge shown at checkout covers shipping plus local taxes and import duties. Typically within 5 days."
+          answer: "Every REMsleep order is packed with care and shipped with trusted carriers.\n\nExpress Delivery (UK) — £6.95\nOrders placed before 12pm (Mon–Fri) are dispatched the same day via DPD (express, tracked). Limited to UK mainland addresses.\n\nStandard Delivery (UK) — Free on orders over £99\nPlease allow 3–5 working days. Ships via DPD, Royal Mail, or Evri. Most deliveries include tracking with advance notification.\n\nNorthern Ireland & Channel Islands — £9.95\n\nEU & international\nDelivery charge shown at checkout covers shipping plus local taxes and import duties. Typically within 5 days."
         }
       ]
     },

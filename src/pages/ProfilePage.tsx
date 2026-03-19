@@ -6,7 +6,7 @@ import {
   Bell, Package, Heart, LogOut, ChevronRight,
   Shield, Eye, EyeOff, Globe, Sparkles, Loader2
 } from 'lucide-react';
-import { SimpleBackButton } from '../components/SimpleBackButton';
+import { StoreNavbar } from '../components/store/StoreNavbar';
 import { useCustomerStore } from '@/stores/customerStore';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -222,7 +222,7 @@ export default function ProfilePage() {
   const hasAddress = profile.address_line1 || profile.city || profile.country;
 
   return (
-    <div className="min-h-screen bg-[#f5f1ed] overflow-x-hidden" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+    <div className="min-h-screen bg-[#f2e9dc] overflow-x-hidden" style={{ fontFamily: 'Montserrat' }}>
       {/* Ambient orbs */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <motion.div className="absolute top-[-80px] right-0 w-[500px] h-[500px] rounded-full bg-[#d4ccc3] blur-[100px] opacity-20"
@@ -231,7 +231,7 @@ export default function ProfilePage() {
           animate={{ scale: [1, 1.1, 1], y: [0, -30, 0] }} transition={{ duration: 16, repeat: Infinity, delay: 4 }} />
       </div>
       
-      <SimpleBackButton />
+      <StoreNavbar />
 
       <main className="relative z-10 max-w-[1100px] mx-auto px-6 md:px-10 pt-16 pb-24">
         {/* Page header */}

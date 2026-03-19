@@ -48,8 +48,8 @@ function ReviewSlider() {
         >
           {duplicated.map((review, index) => (
             <div key={index} className="flex-shrink-0">
-              <p className="text-gray-700 text-sm font-sans italic">
-                "{review.review}" — <span className="font-semibold not-italic">{review.name}</span>
+              <p className="text-gray-700 text-sm font-body">
+                "{review.review}" — <span className="font-semibold not-italic font-body">{review.name}</span>
               </p>
             </div>
           ))}

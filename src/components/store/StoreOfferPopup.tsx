@@ -187,7 +187,7 @@ export function StoreOfferPopup() {
                     padding: 0.75rem 0 !important;
                     font-size: 16px !important;
                     color: #1a1a1a !important;
-                    font-family: 'Inter', sans-serif !important;
+                    font-family: 'Montserrat' !important;
                     text-align: center !important;
                     transition: all 0.3s ease;
                 }

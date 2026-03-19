@@ -116,10 +116,10 @@ function REMsleepPromise() {
               {p.icon}
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-900 mb-0.5" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-900 mb-0.5" style={{ fontFamily: 'Montserrat' }}>
                 {p.title}
               </p>
-              <p className="text-[12px] text-gray-500 leading-relaxed" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              <p className="text-[12px] text-gray-500 leading-relaxed" style={{ fontFamily: 'Montserrat' }}>
                 {p.body}
               </p>
             </div>
@@ -134,7 +134,7 @@ function REMsleepPromise() {
 function Field({ label, children, optional = false }: { label: string; children: React.ReactNode; optional?: boolean }) {
   return (
     <div className="space-y-2">
-      <label className="flex items-center gap-2 text-sm font-medium text-gray-700" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+      <label className="flex items-center gap-2 text-sm font-medium text-gray-700" style={{ fontFamily: 'Montserrat' }}>
         {label}
         {optional && <span className="text-[11px] text-[#8f877d] font-normal tracking-wide">optional</span>}
       </label>
@@ -160,7 +160,7 @@ function FormSection({ icon, title, children, delay = 0 }: { icon: React.ReactNo
         <div className="w-9 h-9 rounded-full bg-[#ece8e2] flex items-center justify-center flex-shrink-0">
           {icon}
         </div>
-        <h2 className="text-lg md:text-xl text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</h2>
+        <h2 className="text-lg md:text-xl text-gray-900" style={{ fontFamily: 'Montserrat' }}>{title}</h2>
       </div>
       {children}
     </motion.div>
@@ -181,11 +181,11 @@ function CompletedStep({ icon, title, summary, onEdit, delay = 0 }: { icon: Reac
           <Check className="w-3.5 h-3.5 text-white" />
         </div>
         <div>
-          <p className="text-xs text-[#8f877d] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</p>
-          <p className="text-sm text-gray-700" style={{ fontFamily: 'Montserrat, sans-serif' }}>{summary}</p>
+          <p className="text-xs text-[#8f877d] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'Montserrat' }}>{title}</p>
+          <p className="text-sm text-gray-700" style={{ fontFamily: 'Montserrat' }}>{summary}</p>
         </div>
       </div>
-      <button onClick={onEdit} className="text-xs text-[#8f877d] hover:text-gray-900 underline underline-offset-2 transition-colors whitespace-nowrap flex-shrink-0" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+      <button onClick={onEdit} className="text-xs text-[#8f877d] hover:text-gray-900 underline underline-offset-2 transition-colors whitespace-nowrap flex-shrink-0" style={{ fontFamily: 'Montserrat' }}>
         Edit
       </button>
     </motion.div>
@@ -203,30 +203,30 @@ function ExpressCheckout({ onExpress }: { onExpress: (method: string) => void })
     >
       <div className="flex items-center gap-2 mb-5">
         <Zap className="w-4 h-4 text-[#8f877d]" />
-        <h2 className="text-sm font-medium text-gray-700 tracking-[0.08em] uppercase" style={{ fontFamily: 'Montserrat, sans-serif' }}>Express Checkout</h2>
+        <h2 className="text-sm font-medium text-gray-700 tracking-[0.08em] uppercase" style={{ fontFamily: 'Montserrat' }}>Express Checkout</h2>
       </div>
 
       {/* Shop Pay - full width */}
       <button onClick={() => onExpress('shop')} className="w-full mb-3 rounded-xl overflow-hidden h-12 flex items-center justify-center font-bold text-white text-sm tracking-wide transition-all duration-200 hover:opacity-90 active:scale-[0.98]" style={{ background: 'linear-gradient(135deg, #5a31f4, #7c3aed)' }}>
-        <svg width="45" height="18" viewBox="0 0 45 18" fill="none"><text x="0" y="14" fill="white" fontSize="14" fontFamily="Montserrat, sans-serif" fontWeight="bold" letterSpacing="1">shop</text></svg>
-        <span className="text-white text-[13px] font-semibold ml-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>Pay</span>
+        <svg width="45" height="18" viewBox="0 0 45 18" fill="none"><text x="0" y="14" fill="white" fontSize="14" fontFamily="Montserrat" fontWeight="bold" letterSpacing="1">shop</text></svg>
+        <span className="text-white text-[13px] font-semibold ml-1" style={{ fontFamily: 'Montserrat' }}>Pay</span>
       </button>
 
       {/* Apple Pay & Google Pay side by side */}
       <div className="grid grid-cols-2 gap-2.5 mb-5">
         <button onClick={() => onExpress('apple')} className="h-12 rounded-xl bg-black flex items-center justify-center gap-1.5 transition-all duration-200 hover:opacity-90 active:scale-[0.98]">
           <svg viewBox="0 0 18 22" width="13" height="16" fill="white"><path d="M14.5 11.8c0-3.2 2.6-4.7 2.7-4.8-1.5-2.1-3.7-2.4-4.5-2.4-1.9-.2-3.8 1.1-4.7 1.1-.9 0-2.4-1.1-4-1.1C1.8 4.7 0 6 0 9.5c0 2.1.4 4.3 1.2 5.7.8 1.3 1.7 2.5 2.9 2.5 1.1 0 1.6-.7 3-.7 1.5 0 1.9.7 3.1.7 1.3 0 2.1-1.1 2.9-2.4.4-.7.7-1.4.9-2.1-.1-.1-2.5-1-2.5-3.4z"/><path d="M12.6 2.8c.7-.9 1.2-2.1 1-3.3-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.1.1 2.3-.6 3.1-1.4z"/></svg>
-          <span className="text-white text-[13px] font-medium tracking-wide" style={{ fontFamily: 'Montserrat, sans-serif' }}>Pay</span>
+          <span className="text-white text-[13px] font-medium tracking-wide" style={{ fontFamily: 'Montserrat' }}>Pay</span>
         </button>
         <button onClick={() => onExpress('google')} className="h-12 rounded-xl bg-white border border-[#e8e3dc] flex items-center justify-center gap-1 transition-all duration-200 hover:bg-gray-50 active:scale-[0.98]">
           <svg viewBox="0 0 24 24" width="16" height="16"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-          <span className="text-gray-800 text-[13px] font-medium tracking-wide" style={{ fontFamily: 'Montserrat, sans-serif' }}>Pay</span>
+          <span className="text-gray-800 text-[13px] font-medium tracking-wide" style={{ fontFamily: 'Montserrat' }}>Pay</span>
         </button>
       </div>
 
       <div className="flex items-center gap-4">
         <div className="flex-1 h-px bg-[#e8e3dc]" />
-        <span className="text-xs text-[#8f877d] tracking-[0.2em] uppercase" style={{ fontFamily: 'Montserrat, sans-serif' }}>Or continue below</span>
+        <span className="text-xs text-[#8f877d] tracking-[0.2em] uppercase" style={{ fontFamily: 'Montserrat' }}>Or continue below</span>
         <div className="flex-1 h-px bg-[#e8e3dc]" />
       </div>
     </motion.div>
@@ -247,12 +247,12 @@ function StepContact({ data, onChange, onNext }: { data: any; onChange: (e: any)
               {data.saveInfo && <Check className="w-3 h-3 text-white" />}
             </div>
             <input type="checkbox" name="saveInfo" checked={data.saveInfo} onChange={onChange} className="sr-only" />
-            <span className="text-sm text-gray-600" style={{ fontFamily: 'Montserrat, sans-serif' }}>Save my information for next time</span>
+            <span className="text-sm text-gray-600" style={{ fontFamily: 'Montserrat' }}>Save my information for next time</span>
           </label>
         </div>
       </FormSection>
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}>
-        <button onClick={onNext} disabled={!data.email} className={`w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${data.email ? 'bg-gray-900 text-white hover:bg-[#111] shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`} style={{ fontFamily: 'Montserrat, sans-serif' }}>
+        <button onClick={onNext} disabled={!data.email} className={`w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${data.email ? 'bg-gray-900 text-white hover:bg-[#111] shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`} style={{ fontFamily: 'Montserrat' }}>
           Continue to Shipping <ArrowRight className="w-4 h-4" />
         </button>
       </motion.div>
@@ -301,7 +301,7 @@ function StepShipping({ data, onChange, onNext, onBack }: { data: any; onChange:
           </div>
           <Field label="Country">
             <div className="relative">
-              <select name="country" value={data.country} onChange={handleCountryChange} className={selectClass} style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              <select name="country" value={data.country} onChange={handleCountryChange} className={selectClass} style={{ fontFamily: 'Montserrat' }}>
                 {countries.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
@@ -337,20 +337,20 @@ function StepShipping({ data, onChange, onNext, onBack }: { data: any; onChange:
                 {data.shippingMethod === method.id && <div className="w-2.5 h-2.5 rounded-full bg-gray-900" />}
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{method.label}</p>
-                <p className="text-xs text-gray-500 mt-0.5" style={{ fontFamily: 'Montserrat, sans-serif' }}>{method.sub}</p>
+                <p className="text-sm font-medium text-gray-900" style={{ fontFamily: 'Montserrat' }}>{method.label}</p>
+                <p className="text-xs text-gray-500 mt-0.5" style={{ fontFamily: 'Montserrat' }}>{method.sub}</p>
               </div>
-              <span className="text-sm font-medium text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{method.price}</span>
+              <span className="text-sm font-medium text-gray-900" style={{ fontFamily: 'Montserrat' }}>{method.price}</span>
             </label>
           ))}
         </div>
       </FormSection>
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.15 }} className="flex gap-3">
-        <button onClick={onBack} className="flex items-center gap-2 px-5 py-4 rounded-full text-sm tracking-[0.12em] uppercase font-medium text-gray-600 border border-[#d8d1c8] hover:border-gray-400 transition-all duration-200" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+        <button onClick={onBack} className="flex items-center gap-2 px-5 py-4 rounded-full text-sm tracking-[0.12em] uppercase font-medium text-gray-600 border border-[#d8d1c8] hover:border-gray-400 transition-all duration-200" style={{ fontFamily: 'Montserrat' }}>
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <button onClick={onNext} disabled={!allFilled} className={`flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${allFilled ? 'bg-gray-900 text-white hover:bg-[#111] shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`} style={{ fontFamily: 'Montserrat, sans-serif' }}>
+        <button onClick={onNext} disabled={!allFilled} className={`flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${allFilled ? 'bg-gray-900 text-white hover:bg-[#111] shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`} style={{ fontFamily: 'Montserrat' }}>
           Continue to Review <ArrowRight className="w-4 h-4" />
         </button>
       </motion.div>
@@ -367,13 +367,13 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
         <div className="space-y-5">
           <div className="flex items-center gap-2 bg-green-50 border border-green-100 rounded-xl px-4 py-3">
             <Shield className="w-4 h-4 text-green-600 flex-shrink-0" />
-            <p className="text-sm text-green-700" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            <p className="text-sm text-green-700" style={{ fontFamily: 'Montserrat' }}>
               You'll be redirected to our secure checkout to complete payment
             </p>
           </div>
 
           <div className="bg-[#faf9f7] rounded-xl p-5 border border-[#e8e3dc]">
-            <p className="text-sm font-medium text-gray-900 mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            <p className="text-sm font-medium text-gray-900 mb-3" style={{ fontFamily: 'Montserrat' }}>
               Accepted Payment Methods
             </p>
             <div className="flex flex-wrap gap-2">
@@ -407,8 +407,8 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
 
           {/* Shipping Summary */}
           <div className="bg-[#faf9f7] rounded-xl p-5 border border-[#e8e3dc]">
-            <p className="text-sm font-medium text-gray-900 mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>Shipping to</p>
-            <p className="text-sm text-gray-600" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            <p className="text-sm font-medium text-gray-900 mb-2" style={{ fontFamily: 'Montserrat' }}>Shipping to</p>
+            <p className="text-sm text-gray-600" style={{ fontFamily: 'Montserrat' }}>
               {data.firstName} {data.lastName}<br />
               {data.address}{data.apartment ? `, ${data.apartment}` : ''}<br />
               {data.city}, {data.postcode}<br />
@@ -422,7 +422,7 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
               {data.termsAccepted && <Check className="w-3 h-3 text-white" />}
             </div>
             <input type="checkbox" name="termsAccepted" checked={data.termsAccepted} onChange={onChange} className="sr-only" />
-            <span className="text-[14px] text-gray-600 leading-relaxed" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            <span className="text-[14px] text-gray-600 leading-relaxed" style={{ fontFamily: 'Montserrat' }}>
               I agree to the <a href="/terms" className="underline underline-offset-2 hover:text-gray-900 transition-colors">Terms and Conditions</a> and <a href="/privacy" className="underline underline-offset-2 hover:text-gray-900 transition-colors">Privacy Policy</a>. I understand this order is subject to REMsleep's return policy.
             </span>
           </label>
@@ -430,7 +430,7 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
       </FormSection>
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.15 }} className="flex gap-3">
-        <button onClick={onBack} className="flex items-center gap-2 px-5 py-4 rounded-full text-sm tracking-[0.12em] uppercase font-medium text-gray-600 border border-[#d8d1c8] hover:border-gray-400 transition-all duration-200" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+        <button onClick={onBack} className="flex items-center gap-2 px-5 py-4 rounded-full text-sm tracking-[0.12em] uppercase font-medium text-gray-600 border border-[#d8d1c8] hover:border-gray-400 transition-all duration-200" style={{ fontFamily: 'Montserrat' }}>
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
         <motion.button
@@ -439,7 +439,7 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
           whileHover={data.termsAccepted && checkoutUrl ? { scale: 1.02 } : {}}
           whileTap={data.termsAccepted && checkoutUrl ? { scale: 0.98 } : {}}
           className={`flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${data.termsAccepted && !loading && checkoutUrl ? 'bg-gray-900 text-white hover:bg-[#111] shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`}
-          style={{ fontFamily: 'Montserrat, sans-serif' }}
+          style={{ fontFamily: 'Montserrat' }}
         >
           {loading ? (
             <motion.div className="flex items-center gap-2">
@@ -459,7 +459,7 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
       {!checkoutUrl && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
           <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-          <p className="text-sm text-amber-700" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+          <p className="text-sm text-amber-700" style={{ fontFamily: 'Montserrat' }}>
             No checkout URL available. Please add items to your cart first.
           </p>
         </motion.div>
@@ -562,7 +562,7 @@ export default function CheckoutPage() {
   const steps = ['Contact', 'Shipping', 'Review & Pay'];
 
   return (
-    <div className="min-h-screen bg-[#f5f1ed] flex flex-col overflow-x-hidden" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+    <div className="min-h-screen bg-[#f5f1ed] flex flex-col overflow-x-hidden" style={{ fontFamily: 'Montserrat' }}>
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <motion.div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#e8e3dc] rounded-full blur-[110px] opacity-35" animate={{ x: [0, 60, 0], scale: [1, 1.08, 1] }} transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }} />
         <motion.div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#d4ccc3] rounded-full blur-[90px] opacity-30" animate={{ x: [0, -70, 0], scale: [1, 1.06, 1] }} transition={{ duration: 38, repeat: Infinity, ease: 'easeInOut', delay: 5 }} />
@@ -572,7 +572,7 @@ export default function CheckoutPage() {
 
       <main className="flex-grow relative z-10 px-6 md:px-12 xl:px-20 pt-14 pb-24 max-w-[1400px] mx-auto w-full">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} className="mb-10 md:mb-12">
-          <h1 className="text-[clamp(32px,4.5vw,64px)] text-gray-900 leading-none tracking-tight" style={{ fontFamily: 'Montserrat, sans-serif' }}>Complete Your Order</h1>
+          <h1 className="text-[clamp(32px,4.5vw,64px)] text-gray-900 leading-none tracking-tight" style={{ fontFamily: 'Montserrat' }}>Complete Your Order</h1>
         </motion.div>
 
         {/* Step indicators */}
@@ -587,7 +587,7 @@ export default function CheckoutPage() {
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-300 ${isDone ? 'bg-gray-900 text-white' : isActive ? 'bg-gray-900 text-white ring-4 ring-gray-900/10' : 'bg-[#e8e3dc] text-gray-500'}`}>
                     {isDone ? <Check className="w-3.5 h-3.5" /> : stepNum}
                   </div>
-                  <span className={`text-xs font-medium tracking-wide transition-all duration-300 ${isActive ? 'text-gray-900' : isDone ? 'text-gray-500' : 'text-gray-400'}`} style={{ fontFamily: 'Montserrat, sans-serif' }}>{s}</span>
+                  <span className={`text-xs font-medium tracking-wide transition-all duration-300 ${isActive ? 'text-gray-900' : isDone ? 'text-gray-500' : 'text-gray-400'}`} style={{ fontFamily: 'Montserrat' }}>{s}</span>
                 </div>
                 {i < steps.length - 1 && <div className={`w-12 h-px mx-3 transition-all duration-300 ${isDone ? 'bg-gray-900' : 'bg-[#e8e3dc]'}`} />}
               </div>
@@ -617,7 +617,7 @@ export default function CheckoutPage() {
             <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}>
               <TiltCard className="bg-white/75 backdrop-blur-md shadow-lg border border-white/80" intensity={0.5}>
                 <div className="p-7 md:p-8">
-                  <h2 className="text-lg text-gray-900 mb-6 pb-4 border-b border-[#ede9e4]" style={{ fontFamily: 'Montserrat, sans-serif' }}>Order Summary</h2>
+                  <h2 className="text-lg text-gray-900 mb-6 pb-4 border-b border-[#ede9e4]" style={{ fontFamily: 'Montserrat' }}>Order Summary</h2>
 
                   {items.map((item) => {
                     const selectedColor = item.selectedOptions.find(opt => opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('colour'))?.value;
@@ -629,11 +629,11 @@ export default function CheckoutPage() {
                           <img src={colorImage || '/placeholder.png'} alt={colorTitle} className="w-full h-full object-contain p-1" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-gray-900 text-[14px] leading-snug mb-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>{colorTitle}</p>
-                          <p className="text-xs text-gray-500 mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                          <p className="text-gray-900 text-[14px] leading-snug mb-1" style={{ fontFamily: 'Montserrat' }}>{colorTitle}</p>
+                          <p className="text-xs text-gray-500 mb-2" style={{ fontFamily: 'Montserrat' }}>
                             {item.selectedOptions.filter(opt => opt.value !== 'Default Title' && opt.value !== 'Default').map(opt => opt.value).join(' · ')} · Qty: {item.quantity}
                           </p>
-                          <p className="text-[15px] font-medium text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{formatPrice(parseFloat(item.price.amount))}</p>
+                          <p className="text-[15px] font-medium text-gray-900" style={{ fontFamily: 'Montserrat' }}>{formatPrice(parseFloat(item.price.amount))}</p>
                         </div>
                       </div>
                     );
@@ -642,27 +642,27 @@ export default function CheckoutPage() {
                   {/* Coupon */}
                   <div className="flex gap-2 mb-6">
                     <input type="text" className="flex-1 px-4 py-2.5 bg-[#faf9f7] border border-[#e8e3dc] rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#8f877d]/40 focus:border-[#8f877d]" placeholder="Discount code" />
-                    <button className="px-4 py-2.5 bg-[#ece8e2] text-gray-700 rounded-xl text-sm font-medium hover:bg-[#e2ddd7] transition-colors whitespace-nowrap" style={{ fontFamily: 'Montserrat, sans-serif' }}>Apply</button>
+                    <button className="px-4 py-2.5 bg-[#ece8e2] text-gray-700 rounded-xl text-sm font-medium hover:bg-[#e2ddd7] transition-colors whitespace-nowrap" style={{ fontFamily: 'Montserrat' }}>Apply</button>
                   </div>
 
                   {/* Totals */}
                   <div className="border-t border-[#ede9e4] pt-5 space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>Subtotal</span>
-                      <span className="text-gray-900 font-medium" style={{ fontFamily: 'Montserrat, sans-serif' }}>{formatPrice(subtotal)}</span>
+                      <span className="text-gray-500" style={{ fontFamily: 'Montserrat' }}>Subtotal</span>
+                      <span className="text-gray-900 font-medium" style={{ fontFamily: 'Montserrat' }}>{formatPrice(subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>Shipping</span>
+                      <span className="text-gray-500" style={{ fontFamily: 'Montserrat' }}>Shipping</span>
                       <AnimatePresence mode="wait">
-                        <motion.span key={shippingCost} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className="font-medium text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                        <motion.span key={shippingCost} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className="font-medium text-gray-900" style={{ fontFamily: 'Montserrat' }}>
                           {formatPrice(shippingCost)}
                         </motion.span>
                       </AnimatePresence>
                     </div>
                     <div className="flex justify-between text-[17px] pt-3 border-t border-[#ede9e4]">
-                      <span className="text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Total</span>
+                      <span className="text-gray-900" style={{ fontFamily: 'Montserrat' }}>Total</span>
                       <AnimatePresence mode="wait">
-                        <motion.span key={total} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className="text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                        <motion.span key={total} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className="text-gray-900" style={{ fontFamily: 'Montserrat' }}>
                           {formatPrice(total)}
                         </motion.span>
                       </AnimatePresence>
@@ -678,7 +678,7 @@ export default function CheckoutPage() {
       </main>
 
       <footer className="relative z-10 border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#f5f1ed]">
-        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase" style={{ fontFamily: 'Montserrat, sans-serif' }}>REMsleep — Crafted for Nightly Ritual</p>
+        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase" style={{ fontFamily: 'Montserrat' }}>REMsleep — Crafted for Nightly Ritual</p>
       </footer>
     </div>
   );

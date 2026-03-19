@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
 import { Package, Calendar, Truck, Check, X, ArrowRight, ChevronDown, Search, Clock, Star, ExternalLink, Loader2, ShoppingBag } from 'lucide-react';
-import { SimpleBackButton } from '../components/SimpleBackButton';
+import { StoreNavbar } from '../components/store/StoreNavbar';
 import { useCustomerStore } from '@/stores/customerStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -188,7 +188,7 @@ function OrderCard({ order, index, onClick, formatPrice }: { order: LocalOrder; 
       >
         <div className={`absolute inset-0 bg-gradient-to-br ${cfg.color} opacity-40 pointer-events-none`} />
 
-        <div className="relative p-6 flex items-center gap-6">
+        <div className="relative p-4 sm:p-6 flex items-center gap-4 sm:gap-6">
           <motion.div
             className="w-20 h-20 rounded-xl overflow-hidden bg-[#e8e3dc] flex-shrink-0 shadow-inner"
             style={{ transformStyle: 'preserve-3d', transform: 'translateZ(8px)' }}
@@ -199,7 +199,7 @@ function OrderCard({ order, index, onClick, formatPrice }: { order: LocalOrder; 
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-1.5">
-              <p className="font-serif text-gray-900 text-[15px] font-medium">{order.id}</p>
+              <p className="font-serif text-gray-900 text-[13px] sm:text-[15px] font-medium">{order.id}</p>
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -210,7 +210,7 @@ function OrderCard({ order, index, onClick, formatPrice }: { order: LocalOrder; 
                 {cfg.label}
               </motion.div>
             </div>
-            <p className="text-sm text-gray-600 mb-1 truncate">{productTitle}</p>
+            <p className="text-xs sm:text-sm text-gray-600 mb-1 truncate">{productTitle}</p>
             <div className="flex items-center gap-4 text-xs text-gray-400">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
@@ -221,7 +221,7 @@ function OrderCard({ order, index, onClick, formatPrice }: { order: LocalOrder; 
           </div>
 
           <div className="flex flex-col items-end gap-3 flex-shrink-0">
-            <p className="text-xl font-serif text-gray-900">{formatPrice(order.total)}</p>
+            <p className="text-lg sm:text-xl font-serif text-gray-900">{formatPrice(order.total)}</p>
             <motion.div
               className="w-8 h-8 rounded-full bg-[#f0ece7] flex items-center justify-center group-hover:bg-gray-900 transition-colors duration-300"
               whileHover={{ scale: 1.1 }}
@@ -384,7 +384,7 @@ export default function OrdersPage() {
   ];
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#f5f1ed] overflow-x-hidden" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+    <div ref={containerRef} className="min-h-screen bg-[#f2e9dc] overflow-x-hidden" style={{ fontFamily: 'Montserrat' }}>
       {/* Ambient */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <motion.div className="absolute top-[-80px] right-[-100px] w-[500px] h-[500px] rounded-full bg-[#d4ccc3] blur-[100px] opacity-20"
@@ -393,9 +393,9 @@ export default function OrdersPage() {
           animate={{ scale: [1, 1.1, 1], y: [0, -30, 0] }} transition={{ duration: 16, repeat: Infinity, delay: 4 }} />
       </div>
 
-      <SimpleBackButton />
+      <StoreNavbar />
 
-      <main className="relative z-10 max-w-[1100px] mx-auto px-6 md:px-10 pt-16 pb-24">
+      <main className="relative z-10 max-w-[1100px] mx-auto px-4 sm:px-6 md:px-10 pt-16 pb-24">
         {/* Header */}
         <motion.div style={{ y: headerY }} className="mb-12">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
@@ -407,7 +407,7 @@ export default function OrdersPage() {
           </motion.div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {stats.map((stat, i) => {
               const Icon = stat.icon;
               return (
@@ -436,7 +436,7 @@ export default function OrdersPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-3 mb-8"
+          className="flex flex-col gap-3 mb-8 sm:flex-row sm:gap-4"
         >
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8f877d]" />
@@ -465,7 +465,7 @@ export default function OrdersPage() {
         </motion.div>
 
         {/* Orders */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {filteredOrders.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 30 }}

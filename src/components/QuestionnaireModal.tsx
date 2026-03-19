@@ -143,7 +143,7 @@ export function QuestionnaireModal({ isOpen, email, onComplete }: QuestionnaireM
     try {
       await updateProfileWithQuestionnaire(email, data);
 
-      // Send Internal Notification with Questionnaire Answers
+      // Send internal Notification with Questionnaire Answers
       try {
         await fetch('/api/send-email', {
           method: 'POST',

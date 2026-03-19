@@ -66,7 +66,7 @@ Legal and regulatory disclosures
 We may disclose information where required by law or where necessary to protect our rights, users, or business.`
     },
     {
-        title: "7. International transfers",
+        title: "7. international transfers",
         content: `Some of our suppliers may process personal information outside the UK/EEA. Where this happens, we use recognised safeguards designed to protect your information (for example, standard contractual clauses or other lawful transfer mechanisms), and we take additional steps where required.`
     },
     {

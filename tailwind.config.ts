@@ -14,11 +14,11 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Montserrat', 'sans-serif'],
-        display: ['Montserrat', 'sans-serif'],
-        serif: ['Playfair Display', 'serif'],
-        body: ['Montserrat', 'sans-serif'],
-        default: ['Montserrat', 'sans-serif'],
+        sans: ['Montserrat'],
+        serif: ['Montserrat'],
+        mono: ['Montserrat'],
+        display: ['Montserrat'],
+        body: ['Montserrat'],
       },
       colors: {
         border: "hsl(var(--border))",

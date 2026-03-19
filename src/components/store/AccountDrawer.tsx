@@ -157,7 +157,7 @@ export function AccountDrawer() {
                     ? "w-full border-l shadow-2xl"
                     : "w-full sm:max-w-md border-l"
                     }`}
-                style={{ fontFamily: 'Montserrat, sans-serif' }}
+                style={{ fontFamily: 'Montserrat' }}
             >
                 <SheetHeader className="sticky top-0 z-30 flex-shrink-0 px-6 py-6 border-b border-[#e0dbd5] bg-[#f2e9dc]">
                     <div className="flex items-center justify-between">
@@ -170,7 +170,7 @@ export function AccountDrawer() {
                                     <ChevronRight className="h-5 w-5 rotate-180" strokeWidth={1.5} />
                                 </button>
                             )}
-                            <SheetTitle className="text-sm font-bold tracking-[0.2em] uppercase text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                            <SheetTitle className="text-sm font-bold tracking-[0.2em] uppercase text-gray-900" style={{ fontFamily: 'Montserrat' }}>
                                 {view === 'profile' ? 'My Account' : (view === 'login' ? 'Log In' : (view === 'signup' ? 'Sign Up' : 'Account'))}
                             </SheetTitle>
                         </div>
@@ -194,7 +194,7 @@ export function AccountDrawer() {
                                 className="space-y-10"
                             >
                                 <div className="space-y-6">
-                                    <p className="text-[14px] leading-relaxed text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                                    <p className="text-[14px] leading-relaxed text-gray-900" style={{ fontFamily: 'Montserrat' }}>
                                         Login or create an account to view your order history and manage your account preferences.
                                     </p>
 
@@ -202,14 +202,14 @@ export function AccountDrawer() {
                                         <Button
                                             onClick={() => setView('login')}
                                             className="w-full h-14 bg-[#2D2D2D] hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
-                                            style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                            style={{ fontFamily: 'Montserrat' }}
                                         >
                                             Log In
                                         </Button>
                                         <Button
                                             onClick={() => setView('signup')}
                                             className="w-full h-14 bg-[#2D2D2D] hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
-                                            style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                            style={{ fontFamily: 'Montserrat' }}
                                         >
                                             Create Account
                                         </Button>
@@ -217,7 +217,7 @@ export function AccountDrawer() {
                                 </div>
 
                                 <div className="space-y-6">
-                                    <h3 className="text-[11px] font-bold text-gray-900 uppercase tracking-[0.15em]" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                                    <h3 className="text-[11px] font-bold text-gray-900 uppercase tracking-[0.15em]" style={{ fontFamily: 'Montserrat' }}>
                                         Your Account
                                     </h3>
 
@@ -235,7 +235,7 @@ export function AccountDrawer() {
                                             className="w-full flex items-center justify-center gap-3 h-16 bg-[#F8F5F2] hover:bg-[#EBE7E0] border border-[#e0dbd5] transition-colors group"
                                         >
                                             <Package className="h-5 w-5 text-gray-700" strokeWidth={1.5} />
-                                            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Orders</span>
+                                            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900" style={{ fontFamily: 'Montserrat' }}>Orders</span>
                                         </button>
 
                                         <button 
@@ -251,7 +251,7 @@ export function AccountDrawer() {
                                             className="w-full flex items-center justify-center gap-3 h-16 bg-[#F8F5F2] hover:bg-[#EBE7E0] border border-[#e0dbd5] transition-colors group"
                                         >
                                             <User className="h-5 w-5 text-gray-700" strokeWidth={1.5} />
-                                            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Profile</span>
+                                            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900" style={{ fontFamily: 'Montserrat' }}>Profile</span>
                                         </button>
                                     </div>
                                 </div>
@@ -268,10 +268,10 @@ export function AccountDrawer() {
                                 className="space-y-8"
                             >
                                 <div className="space-y-2">
-                                    <h3 className="text-2xl text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                                    <h3 className="text-2xl text-gray-900" style={{ fontFamily: 'Montserrat' }}>
                                         {view === 'login' ? 'Welcome back' : 'Join REMsleep'}
                                     </h3>
-                                    <p className="text-sm text-gray-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                                    <p className="text-sm text-gray-500" style={{ fontFamily: 'Montserrat' }}>
                                         {view === 'login'
                                             ? 'Sign in to access your orders and profile.'
                                             : 'Create an account for a better sleep ritual.'}
@@ -288,7 +288,7 @@ export function AccountDrawer() {
                                                         onChange={(e) => handleInputChange('firstName', e.target.value)}
                                                         placeholder="First Name"
                                                         className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.firstName ? 'border-red-500' : ''}`}
-                                                        style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                                        style={{ fontFamily: 'Montserrat' }}
                                                     />
                                                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                                     {errors.firstName && (
@@ -301,7 +301,7 @@ export function AccountDrawer() {
                                                         onChange={(e) => handleInputChange('lastName', e.target.value)}
                                                         placeholder="Last Name"
                                                         className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.lastName ? 'border-red-500' : ''}`}
-                                                        style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                                        style={{ fontFamily: 'Montserrat' }}
                                                     />
                                                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                                     {errors.lastName && (
@@ -317,7 +317,7 @@ export function AccountDrawer() {
                                                 onChange={(e) => handleInputChange('email', e.target.value)}
                                                 placeholder="Email Address"
                                                 className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.email ? 'border-red-500' : ''}`}
-                                                style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                                style={{ fontFamily: 'Montserrat' }}
                                                 required
                                             />
                                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -333,7 +333,7 @@ export function AccountDrawer() {
                                                     onChange={(e) => handleInputChange('phone', e.target.value)}
                                                     placeholder="Phone Number (Optional)"
                                                     className={`pl-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.phone ? 'border-red-500' : ''}`}
-                                                    style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                                    style={{ fontFamily: 'Montserrat' }}
                                                 />
                                                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                                 {errors.phone && (
@@ -348,7 +348,7 @@ export function AccountDrawer() {
                                                 onChange={(e) => handleInputChange('password', e.target.value)}
                                                 placeholder="Password"
                                                 className={`pl-10 pr-10 h-14 bg-white border-zinc-200 rounded-none focus:ring-zinc-900 text-sm ${errors.password ? 'border-red-500' : ''}`}
-                                                style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                                style={{ fontFamily: 'Montserrat' }}
                                                 required
                                             />
                                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -376,7 +376,7 @@ export function AccountDrawer() {
                                             <Label
                                                 htmlFor="remember-me"
                                                 className="text-sm text-gray-700 cursor-pointer"
-                                                style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                                style={{ fontFamily: 'Montserrat' }}
                                             >
                                                 Remember me
                                             </Label>
@@ -387,7 +387,7 @@ export function AccountDrawer() {
                                         type="submit"
                                         disabled={isLoading}
                                         className="w-full h-14 bg-[#2D2D2D] hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
-                                        style={{ fontFamily: 'Montserrat, sans-serif' }}
+                                        style={{ fontFamily: 'Montserrat' }}
                                     >
                                         {isLoading ? (
                                             <Loader2 className="h-4 w-4 animate-spin" />
@@ -426,10 +426,10 @@ export function AccountDrawer() {
                                         <User className="h-8 w-8 text-zinc-400" />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg text-gray-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                                        <h4 className="text-lg text-gray-900" style={{ fontFamily: 'Montserrat' }}>
                                             {profile.first_name} {profile.last_name}
                                         </h4>
-                                        <p className="text-xs text-gray-500" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                                        <p className="text-xs text-gray-500" style={{ fontFamily: 'Montserrat' }}>
                                             {profile.email}
                                         </p>
                                     </div>

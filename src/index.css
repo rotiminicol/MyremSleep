@@ -1,6 +1,5 @@
 /* Remsleep Design System - Luxury Bedding Aesthetic */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
+@import '@fontsource/montserrat';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -116,7 +115,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    font-family: 'Montserrat';
+    @apply bg-background text-foreground antialiased;
   }
 
   h1,
@@ -125,7 +125,11 @@
   h4,
   h5,
   h6 {
-    @apply font-display;
+    font-family: 'Montserrat';
+  }
+
+  * {
+    font-family: 'Montserrat';
   }
 }
 
@@ -165,7 +169,7 @@
 
   /* Scrollbar Hide */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    -ms-overflow-style: none;  /* internet Explorer 10+ */
     scrollbar-width: none;  /* Firefox */
   }
   .scrollbar-hide::-webkit-scrollbar {
@@ -174,11 +178,11 @@
 
   /* Typography */
   .font-display {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat';
   }
 
   .font-body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Montserrat';
   }
 
   .text-headline {
