@@ -72,24 +72,12 @@ export function StoreFooter() {
       src: 'https://cdn.svgporn.com/logos/mastercard.svg',
     },
     {
-      name: 'PayPal',
-      src: 'https://cdn.svgporn.com/logos/paypal.svg',
-    },
-    {
-      name: 'Stripe',
-      src: 'https://cdn.svgporn.com/logos/stripe.svg',
-    },
-    {
       name: 'Apple Pay',
       src: 'https://cdn.svgporn.com/logos/apple-pay.svg',
     },
     {
       name: 'Google Pay',
       src: 'https://cdn.svgporn.com/logos/google-pay.svg',
-    },
-    {
-      name: 'American Express',
-      src: 'https://cdn.svgporn.com/logos/amex.svg',
     },
     {
       name: 'Shop Pay',

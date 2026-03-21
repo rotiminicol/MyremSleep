@@ -222,7 +222,7 @@ export default function ProfilePage() {
   const hasAddress = profile.address_line1 || profile.city || profile.country;
 
   return (
-    <div className="min-h-screen bg-[#f2e9dc] overflow-x-hidden" style={{ fontFamily: 'Montserrat' }}>
+    <div className="min-h-screen bg-[#F2EDE8] overflow-x-hidden" style={{ fontFamily: 'Montserrat' }}>
       {/* Ambient orbs */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <motion.div className="absolute top-[-80px] right-0 w-[500px] h-[500px] rounded-full bg-[#d4ccc3] blur-[100px] opacity-20"

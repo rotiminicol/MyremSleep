@@ -296,7 +296,7 @@ export default function HelpCenterPage() {
   ];
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#f2e9dc] flex flex-col overflow-x-hidden font-['Georgia',serif]">
+    <div ref={containerRef} className="min-h-screen bg-[#F2EDE8] flex flex-col overflow-x-hidden font-['Georgia',serif]">
       <StoreNavbar />
 
       {/* Ambient background */}
@@ -409,7 +409,7 @@ export default function HelpCenterPage() {
       </main>
 
       {/* Footer stub */}
-      <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#f2e9dc]">
+      <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#F2EDE8]">
         <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
       </footer>
 

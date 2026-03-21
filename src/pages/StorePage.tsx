@@ -5,7 +5,7 @@ import { StoreFooter } from '@/components/store/StoreFooter';
 
 export default function StorePage() {
   return (
-    <div className="min-h-screen bg-[#f2e9dc]">
+    <div className="min-h-screen bg-[#F2EDE8]">
       <StoreNavbar />
       <StoreHero />
       <ProductGrid />

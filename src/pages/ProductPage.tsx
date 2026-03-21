@@ -293,7 +293,7 @@ export default function ProductPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f2e9dc]">
+      <div className="min-h-screen bg-[#F2EDE8]">
         <StoreNavbar />
         <div className="flex items-center justify-center py-40">
           <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
@@ -305,7 +305,7 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-[#f2e9dc]">
+      <div className="min-h-screen bg-[#F2EDE8]">
         <StoreNavbar />
         <div className="max-w-[1400px] mx-auto px-6 py-20 text-center">
           <h1 className="text-2xl font-medium text-gray-800 mb-4">Product not found</h1>
@@ -323,7 +323,7 @@ export default function ProductPage() {
   const currentImage = images[selectedImageIndex]?.node;
 
   return (
-    <div className="min-h-screen bg-[#f2e9dc]">
+    <div className="min-h-screen bg-[#F2EDE8]">
       {/* Swatch keyframes */}
       <style>{`
         @keyframes swatchBreathe {
@@ -402,7 +402,7 @@ export default function ProductPage() {
           </div>
 
           {/* ── RIGHT: Product Info ── */}
-          <div className="flex flex-col justify-start py-10 px-8 lg:px-12 xl:px-14 overflow-y-auto lg:max-h-[100vh] bg-[#f2e9dc] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex flex-col justify-start py-10 px-8 lg:px-12 xl:px-14 overflow-y-auto lg:max-h-[100vh] bg-[#F2EDE8] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-5">
               <span>REMsleep</span>
@@ -624,7 +624,7 @@ export default function ProductPage() {
       </main>
 
       {/* Reviews section */}
-      <div className="bg-[#f2e9dc]">
+      <div className="bg-[#F2EDE8]">
         <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16">
           <ReviewsSection
             productHandle={handle || ''}
@@ -642,7 +642,7 @@ export default function ProductPage() {
 
       {/* Recommended Products */}
       {recommendedProducts.length > 0 && (
-        <div className="bg-[#f2e9dc] py-16">
+        <div className="bg-[#F2EDE8] py-16">
           <div className="max-w-[1400px] mx-auto px-6">
             <h2 className="text-2xl font-serif text-gray-900 text-center mb-10">You May Also Like</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
@@ -685,7 +685,7 @@ export default function ProductPage() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-              className="fixed right-0 top-0 h-full w-full max-w-[480px] bg-[#f2e9dc] shadow-2xl z-50 overflow-y-auto scrollbar-hide"
+              className="fixed right-0 top-0 h-full w-full max-w-[480px] bg-[#F2EDE8] shadow-2xl z-50 overflow-y-auto scrollbar-hide"
             >
               <div className="p-8">
                 <div className="flex items-center justify-between mb-8">
@@ -849,7 +849,7 @@ export default function ProductPage() {
                           <p className="text-sm text-gray-500 font-sans italic py-4">No reviews yet — be the first to share your experience.</p>
                         )}
                       </div>
-                      <div className="sticky bottom-0 py-6 border-t border-[#e0dbd5] bg-[#f2e9dc]">
+                      <div className="sticky bottom-0 py-6 border-t border-[#e0dbd5] bg-[#F2EDE8]">
                         <button className="w-full bg-gray-900 text-white py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all" onClick={() => setOpenDrawer(null)}>
                           Continue Shopping
                         </button>

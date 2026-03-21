@@ -390,10 +390,10 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
         initial={{ y: 0 }}
         animate={{ y: isVisible ? 0 : '-100%' }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="sticky top-0 z-50 bg-[#f2e9dc] border-b border-[#e0dbd5]"
+        className="sticky top-0 z-50 bg-[#F2EDE8] border-b border-[#e0dbd5]"
         onMouseLeave={() => { }}
       >
-        <nav className="w-full px-6 py-6 bg-[#f2e9dc]">
+        <nav className="w-full px-6 py-6 bg-[#F2EDE8]">
           {/* Desktop Layout - 3 Column Grid */}
           <div className="hidden md:grid md:grid-cols-3 items-center">
             {/* Left Column: Empty or Search */}
@@ -444,7 +444,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ duration: 0.2, ease: "easeOut" }}
-                      className="absolute top-full right-0 mt-2 w-96 bg-[#f2e9dc] border border-[#d8d1c8] rounded-2xl shadow-2xl overflow-hidden z-50 backdrop-blur-sm"
+                      className="absolute top-full right-0 mt-2 w-96 bg-[#F2EDE8] border border-[#d8d1c8] rounded-2xl shadow-2xl overflow-hidden z-50 backdrop-blur-sm"
                     >
                       {/* Header with Search */}
                       <div className="p-4 border-b border-[#d8d1c8]">
@@ -566,7 +566,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                       <div className="p-3 border-t border-[#d8d1c8] bg-[#e8e3dc]">
                         <div className="flex items-center justify-between text-xs text-gray-600">
                           <span>{currencies.length} currencies available</span>
-                          <span className="px-2 py-1 bg-[#f2e9dc] rounded-lg">Live exchange rates</span>
+                          <span className="px-2 py-1 bg-[#F2EDE8] rounded-lg">Live exchange rates</span>
                         </div>
                       </div>
                     </motion.div>
@@ -631,7 +631,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="fixed inset-0 z-[60] bg-[#f2e9dc] md:hidden flex flex-col"
+                className="fixed inset-0 z-[60] bg-[#F2EDE8] md:hidden flex flex-col"
               >
                 {/* Mobile Header Inside Menu */}
                 <div className="flex items-center px-6 h-16 border-b border-[#e0dbd5]">
@@ -674,7 +674,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                 </div>
 
                 {/* Sticky Footer */}
-                <div className="mt-auto border-t border-[#e0dbd5] bg-[#f2e9dc] p-8 pb-10">
+                <div className="mt-auto border-t border-[#e0dbd5] bg-[#F2EDE8] p-8 pb-10">
                   <div className="flex items-center justify-between">
                     {/* Currency Selector - Mobile Enhanced */}
                     <div className="relative">
@@ -701,7 +701,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute bottom-full left-0 mb-2 w-[320px] bg-[#f2e9dc] border border-[#d8d1c8] rounded-2xl shadow-2xl overflow-hidden z-50"
+                            className="absolute bottom-full left-0 mb-2 w-[320px] bg-[#F2EDE8] border border-[#d8d1c8] rounded-2xl shadow-2xl overflow-hidden z-50"
                           >
                             {/* Header with Search */}
                             <div className="p-4 border-b border-[#d8d1c8]">
@@ -790,7 +790,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
               animate={{ opacity: 1, scaleY: 1 }}
               exit={{ opacity: 0, scaleY: 0 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute top-full left-0 w-full z-[45] bg-[#f2e9dc] border-b border-[#e0dbd5] origin-top shadow-xl"
+              className="absolute top-full left-0 w-full z-[45] bg-[#F2EDE8] border-b border-[#e0dbd5] origin-top shadow-xl"
             >
               <div className="max-w-[1400px] mx-auto px-6 py-12 flex justify-center text-center">
                 <div className="max-w-3xl w-full">

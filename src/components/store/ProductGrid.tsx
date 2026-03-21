@@ -85,7 +85,7 @@ export function ProductGrid() {
   const activeColor = activeColorName ? COLOR_HEX[activeColorName] : null;
 
   return (
-    <section className="md:px-6 bg-[#f2e9dc]">
+    <section className="md:px-6 bg-[#F2EDE8]">
       <style>{`
         /* Hide scrollbar for Chrome, Safari and Opera */
         .hide-scrollbar::-webkit-scrollbar {

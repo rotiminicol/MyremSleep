@@ -153,13 +153,13 @@ export function AccountDrawer() {
             </SheetTrigger>
             <SheetContent
                 side="right"
-                className={`bg-[#f2e9dc] p-0 gap-0 border-zinc-200 h-full flex flex-col overflow-hidden ${isMobile
+                className={`bg-[#F2EDE8] p-0 gap-0 border-zinc-200 h-full flex flex-col overflow-hidden ${isMobile
                     ? "w-full border-l shadow-2xl"
                     : "w-full sm:max-w-md border-l"
                     }`}
                 style={{ fontFamily: 'Montserrat' }}
             >
-                <SheetHeader className="sticky top-0 z-30 flex-shrink-0 px-6 py-6 border-b border-[#e0dbd5] bg-[#f2e9dc]">
+                <SheetHeader className="sticky top-0 z-30 flex-shrink-0 px-6 py-6 border-b border-[#e0dbd5] bg-[#F2EDE8]">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             {view !== 'home' && view !== 'profile' && (

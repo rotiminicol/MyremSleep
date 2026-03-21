@@ -56,7 +56,7 @@ export default function ContactPage() {
   const iconClasses = "absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8f877d] transition-colors duration-300";
 
   return (
-    <div className="min-h-screen bg-[#f2e9dc] flex flex-col relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#F2EDE8] flex flex-col relative overflow-x-hidden">
       <StoreNavbar />
       <motion.div
         initial={{ opacity: 0 }}
@@ -94,7 +94,7 @@ export default function ContactPage() {
         </div>
 
         {/* Right Side - Contact Form - Half Screen */}
-        <div className="w-full md:w-1/2 h-screen overflow-y-auto bg-[#f2e9dc] relative scrollbar-hide">
+        <div className="w-full md:w-1/2 h-screen overflow-y-auto bg-[#F2EDE8] relative scrollbar-hide">
           <style>{`
             .scrollbar-hide::-webkit-scrollbar {
               display: none;

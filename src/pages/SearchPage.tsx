@@ -163,7 +163,7 @@ export default function SearchPage() {
 
   if (isSearching) {
     return (
-      <div className="min-h-screen bg-[#f2e9dc]">
+      <div className="min-h-screen bg-[#F2EDE8]">
         <StoreNavbar />
         <div className="flex items-center justify-center py-40">
           <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
@@ -174,7 +174,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f2e9dc]">
+    <div className="min-h-screen bg-[#F2EDE8]">
       <StoreNavbar />
       
       <main className="max-w-[1400px] mx-auto px-6 py-16">

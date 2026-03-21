@@ -69,7 +69,7 @@ export default function AboutPage() {
     ];
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-[#f2e9dc] flex flex-col">
+        <div ref={containerRef} className="min-h-screen bg-[#F2EDE8] flex flex-col">
             <StoreNavbar />
 
             <main className="flex-grow pt-8 pb-16 relative">
@@ -274,7 +274,7 @@ export default function AboutPage() {
                                     </div>
                                     
                                     {/* Center dot */}
-                                    <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-[#c2b9ae] rounded-full border-4 border-[#f2e9dc]" />
+                                    <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-[#c2b9ae] rounded-full border-4 border-[#F2EDE8]" />
                                     
                                     {/* Empty space for other side */}
                                     <div className="w-1/2" />
@@ -307,7 +307,7 @@ export default function AboutPage() {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="bg-[#2c2c2c] text-[#f2e9dc] px-12 py-4 rounded-full text-sm tracking-widest uppercase hover:bg-[#1a1a1a] transition-colors"
+                                className="bg-[#2c2c2c] text-[#F2EDE8] px-12 py-4 rounded-full text-sm tracking-widest uppercase hover:bg-[#1a1a1a] transition-colors"
                             >
                                 Shop Now
                             </motion.button>

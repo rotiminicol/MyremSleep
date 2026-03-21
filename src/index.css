@@ -114,7 +114,8 @@
     @apply border-border;
   }
 
-  html, body {
+  html,
+  body {
     max-width: 100%;
     overflow-x: hidden;
   }
@@ -174,11 +175,15 @@
 
   /* Scrollbar Hide */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* internet Explorer 10+ */
+    scrollbar-width: none;
+    /* Firefox */
   }
+
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;  /* Safari and Chrome */
+    display: none;
+    /* Safari and Chrome */
   }
 
   /* Typography */

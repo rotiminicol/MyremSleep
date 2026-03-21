@@ -66,7 +66,7 @@ export function FavoritesDrawer() {
             </SheetTrigger>
             <SheetContent
                 side="right"
-                className={`bg-[#f2e9dc] p-0 gap-0 border-zinc-200 h-full flex flex-row overflow-hidden ${isMobile
+                className={`bg-[#F2EDE8] p-0 gap-0 border-zinc-200 h-full flex flex-row overflow-hidden ${isMobile
                     ? "w-full border-l shadow-2xl"
                     : "w-full sm:max-w-md border-l"
                     }`}
@@ -77,7 +77,7 @@ export function FavoritesDrawer() {
 
                 {/* Right Side - Favorites Content */}
                 <div className="flex flex-col flex-1 h-full min-w-0 overflow-hidden">
-                    <SheetHeader className="sticky top-0 z-30 flex-shrink-0 px-3 md:px-8 py-4 md:py-6 border-b border-[#e0dbd5] bg-[#f2e9dc]">
+                    <SheetHeader className="sticky top-0 z-30 flex-shrink-0 px-3 md:px-8 py-4 md:py-6 border-b border-[#e0dbd5] bg-[#F2EDE8]">
                         <div className="flex items-center justify-between gap-2">
                             <SheetTitle className="text-[15px] md:text-[22px] font-medium tracking-tight text-gray-900 whitespace-nowrap">
                                 Favorites
@@ -92,7 +92,7 @@ export function FavoritesDrawer() {
                         </div>
                     </SheetHeader>
 
-                    <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-[#f2e9dc]">
+                    <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-[#F2EDE8]">
                         {items.length === 0 ? (
                             <div className="flex-1 flex items-center justify-center px-8">
                                 <div className="text-center">
@@ -170,7 +170,7 @@ export function FavoritesDrawer() {
 
                     {/* Footer - Only show if there are items */}
                     {items.length > 0 && (
-                        <div className="sticky bottom-0 z-20 flex-shrink-0 px-8 py-6 border-t border-[#e0dbd5] bg-[#f2e9dc]/95 backdrop-blur-md">
+                        <div className="sticky bottom-0 z-20 flex-shrink-0 px-8 py-6 border-t border-[#e0dbd5] bg-[#F2EDE8]/95 backdrop-blur-md">
                             <button
                                 onClick={() => setFavoritesOpen(false)}
                                 className="w-full bg-white border border-gray-200 text-gray-900 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-gray-50 transition-all transform active:scale-[0.99]"

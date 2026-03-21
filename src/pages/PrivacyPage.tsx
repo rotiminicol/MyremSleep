@@ -129,7 +129,7 @@ export default function PrivacyPage() {
     const [showContactForm, setShowContactForm] = useState(false);
 
     return (
-        <div className="min-h-screen bg-[#f2e9dc]">
+        <div className="min-h-screen bg-[#F2EDE8]">
             <StoreNavbar />
 
             {/* Hero Section */}
