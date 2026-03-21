@@ -168,7 +168,7 @@ export function StoreFooter() {
             {paymentMethods.map((method) => (
               <div
                 key={method.name}
-                className="bg-white/10 backdrop-blur-sm border border-gray-600 rounded px-2 py-1 h-8 flex items-center justify-center shadow-sm"
+                className="bg-white border border-[#e0dbd5] rounded px-2 py-1 h-8 flex items-center justify-center shadow-md"
                 title={method.name}
               >
                 <img
