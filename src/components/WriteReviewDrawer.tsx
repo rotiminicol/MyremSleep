@@ -217,7 +217,7 @@ export function WriteReviewDrawer({ open, onClose, productId, productHandle }: W
                 className={cn(
                   'px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors flex items-center gap-2',
                   isValid && !createReview.isPending
-                    ? 'bg-[#2D2D2D] hover:bg-black text-white'
+                    ? 'bg-primary hover:bg-black text-white'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 )}
               >

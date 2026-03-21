@@ -143,7 +143,7 @@ export function AccountDrawer() {
                     aria-label="Account"
                 >
                     {isLoggedIn() ? (
-                        <div className="w-8 h-8 bg-[#2D2D2D] text-white rounded-full flex items-center justify-center text-sm font-medium">
+                        <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-medium">
                             {profile?.first_name?.charAt(0)}{profile?.last_name?.charAt(0)}
                         </div>
                     ) : (
@@ -201,14 +201,14 @@ export function AccountDrawer() {
                                     <div className="space-y-3">
                                         <Button
                                             onClick={() => setView('login')}
-                                            className="w-full h-14 bg-[#2D2D2D] hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
+                                            className="w-full h-14 bg-primary hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
                                             style={{ fontFamily: 'Montserrat' }}
                                         >
                                             Log In
                                         </Button>
                                         <Button
                                             onClick={() => setView('signup')}
-                                            className="w-full h-14 bg-[#2D2D2D] hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
+                                            className="w-full h-14 bg-primary hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
                                             style={{ fontFamily: 'Montserrat' }}
                                         >
                                             Create Account
@@ -386,7 +386,7 @@ export function AccountDrawer() {
                                     <Button
                                         type="submit"
                                         disabled={isLoading}
-                                        className="w-full h-14 bg-[#2D2D2D] hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
+                                        className="w-full h-14 bg-primary hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all"
                                         style={{ fontFamily: 'Montserrat' }}
                                     >
                                         {isLoading ? (

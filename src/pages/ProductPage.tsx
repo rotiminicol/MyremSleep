@@ -419,25 +419,25 @@ export default function ProductPage() {
             </p>
 
             {product.description && (
-              <p className="text-sm text-gray-600 leading-relaxed mt-3">
+              <p className="text-sm font-medium text-gray-900 leading-relaxed mt-4">
                 {product.description}
               </p>
             )}
 
             <div className="h-px bg-[#e0dbd5] my-6" />
 
-            <div className="space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900 mb-3">The essentials</p>
+            <div className="space-y-2 mt-2">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900 mb-4">The essentials</p>
               {[
-                'Material: 100% Egyptian cotton',
-                'Weave: Sateen',
-                'Thread count: 300',
-                'Includes: Duvet cover + fitted sheet + 4 pillowcases (2 Oxford + 2 plain)',
-                'Certification: OEKO-TEX® Standard 100',
+                { label: 'Material', value: '100% Egyptian cotton' },
+                { label: 'Weave', value: 'Sateen' },
+                { label: 'Thread count', value: '300' },
+                { label: 'Includes', value: 'Duvet cover + fitted sheet + 4 pillowcases (2 Oxford + 2 plain)' },
+                { label: 'Certification', value: 'OEKO-TEX® Standard 100' },
               ].map((item) => (
-                <div key={item} className="flex items-start gap-2 text-[12px] text-gray-600 leading-relaxed">
-                  <span className="mt-[7px] w-1 h-1 rounded-full bg-gray-400 flex-shrink-0" />
-                  {item}
+                <div key={item.label} className="flex items-start gap-2 text-[13px] text-gray-900 font-medium leading-relaxed">
+                  <span className="mt-[9px] w-1 h-1 rounded-full bg-gray-600 flex-shrink-0" />
+                  <span><span className="font-bold">{item.label}:</span> {item.value}</span>
                 </div>
               ))}
             </div>
@@ -464,7 +464,7 @@ export default function ProductPage() {
                       className={cn(
                         "px-5 py-2.5 text-[12px] font-medium tracking-wide transition-all border",
                         selectedSize === size
-                          ? "border-gray-900 bg-gray-900 text-white"
+                          ? "border-primary bg-primary text-white"
                           : "border-[#e0dbd5] text-gray-500 hover:border-gray-400 hover:text-gray-900 bg-transparent"
                       )}
                     >
@@ -569,7 +569,7 @@ export default function ProductPage() {
               <Button
                 onClick={handleAddToCart}
                 disabled={!selectedVariant?.availableForSale || isCartLoading}
-                className="flex-1 h-16 bg-[#2D2D2D] hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
+                className="flex-1 h-16 bg-primary hover:bg-black text-white rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
               >
                 {isCartLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -685,7 +685,7 @@ export default function ProductPage() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-              className="fixed right-0 top-0 h-full w-full max-w-[480px] bg-white shadow-2xl z-50 overflow-y-auto scrollbar-hide"
+              className="fixed right-0 top-0 h-full w-full max-w-[480px] bg-[#f2e9dc] shadow-2xl z-50 overflow-y-auto scrollbar-hide"
             >
               <div className="p-8">
                 <div className="flex items-center justify-between mb-8">
@@ -709,7 +709,7 @@ export default function ProductPage() {
                       <p className="text-sm text-gray-600 leading-relaxed">
                         Everything that meets your skin should feel right. We focus on Fabric, Finish and Function—so your bedroom feels calm not cluttered. Our Bedding bundles gives you the hotel-feel comfort, effortlessly. Our 100% cotton 300 thread count sateen bundle brings a smooth, breathable finish and a subtle sheen—so your bed looks instantly considered, every night.
                       </p>
-                      <div className="space-y-4 pt-2 border-t border-gray-100">
+                      <div className="space-y-4 pt-2 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Each Set Includes</h4>
                         <p className="text-sm text-gray-600 leading-relaxed">A fitted sheet, duvet cover, and four pillowcases (2 Oxford + 2 plain).</p>
                       </div>
@@ -735,7 +735,7 @@ export default function ProductPage() {
                   {openDrawer === 'care' && (
                     <div className="space-y-8">
                       <p className="text-sm text-gray-600 leading-relaxed">REMsleep sateen is made to live with you. A little intention keeps it crisp, smooth, and softly luminous.</p>
-                      <div className="space-y-4 pt-2 border-t border-gray-100">
+                      <div className="space-y-4 pt-2 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Three Rules Of Longevity</h4>
                         <ul className="space-y-3">
                           {['Protect sheen: wash inside out', 'Reduce friction: gentle cycles, light loads', 'Use lower heat: cool washes, low drying temps'].map((r) => (
@@ -743,7 +743,7 @@ export default function ProductPage() {
                           ))}
                         </ul>
                       </div>
-                      <div className="space-y-4 border-t border-gray-100">
+                      <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Wash</h4>
                         <ul className="space-y-3">
                           {['30°C for most washes (best for softness + sheen)', '40°C when you need a deeper clean', 'Choose gentle cycle + low spin, and do not overfill drum'].map((i) => (
@@ -752,7 +752,7 @@ export default function ProductPage() {
                         </ul>
                         <p className="text-sm text-gray-600 italic leading-relaxed pt-2">Pro tip: duvet covers and pillowcases inside out—that is where sateen glow is protected</p>
                       </div>
-                      <div className="space-y-4 border-t border-gray-100">
+                      <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Dry</h4>
                         <ul className="space-y-3">
                           {['Line dry where possible. If tumble drying: low heat, and remove slightly damp and let air dry', 'Avoid abrasion', 'Keep sateen away from rough contact where you can, as rough surfaces can reduce sheen.'].map((i) => (
@@ -760,7 +760,7 @@ export default function ProductPage() {
                           ))}
                         </ul>
                       </div>
-                      <div className="space-y-4 border-t border-gray-100">
+                      <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Optional Finishing</h4>
                         <p className="text-sm text-gray-600 leading-relaxed">Steam to revive drape, or iron moderate heat while slightly damp for extra crispness.</p>
                       </div>
@@ -775,7 +775,7 @@ export default function ProductPage() {
                         { label: 'Thread Count', value: '300' },
                         { label: 'Finish / Feel', value: 'Smooth, softly luminous, elegant drape' },
                       ].map(({ label, value }) => (
-                        <div key={label} className="space-y-1 border-t border-gray-100 pt-6 first:border-t-0 first:pt-0">
+                        <div key={label} className="space-y-1 border-t border-[#e0dbd5] pt-6 first:border-t-0 first:pt-0">
                           <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900">{label}</h4>
                           <p className="text-sm text-gray-600">{value}</p>
                         </div>
@@ -814,12 +814,12 @@ export default function ProductPage() {
                             )}
                           </div>
                           <button onClick={() => { setOpenDrawer(null); setReviewDrawerOpen(true); }}
-                            className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 border-b border-gray-900 pb-0.5 hover:opacity-60 transition-opacity">
+                            className="text-[11px] font-bold uppercase tracking-[0.15em] text-primary border-b border-primary pb-0.5 hover:opacity-60 transition-opacity">
                             Write a Review
                           </button>
                         </div>
                       </div>
-                      <div className="border-t border-gray-100" />
+                      <div className="border-t border-[#e0dbd5]" />
                       <div className="space-y-10">
                         {isReviewsLoading ? (
                           <div className="flex justify-center py-8">
@@ -849,7 +849,7 @@ export default function ProductPage() {
                           <p className="text-sm text-gray-500 font-sans italic py-4">No reviews yet — be the first to share your experience.</p>
                         )}
                       </div>
-                      <div className="sticky bottom-0 py-6 border-t border-gray-100 bg-white">
+                      <div className="sticky bottom-0 py-6 border-t border-[#e0dbd5] bg-[#f2e9dc]">
                         <button className="w-full bg-gray-900 text-white py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all" onClick={() => setOpenDrawer(null)}>
                           Continue Shopping
                         </button>
@@ -859,7 +859,7 @@ export default function ProductPage() {
 
                   {openDrawer === 'size' && (
                     <div className="space-y-6">
-                      <div className="flex gap-8 border-b border-gray-100 mb-6">
+                      <div className="flex gap-8 border-b border-[#e0dbd5] mb-6">
                         {[{ page: 1 as const, label: 'Measurements' }, { page: 2 as const, label: 'Details' }].map(tab => (
                           <button key={tab.page} onClick={() => setSizeDrawerPage(tab.page)}
                             className={cn("pb-4 text-[11px] font-bold uppercase tracking-[0.2em] transition-all relative",
@@ -873,12 +873,12 @@ export default function ProductPage() {
                         {sizeDrawerPage === 1 ? (
                           <motion.div key="t1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-5">
                             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-900">Measurements (cm)</p>
-                            <div className="border border-gray-100 overflow-hidden">
+                            <div className="border border-[#e0dbd5] overflow-hidden">
                               <table className="w-full text-center border-collapse">
-                                <thead className="bg-gray-50">
+                                <thead className="bg-[#e8dfd3]">
                                   <tr>
                                     {['Size', 'Duvet Cover', 'Fitted Sheet', 'Oxford Case', 'Regular Case'].map(h => (
-                                      <th key={h} className="border border-gray-100 px-3 py-4 text-[9px] font-bold text-gray-900 uppercase tracking-widest">{h}</th>
+                                      <th key={h} className="border border-[#e0dbd5] px-3 py-4 text-[9px] font-bold text-gray-900 uppercase tracking-widest">{h}</th>
                                     ))}
                                   </tr>
                                 </thead>
@@ -889,11 +889,11 @@ export default function ProductPage() {
                                     { size: 'King', duvet: '225×220', fitted: '150×200×40', oxford: '50×75', regular: '50×75' },
                                   ].map(row => (
                                     <tr key={row.size} className="hover:bg-gray-50 transition-colors">
-                                      <td className="border border-gray-100 px-3 py-5 text-[11px] font-medium text-gray-900 text-left">{row.size}</td>
-                                      <td className="border border-gray-100 px-3 py-5 text-[11px] text-gray-600">{row.duvet}</td>
-                                      <td className="border border-gray-100 px-3 py-5 text-[11px] text-gray-600">{row.fitted}</td>
-                                      <td className="border border-gray-100 px-3 py-5 text-[11px] text-gray-600">{row.oxford}</td>
-                                      <td className="border border-gray-100 px-3 py-5 text-[11px] text-gray-600">{row.regular}</td>
+                                      <td className="border border-[#e0dbd5] px-3 py-5 text-[11px] font-medium text-gray-900 text-left">{row.size}</td>
+                                      <td className="border border-[#e0dbd5] px-3 py-5 text-[11px] text-gray-600">{row.duvet}</td>
+                                      <td className="border border-[#e0dbd5] px-3 py-5 text-[11px] text-gray-600">{row.fitted}</td>
+                                      <td className="border border-[#e0dbd5] px-3 py-5 text-[11px] text-gray-600">{row.oxford}</td>
+                                      <td className="border border-[#e0dbd5] px-3 py-5 text-[11px] text-gray-600">{row.regular}</td>
                                     </tr>
                                   ))}
                                 </tbody>
@@ -908,15 +908,15 @@ export default function ProductPage() {
                               <p>A bed should look finished, not fussy. REMsleep is made for real life: sleep, slow mornings, and the occasional full-day reset.</p>
                               <p>Our fitted sheet is designed to keep the bed looking made — with less shifting, less bunching, and no corner slip.</p>
                             </div>
-                            <div className="space-y-3 pt-2 border-t border-gray-100">
+                            <div className="space-y-3 pt-2 border-t border-[#e0dbd5]">
                               <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">How sizing works</h4>
                               <p className="text-sm text-gray-600 leading-relaxed">Choose the size that matches your mattress. The cut is shaped to sit neatly, with corners designed to stay anchored.</p>
                             </div>
-                            <div className="space-y-3 border-t border-gray-100">
+                            <div className="space-y-3 border-t border-[#e0dbd5]">
                               <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Deep-mattress elastic</h4>
                               <p className="text-sm text-gray-600 leading-relaxed">Our fitted sheet uses elastic designed for deeper mattresses, so it tucks in cleanly and stays there. Expect sharper corners, a smoother surface, and less re-tucking.</p>
                             </div>
-                            <div className="space-y-4 border-t border-gray-100">
+                            <div className="space-y-4 border-t border-[#e0dbd5]">
                               <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Why You'll Love It</h4>
                               <ul className="space-y-2.5">
                                 {['Hugs the corners with a tighter fit', 'Holds position with strong, deep-mattress elastic', 'Stays smooth for a cleaner, more intentional finish'].map(p => (

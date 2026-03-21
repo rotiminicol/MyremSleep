@@ -177,7 +177,7 @@ function CompletedStep({ icon, title, summary, onEdit, delay = 0 }: { icon: Reac
       className="bg-white/50 backdrop-blur-md rounded-2xl px-8 py-5 shadow-sm border border-white/80 flex items-center justify-between gap-4"
     >
       <div className="flex items-center gap-3">
-        <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0">
+        <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
           <Check className="w-3.5 h-3.5 text-white" />
         </div>
         <div>
@@ -243,7 +243,7 @@ function StepContact({ data, onChange, onNext }: { data: any; onChange: (e: any)
             <input type="email" name="email" value={data.email} onChange={onChange} className={inputClass} placeholder="your@email.com" />
           </Field>
           <label className="flex items-center gap-3 cursor-pointer group">
-            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${data.saveInfo ? 'bg-gray-900 border-gray-900' : 'border-[#d8d1c8] group-hover:border-gray-400'}`}>
+            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${data.saveInfo ? 'bg-primary border-primary' : 'border-[#d8d1c8] group-hover:border-gray-400'}`}>
               {data.saveInfo && <Check className="w-3 h-3 text-white" />}
             </div>
             <input type="checkbox" name="saveInfo" checked={data.saveInfo} onChange={onChange} className="sr-only" />
@@ -252,7 +252,7 @@ function StepContact({ data, onChange, onNext }: { data: any; onChange: (e: any)
         </div>
       </FormSection>
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}>
-        <button onClick={onNext} disabled={!data.email} className={`w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${data.email ? 'bg-gray-900 text-white hover:bg-[#111] shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`} style={{ fontFamily: 'Montserrat' }}>
+        <button onClick={onNext} disabled={!data.email} className={`w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${data.email ? 'bg-primary text-white hover:bg-black shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`} style={{ fontFamily: 'Montserrat' }}>
           Continue to Shipping <ArrowRight className="w-4 h-4" />
         </button>
       </motion.div>
@@ -333,8 +333,8 @@ function StepShipping({ data, onChange, onNext, onBack }: { data: any; onChange:
             <label key={method.id} className="flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-150 hover:border-[#8f877d]/40"
               style={{ borderColor: data.shippingMethod === method.id ? '#4b4540' : '#e8e3dc', background: data.shippingMethod === method.id ? '#faf9f7' : 'transparent' }}>
               <input type="radio" name="shippingMethod" value={method.id} checked={data.shippingMethod === method.id} onChange={onChange} className="sr-only" />
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${data.shippingMethod === method.id ? 'border-gray-900' : 'border-[#d8d1c8]'}`}>
-                {data.shippingMethod === method.id && <div className="w-2.5 h-2.5 rounded-full bg-gray-900" />}
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${data.shippingMethod === method.id ? 'border-primary' : 'border-[#d8d1c8]'}`}>
+                {data.shippingMethod === method.id && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900" style={{ fontFamily: 'Montserrat' }}>{method.label}</p>
@@ -350,7 +350,7 @@ function StepShipping({ data, onChange, onNext, onBack }: { data: any; onChange:
         <button onClick={onBack} className="flex items-center gap-2 px-5 py-4 rounded-full text-sm tracking-[0.12em] uppercase font-medium text-gray-600 border border-[#d8d1c8] hover:border-gray-400 transition-all duration-200" style={{ fontFamily: 'Montserrat' }}>
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <button onClick={onNext} disabled={!allFilled} className={`flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${allFilled ? 'bg-gray-900 text-white hover:bg-[#111] shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`} style={{ fontFamily: 'Montserrat' }}>
+        <button onClick={onNext} disabled={!allFilled} className={`flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${allFilled ? 'bg-primary text-white hover:bg-black shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`} style={{ fontFamily: 'Montserrat' }}>
           Continue to Review <ArrowRight className="w-4 h-4" />
         </button>
       </motion.div>
@@ -418,7 +418,7 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
 
           {/* Terms */}
           <label className="flex items-start gap-4 cursor-pointer group">
-            <div className={`w-5 h-5 mt-0.5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${data.termsAccepted ? 'bg-gray-900 border-gray-900' : 'border-[#d8d1c8] group-hover:border-gray-400'}`}>
+            <div className={`w-5 h-5 mt-0.5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${data.termsAccepted ? 'bg-primary border-primary' : 'border-[#d8d1c8] group-hover:border-gray-400'}`}>
               {data.termsAccepted && <Check className="w-3 h-3 text-white" />}
             </div>
             <input type="checkbox" name="termsAccepted" checked={data.termsAccepted} onChange={onChange} className="sr-only" />
@@ -438,7 +438,7 @@ function StepReviewAndPay({ data, onChange, onBack, onPay, loading, checkoutUrl 
           disabled={!data.termsAccepted || loading || !checkoutUrl}
           whileHover={data.termsAccepted && checkoutUrl ? { scale: 1.02 } : {}}
           whileTap={data.termsAccepted && checkoutUrl ? { scale: 0.98 } : {}}
-          className={`flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${data.termsAccepted && !loading && checkoutUrl ? 'bg-gray-900 text-white hover:bg-[#111] shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`}
+          className={`flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all duration-200 ${data.termsAccepted && !loading && checkoutUrl ? 'bg-primary text-white hover:bg-black shadow-lg' : 'bg-[#d8d1c8] text-gray-400 cursor-not-allowed'}`}
           style={{ fontFamily: 'Montserrat' }}
         >
           {loading ? (
@@ -584,12 +584,12 @@ export default function CheckoutPage() {
             return (
               <div key={s} className="flex items-center">
                 <div className="flex items-center gap-2">
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-300 ${isDone ? 'bg-gray-900 text-white' : isActive ? 'bg-gray-900 text-white ring-4 ring-gray-900/10' : 'bg-[#e8e3dc] text-gray-500'}`}>
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-300 ${isDone ? 'bg-primary text-white' : isActive ? 'bg-primary text-white ring-4 ring-primary/10' : 'bg-[#e8e3dc] text-gray-500'}`}>
                     {isDone ? <Check className="w-3.5 h-3.5" /> : stepNum}
                   </div>
                   <span className={`text-xs font-medium tracking-wide transition-all duration-300 ${isActive ? 'text-gray-900' : isDone ? 'text-gray-500' : 'text-gray-400'}`} style={{ fontFamily: 'Montserrat' }}>{s}</span>
                 </div>
-                {i < steps.length - 1 && <div className={`w-12 h-px mx-3 transition-all duration-300 ${isDone ? 'bg-gray-900' : 'bg-[#e8e3dc]'}`} />}
+                {i < steps.length - 1 && <div className={`w-12 h-px mx-3 transition-all duration-300 ${isDone ? 'bg-primary' : 'bg-[#e8e3dc]'}`} />}
               </div>
             );
           })}

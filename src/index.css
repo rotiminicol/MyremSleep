@@ -114,6 +114,11 @@
     @apply border-border;
   }
 
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     font-family: 'Montserrat';
     @apply bg-background text-foreground antialiased;

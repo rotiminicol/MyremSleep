@@ -108,7 +108,7 @@ function OrderTimeline({ status }) {
     <div className="relative flex items-center justify-between px-2 py-6">
       <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-px bg-[#e8e3dc]" />
       <motion.div
-        className="absolute left-6 top-1/2 -translate-y-1/2 h-px bg-gray-900 origin-left"
+        className="absolute left-6 top-1/2 -translate-y-1/2 h-px bg-primary origin-left"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: activeStep === 0 ? 0 : Math.min((activeStep - 1) / 3, 1) }}
         transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -126,15 +126,15 @@ function OrderTimeline({ status }) {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
               className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
-                done ? 'bg-gray-900 border-gray-900' :
-                active ? 'bg-white border-gray-900 shadow-lg' :
+                done ? 'bg-primary border-primary' :
+                active ? 'bg-white border-primary shadow-lg' :
                 'bg-white border-[#e8e3dc]'
               }`}
             >
               <Icon className={`w-4 h-4 ${done ? 'text-white' : active ? 'text-gray-900' : 'text-gray-300'}`} />
               {active && (
                 <motion.div
-                  className="absolute inset-0 rounded-full border-2 border-gray-900"
+                  className="absolute inset-0 rounded-full border-2 border-primary"
                   animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 />
@@ -223,7 +223,7 @@ function OrderCard({ order, index, onClick, formatPrice }: { order: LocalOrder; 
           <div className="flex flex-col items-end gap-3 flex-shrink-0">
             <p className="text-lg sm:text-xl font-serif text-gray-900">{formatPrice(order.total)}</p>
             <motion.div
-              className="w-8 h-8 rounded-full bg-[#f0ece7] flex items-center justify-center group-hover:bg-gray-900 transition-colors duration-300"
+              className="w-8 h-8 rounded-full bg-[#f0ece7] flex items-center justify-center group-hover:bg-primary transition-colors duration-300"
               whileHover={{ scale: 1.1 }}
             >
               <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors duration-300" />
@@ -493,7 +493,7 @@ export default function OrdersPage() {
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/store')}
-                  className="px-8 py-3.5 bg-gray-900 text-white rounded-xl text-sm font-medium tracking-[0.1em] uppercase hover:bg-black transition-colors shadow-xl"
+                  className="px-8 py-3.5 bg-primary text-white rounded-xl text-sm font-medium tracking-[0.1em] uppercase hover:bg-black transition-colors shadow-xl"
                 >
                   Start Shopping
                 </motion.button>

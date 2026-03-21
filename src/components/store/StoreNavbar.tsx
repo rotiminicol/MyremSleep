@@ -210,7 +210,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   ];
 
   const mobileNavLinks = [
-    { label: 'Shop Bundle', href: '/product/winter-cloud' },
+    { label: 'Shop Bundle', href: '/product/winter-cloud-crisp-white-soft-glow-always-polished' },
     { label: 'Favorites', href: '/favorites', isFavorite: true },
     { label: 'About', href: '/about' },
     { label: 'Blog', href: '/blog' },

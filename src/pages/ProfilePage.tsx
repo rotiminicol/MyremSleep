@@ -42,7 +42,7 @@ function Toggle({ checked, onChange }) {
   return (
     <motion.button
       onClick={() => onChange(!checked)}
-      className={`relative w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0 ${checked ? 'bg-gray-900' : 'bg-[#d8d1c8]'}`}
+      className={`relative w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0 ${checked ? 'bg-primary' : 'bg-[#d8d1c8]'}`}
       whileTap={{ scale: 0.95 }}
     >
       <motion.div
@@ -250,7 +250,7 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -16, scale: 0.96 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed top-6 right-6 z-50 flex items-center gap-3 bg-gray-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl"
+              className="fixed top-6 right-6 z-50 flex items-center gap-3 bg-primary text-white px-5 py-3.5 rounded-2xl shadow-2xl"
             >
               <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
                 <Check className="w-3 h-3 text-white" />
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                       />
                     )}
                     <div className="relative z-10 flex items-center gap-3 flex-1">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${active ? 'bg-gray-900' : 'bg-[#f0ece7]'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${active ? 'bg-primary' : 'bg-[#f0ece7]'}`}>
                         <Icon className={`w-3.5 h-3.5 ${active ? 'text-white' : 'text-[#8f877d]'}`} />
                       </div>
                       <span className="text-sm font-medium">{sec.label}</span>
@@ -397,7 +397,7 @@ export default function ProfilePage() {
                           <motion.button whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}
                             onClick={handleSave}
                             disabled={isLoading}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-black transition-all shadow-lg disabled:opacity-50">
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-black transition-all shadow-lg disabled:opacity-50">
                             {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                             Save Changes
                           </motion.button>
@@ -480,7 +480,7 @@ export default function ProfilePage() {
                           <motion.button whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}
                             onClick={handleSaveAddress}
                             disabled={isLoading}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-black transition-all shadow-lg disabled:opacity-50">
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-black transition-all shadow-lg disabled:opacity-50">
                             {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                             Save Address
                           </motion.button>
@@ -519,7 +519,7 @@ export default function ProfilePage() {
                           <div className="bg-gradient-to-br from-[#faf9f7] to-[#f0ece7] rounded-xl p-6 border border-[#ede9e4]"
                             style={{ transformStyle: 'preserve-3d' }}>
                             <div className="flex items-start gap-4">
-                              <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0"
+                              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0"
                                 style={{ transform: 'translateZ(8px)' }}>
                                 <MapPin className="w-4 h-4 text-white" />
                               </div>
@@ -573,7 +573,7 @@ export default function ProfilePage() {
                             className={`relative flex items-center gap-5 p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer ${checked ? 'border-[#c4bbb1] bg-[#faf9f7]' : 'border-[#ede9e4] bg-white/50 hover:border-[#d8d1c8]'}`}
                             onClick={() => setPreferences({ ...preferences, [item.key]: !checked })}
                           >
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-gray-900' : 'bg-[#f0ece7]'}`}>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-primary' : 'bg-[#f0ece7]'}`}>
                               <Icon className={`w-4 h-4 ${checked ? 'text-white' : 'text-[#8f877d]'}`} />
                             </div>
                             <div className="flex-1 min-w-0">

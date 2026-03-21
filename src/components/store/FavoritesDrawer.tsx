@@ -58,7 +58,7 @@ export function FavoritesDrawer() {
                 <button className="relative text-gray-800 hover:text-gray-600 transition-colors">
                     <img src="/wishlist.png" alt="Favorites" className="h-5 w-5 object-contain" />
                     {items.length > 0 && (
-                        <Badge className="absolute -top-2 -right-2 h-4 w-4 rounded-full p-0 flex items-center justify-center text-[10px] bg-gray-900 text-white">
+                        <Badge className="absolute -top-2 -right-2 h-4 w-4 rounded-full p-0 flex items-center justify-center text-[10px] bg-primary text-white">
                             {items.length}
                         </Badge>
                     )}
@@ -140,7 +140,7 @@ export function FavoritesDrawer() {
                                                     {/* Add to Cart Button */}
                                                     <button
                                                         onClick={() => handleAddToCart(item)}
-                                                        className="mt-2 w-fit px-4 py-2 bg-gray-900 text-white text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all"
+                                                        className="mt-2 w-fit px-4 py-2 bg-primary text-white text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all"
                                                     >
                                                         Add to Cart
                                                     </button>

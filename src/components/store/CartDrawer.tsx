@@ -142,7 +142,7 @@ export function CartDrawer() {
         <button className="relative text-gray-800 hover:text-gray-600 transition-colors">
           <img src="/shopping-bag (1).png" alt="Cart" className="h-5 w-5 object-contain" />
           {totalItems > 0 && (
-            <Badge className="absolute -top-2 -right-2 h-4 w-4 rounded-full p-0 flex items-center justify-center text-[10px] bg-gray-900 text-white">
+            <Badge className="absolute -top-2 -right-2 h-4 w-4 rounded-full p-0 flex items-center justify-center text-[10px] bg-primary text-white">
               {totalItems}
             </Badge>
           )}
@@ -277,7 +277,7 @@ export function CartDrawer() {
                     <button
                       onClick={handleCheckout}
                       disabled={items.length === 0 || isLoading || isSyncing}
-                      className="w-full bg-gray-900 text-white py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all transform active:scale-[0.99] disabled:opacity-50"
+                      className="w-full bg-primary text-white py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all transform active:scale-[0.99] disabled:opacity-50"
                     >
                       {isLoading || isSyncing ? (
                         <Loader2 className="w-4 h-4 animate-spin mx-auto" />

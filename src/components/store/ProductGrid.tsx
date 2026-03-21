@@ -6,15 +6,15 @@ import { Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const COLOR_HEX: Record<string, { fill: string; shadow: string }> = {
-  'Winter Cloud':     { fill: '#F5F5F7', shadow: '#d0d0d4' },
+  'Winter Cloud': { fill: '#F5F5F7', shadow: '#d0d0d4' },
   'Desert Whisperer': { fill: '#E5DACE', shadow: '#c0b8ac' },
-  'Buttermilk':       { fill: '#FFF4D2', shadow: '#e0d4a0' },
-  'Clay':             { fill: '#D2C4B5', shadow: '#a89c8e' },
-  'Clay Blush':       { fill: '#D9A891', shadow: '#b07a63' },
-  'Clayblush Pink':   { fill: '#D9A891', shadow: '#b07a63' },
-  'Pebble Haze':      { fill: '#A3A3A3', shadow: '#787878' },
-  'Desert Sand':      { fill: '#E2CA9D', shadow: '#c0a870' },
-  'Cinnamon Bark':    { fill: '#8B4513', shadow: '#5a2c0a' },
+  'Buttermilk': { fill: '#FFF4D2', shadow: '#e0d4a0' },
+  'Clay': { fill: '#D2C4B5', shadow: '#a89c8e' },
+  'Clay Blush': { fill: '#D9A891', shadow: '#b07a63' },
+  'Clayblush Pink': { fill: '#D9A891', shadow: '#b07a63' },
+  'Pebble Haze': { fill: '#A3A3A3', shadow: '#787878' },
+  'Desert Sand': { fill: '#E2CA9D', shadow: '#c0a870' },
+  'Cinnamon Bark': { fill: '#8B4513', shadow: '#5a2c0a' },
 };
 
 function extractColorFromTitle(title: string): string | null {
@@ -42,7 +42,7 @@ export function ProductGrid() {
         console.log('Loading products from Shopify store...');
         const data = await fetchProducts(20);
         console.log('Shopify API response:', data);
-        
+
         if (data && data.length > 0) {
           console.log(`Successfully loaded ${data.length} products from Shopify`);
           setProducts(data);
@@ -85,23 +85,19 @@ export function ProductGrid() {
   const activeColor = activeColorName ? COLOR_HEX[activeColorName] : null;
 
   return (
-    <section className="pb-8 md:pb-12 md:px-6 bg-[#f2e9dc]">
-      {/* Keyframe styles injected once */}
+    <section className="md:px-6 bg-[#f2e9dc]">
       <style>{`
-        @keyframes swatchBreathe {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.09); }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
         }
-        @keyframes swatchRipple {
-          0%   { transform: scale(1);   opacity: 0.65; }
-          100% { transform: scale(1.85); opacity: 0; }
-        }
-        @keyframes swatchIdlePulse {
-          0%, 100% { transform: scale(1); }
-          50%       { transform: scale(1.05); }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
       `}</style>
-
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -148,87 +144,93 @@ export function ProductGrid() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
         viewport={{ once: true }}
-        className="mt-2 md:mt-12 flex flex-col items-center text-center px-6"
+        className="mt-2 md:mt-12 flex flex-col items-center text-center px-1 md:px-6"
       >
-        <h3 className="text-[11px] min-[375px]:text-[13px] min-[425px]:text-sm sm:text-lg md:text-2xl font-serif text-gray-900 mb-2 md:mb-6 whitespace-nowrap">
+        <h3 className="text-[11px] min-[375px]:text-[13px] min-[425px]:text-sm sm:text-lg md:text-2xl font-serif text-gray-900 mb-2 md:mb-6 px-4">
           One set. Eight seasonless colourways. Effortless calm
         </h3>
 
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-2 md:mb-4 w-full max-w-full px-4">
-          {products.map((product, idx) => {
-            const colorName = extractColorFromTitle(product.node.title);
-            const color = colorName ? COLOR_HEX[colorName] : { fill: '#ccc', shadow: '#999' };
-            const isActive = activeProductIndex === idx;
+        {/* Mobile: single line with hidden scrollbar, Desktop: wrap with proper spacing */}
+        <div className="w-full overflow-x-auto overflow-y-visible md:overflow-x-visible pb-2 hide-scrollbar">
+          <div className="flex md:flex-wrap justify-start md:justify-center gap-4 sm:gap-6 md:gap-8 w-max md:w-full min-w-full px-4 md:px-0">
+            {products.map((product, idx) => {
+              const colorName = extractColorFromTitle(product.node.title);
+              const color = colorName ? COLOR_HEX[colorName] : { fill: '#ccc', shadow: '#999' };
+              const isActive = activeProductIndex === idx;
 
-            return (
-              <button
-                key={product.node.id}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setActiveProductIndex(idx);
-                }}
-                title={colorName || product.node.title}
-                className="flex flex-col items-center gap-1.5 flex-shrink-0 bg-transparent border-none cursor-pointer"
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-              >
-                {/* Ripple ring — only on active */}
-                {isActive && (
-                  <span
-                    key={`ripple-${idx}`}
-                    style={{
-                      position: 'absolute',
-                      inset: '8px',
-                      borderRadius: '50%',
-                      border: `2px solid ${color.fill}`,
-                      animation: 'swatchRipple 1.4s ease-out infinite',
-                      pointerEvents: 'none',
-                    }}
-                  />
-                )}
-
-                {/* Circle */}
-                <span
-                  className="relative"
-                  style={{
-                    display: 'block',
-                    width: 'clamp(32px, 5vw, 48px)',
-                    height: 'clamp(32px, 5vw, 48px)',
-                    borderRadius: '50%',
-                    backgroundColor: color.fill,
-                    border: isActive
-                      ? `2.5px solid ${color.shadow}`
-                      : '2px solid transparent',
-                    boxShadow: isActive
-                      ? `0 0 0 3px ${color.fill}88, 0 4px 18px ${color.shadow}66`
-                      : '0 2px 8px rgba(0,0,0,0.10)',
-                    animation: isActive
-                      ? 'swatchBreathe 2.4s ease-in-out infinite'
-                      : undefined,
-                    transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+              return (
+                <button
+                  key={product.node.id}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setActiveProductIndex(idx);
                   }}
-                />
-                
-                {/* Color name under circle - only show when active */}
-                {isActive && (
-                  <span
+                  title={colorName || product.node.title}
+                  className="flex flex-col items-center gap-1.5 sm:gap-2 flex-shrink-0 bg-transparent border-none cursor-pointer"
+                  style={{ 
+                    WebkitTapHighlightColor: 'transparent',
+                    width: 'clamp(50px, 8vw, 70px)',
+                  }}
+                >
+                  {/* Circle wrapper with fixed dimensions */}
+                  <div
                     style={{
-                      fontSize: '9px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
-                      fontWeight: 500,
-                      color: '#000000',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
-                      maxWidth: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 'clamp(36px, 6vw, 52px)',
+                      height: 'clamp(36px, 6vw, 52px)',
+                      flexShrink: 0,
                     }}
                   >
-                    {colorName || product.node.title.split(' ')[0]}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+                    {/* Circle - always same size, only border and shadow change */}
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: '50%',
+                        backgroundColor: color.fill,
+                        border: isActive ? `2.5px solid ${color.shadow}` : '2.5px solid transparent',
+                        boxShadow: isActive
+                          ? `0 0 0 2px ${color.shadow}40`
+                          : 'none',
+                        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+                      }}
+                    />
+                  </div>
+
+                  {/* Color name with fixed height */}
+                  <div 
+                    style={{
+                      height: '24px',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {isActive && (
+                      <span 
+                        style={{
+                          fontSize: 'clamp(9px, 2vw, 11px)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.08em',
+                          fontWeight: 500,
+                          color: '#000000',
+                          textAlign: 'center',
+                          lineHeight: 1.2,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {colorName || product.node.title.split(' ')[0]}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </motion.div>
     </section>

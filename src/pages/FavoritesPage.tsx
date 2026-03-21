@@ -195,7 +195,7 @@ export default function FavoritesPage() {
                   whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/store')}
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white text-sm font-bold tracking-[0.2em] uppercase hover:bg-black transition-all shadow-lg"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white text-sm font-bold tracking-[0.2em] uppercase hover:bg-black transition-all shadow-lg"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   Start Shopping
@@ -289,7 +289,7 @@ export default function FavoritesPage() {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleAddToCart(item)}
                             disabled={isCartLoading}
-                            className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all disabled:opacity-50"
+                            className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all disabled:opacity-50"
                           >
                             {isCartLoading ? (
                               <Loader2 className="w-3.5 h-3.5 animate-spin" />

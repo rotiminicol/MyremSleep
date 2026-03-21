@@ -37,6 +37,7 @@ import { FacebookPixel } from "./components/FacebookPixel";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import { CookieConsent } from "./components/CookieConsent";
 import { StoreOfferPopup } from "./components/store/StoreOfferPopup";
+import ScrollToTop from "./components/ScrollToTop";
 import { useCartSync } from "./hooks/useCartSync";
 import { useCustomerStore } from "./stores/customerStore";
 import { useFavoritesStore } from "./stores/favoritesStore";
@@ -77,6 +78,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <CookieConsent />
         <StoreOfferPopup />
         <GoogleAnalytics />
