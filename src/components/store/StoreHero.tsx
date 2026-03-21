@@ -30,7 +30,7 @@ function ReviewSlider() {
   const duplicated = useMemo(() => [...displayReviews, ...displayReviews], [displayReviews]);
 
   return (
-    <div className="w-full bg-[#f2e9dc] py-4 overflow-hidden">
+    <div className="w-full bg-[#f2e9dc] md:bg-primary py-4 overflow-hidden">
       <div className="relative">
         <motion.div
           className="flex gap-6 px-4"
@@ -48,7 +48,7 @@ function ReviewSlider() {
         >
           {duplicated.map((review, index) => (
             <div key={index} className="flex-shrink-0">
-              <p className="text-gray-700 text-sm font-body">
+              <p className="text-gray-700 md:text-white text-sm font-body">
                 "{review.review}" — <span className="font-semibold not-italic font-body">{review.name}</span>
               </p>
             </div>
