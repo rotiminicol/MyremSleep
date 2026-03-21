@@ -98,15 +98,15 @@ export function StoreFooter() {
   ];
 
   return (
-    <footer className="bg-[#f2e9dc] border-t border-[#e0dbd5] pt-16 pb-8" style={{ fontFamily: 'Montserrat' }}>
+    <footer className="bg-primary text-white border-t border-[#e0dbd5] pt-16 pb-8" style={{ fontFamily: 'Montserrat' }}>
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 mb-16">
           {/* Newsletter Section */}
           <div className="lg:col-span-2">
-            <h3 className="text-sm font-medium text-gray-800 mb-4 tracking-wide" style={{ fontFamily: 'Montserrat' }}>
+            <h3 className="text-sm font-medium text-white mb-4 tracking-wide" style={{ fontFamily: 'Montserrat' }}>
               Keep in touch
             </h3>
-            <p className="text-sm text-gray-600 mb-6 leading-relaxed" style={{ fontFamily: 'Montserrat' }}>
+            <p className="text-sm text-gray-300 mb-6 leading-relaxed" style={{ fontFamily: 'Montserrat' }}>
               Sign up to our newsletter and receive a 10% discount on your next order.
             </p>
             <form onSubmit={handleNewsletterSubmit} className="flex flex-col gap-3">
@@ -115,14 +115,14 @@ export function StoreFooter() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full max-w-xs px-4 py-3 border border-gray-300 bg-transparent text-sm focus:outline-none focus:border-gray-500 transition-colors"
+                className="w-full max-w-xs px-4 py-3 border border-gray-400 bg-transparent text-white placeholder:text-gray-400 text-sm focus:outline-none focus:border-gray-300 transition-colors"
                 style={{ fontFamily: 'Montserrat' }}
                 required
               />
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-max text-sm text-gray-600 hover:text-gray-900 underline underline-offset-4 transition-colors disabled:opacity-50"
+                className="w-max text-sm text-gray-300 hover:text-white underline underline-offset-4 transition-colors disabled:opacity-50"
                 style={{ fontFamily: 'Montserrat' }}
               >
                 {isSubmitting ? 'Subscribing...' : 'Subscribe'}
@@ -133,7 +133,7 @@ export function StoreFooter() {
           {/* Footer Links */}
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h3 className="text-sm font-medium text-gray-800 mb-4 tracking-wide" style={{ fontFamily: 'Montserrat' }}>
+              <h3 className="text-sm font-medium text-white mb-4 tracking-wide" style={{ fontFamily: 'Montserrat' }}>
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -144,7 +144,7 @@ export function StoreFooter() {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                        className="text-sm text-gray-300 hover:text-white transition-colors"
                         style={{ fontFamily: 'Montserrat' }}
                       >
                         {link.label}
@@ -152,7 +152,7 @@ export function StoreFooter() {
                     ) : (
                       <Link
                         to={link.href}
-                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                        className="text-sm text-gray-300 hover:text-white transition-colors"
                         style={{ fontFamily: 'Montserrat' }}
                       >
                         {link.label}
@@ -167,9 +167,9 @@ export function StoreFooter() {
 
         {/* Copyright and Payment Methods */}
         <div className="pt-8 border-t border-[#e0dbd5] flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-xs text-gray-500" style={{ fontFamily: 'Montserrat' }}>
-            © 2026 Remsleep.{' '}
-            <Link to="/blog" className="hover:underline" style={{ fontFamily: 'Montserrat' }}>
+          <p className="text-xs text-white" style={{ fontFamily: 'Montserrat' }}>
+            2026 Remsleep.{' '}
+            <Link to="/blog" className="hover:underline text-white" style={{ fontFamily: 'Montserrat' }}>
               Blog
             </Link>{' '}
             • All rights reserved.
@@ -180,7 +180,7 @@ export function StoreFooter() {
             {paymentMethods.map((method) => (
               <div
                 key={method.name}
-                className="bg-white border border-gray-200 rounded px-2 py-1 h-8 flex items-center justify-center shadow-sm"
+                className="bg-white/10 backdrop-blur-sm border border-gray-600 rounded px-2 py-1 h-8 flex items-center justify-center shadow-sm"
                 title={method.name}
               >
                 <img

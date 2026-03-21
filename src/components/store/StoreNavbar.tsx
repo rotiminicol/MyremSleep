@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, Menu, X, Heart, User, ChevronLeft, ChevronRight, Phone, ShoppingBag, Globe, Check, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUserCart } from '@/stores/userCartStore';
@@ -9,6 +9,37 @@ import { useCustomerStore } from '@/stores/customerStore';
 import { FavoritesDrawer } from './FavoritesDrawer';
 import { CartDrawer } from './CartDrawer';
 import { AccountDrawer } from './AccountDrawer';
+import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
+import { MOCK_PRODUCTS } from '@/lib/mock-products';
+
+// Color hex mapping for search
+const COLOR_HEX: Record<string, string> = {
+  'Winter Cloud': '#F5F5F7',
+  'Desert Whisperer': '#E5DACE',
+  'Buttermilk': '#FFF4D2',
+  'Clay': '#D2C4B5',
+  'Clay Blush': '#D9A891',
+  'Clayblush Pink': '#D9A891',
+  'Pebble Haze': '#A3A3A3',
+  'Desert Sand': '#E2CA9D',
+  'Cinnamon Bark': '#8B4513',
+};
+
+// Material and attribute keywords for search
+const SEARCH_KEYWORDS = {
+  materials: ['cotton', 'egyptian cotton', 'sateen', 'satin', 'silk', 'linen', 'bamboo'],
+  colors: Object.keys(COLOR_HEX),
+  productTypes: ['bedding', 'bundle', 'duvet', 'sheets', 'pillowcase', 'pillowcases'],
+  attributes: ['thread count', '300', 'egyptian', 'soft', 'luxury', 'hotel', 'premium', 'new']
+};
+
+function extractColorFromTitle(title: string): string | null {
+  const colorNames = Object.keys(COLOR_HEX);
+  for (const color of colorNames) {
+    if (title.toLowerCase().includes(color.toLowerCase())) return color;
+  }
+  return null;
+}
 
 const announcements = [
   'Sign up for 10% and Newsletter',
@@ -54,6 +85,10 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<ShopifyProduct[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [allProducts, setAllProducts] = useState<ShopifyProduct[]>([]);
+  const navigate = useNavigate();
 
   // Use currency store
   const { selectedCurrency, setSelectedCurrency } = useCurrencyStore();
@@ -185,12 +220,11 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
   ];
 
   const popularSearches = [
-    'Silk Pillowcase',
-    'Linen Duvet',
-    'Bamboo Sheets',
-    'Weighted Mask',
-    'Lavender Eye Pillow',
-    'Clay Bedding'
+    'Winter Cloud',
+    'Desert Whisperer',
+    'Buttermilk',
+    'Clay Blush',
+    'Pebble Haze'
   ];
 
   const handleSearchToggle = () => {
@@ -204,6 +238,114 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
 
   const prevAnnouncement = () => {
     setCurrentAnnouncement((prev) => (prev - 1 + announcements.length) % announcements.length);
+  };
+
+  // Load products for search
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        console.log('Loading products from Shopify store...');
+        const data = await fetchProducts(50);
+        console.log('Shopify API response:', data);
+        
+        if (data && data.length > 0) {
+          console.log(`Successfully loaded ${data.length} products from Shopify`);
+          setAllProducts(data);
+        } else {
+          console.warn('No products returned from Shopify API');
+          setAllProducts([]);
+        }
+      } catch (error) {
+        console.error('Failed to load products from Shopify API:', error);
+        setAllProducts([]);
+      }
+    }
+    loadProducts();
+  }, []);
+
+  // Search functionality
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    const query = searchQuery.toLowerCase().trim();
+    console.log(`Searching for: "${query}"`);
+    
+    const filtered = allProducts.filter(product => {
+      const title = product.node.title.toLowerCase();
+      const description = product.node.description?.toLowerCase() || '';
+      const productType = product.node.productType?.toLowerCase() || '';
+      const handle = product.node.handle.toLowerCase();
+      
+      // Check color matches - handle both "clay blush" and "clayblush" variations
+      const colorName = extractColorFromTitle(product.node.title);
+      const colorMatch = colorName && (
+        colorName.toLowerCase().includes(query) || 
+        query.includes(colorName.toLowerCase().replace(' ', '')) ||
+        colorName.toLowerCase().replace(' ', '').includes(query)
+      );
+      
+      // Check material matches
+      const materialMatch = SEARCH_KEYWORDS.materials.some(mat => 
+        mat.includes(query) || query.includes(mat)
+      ) && (title.includes(query) || description.includes(query));
+      
+      // Check general text matches - handle space variations
+      const queryNoSpace = query.replace(' ', '');
+      const titleNoSpace = title.replace(' ', '');
+      const textMatch = title.includes(query) || 
+                       title.includes(queryNoSpace) ||
+                       description.includes(query) || 
+                       description.includes(queryNoSpace) ||
+                       productType.includes(query) || 
+                       productType.includes(queryNoSpace) ||
+                       handle.includes(query) || 
+                       handle.includes(queryNoSpace);
+      
+      // Check variant options
+      const variantMatch = product.node.variants.edges.some(variant => 
+        variant.node.title.toLowerCase().includes(query) ||
+        variant.node.title.toLowerCase().includes(queryNoSpace) ||
+        variant.node.selectedOptions.some(option => 
+          option.value.toLowerCase().includes(query) ||
+          option.value.toLowerCase().includes(queryNoSpace)
+        )
+      );
+      
+      console.log(`Product: ${product.node.title}`);
+      console.log(`- Color match: ${colorMatch}`);
+      console.log(`- Material match: ${materialMatch}`);
+      console.log(`- Text match: ${textMatch}`);
+      console.log(`- Variant match: ${variantMatch}`);
+      console.log(`- Variants: ${product.node.variants.edges.map(v => v.node.title).join(', ')}`);
+      
+      return colorMatch || materialMatch || textMatch || variantMatch;
+    });
+    
+    console.log(`Found ${filtered.length} products for "${query}"`);
+    setSearchResults(filtered);
+    setIsSearching(false);
+  }, [searchQuery, allProducts]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Don't navigate - just show search results in the overlay
+    // The search results are already displayed below the input
+  };
+
+  const handleSuggestionClick = (product: ShopifyProduct) => {
+    navigate(`/product/${product.node.handle}`);
+    setIsSearchOpen(false);
+    setSearchQuery('');
+  };
+
+  const handlePopularSearchClick = (term: string) => {
+    setSearchQuery(term);
+    // Don't navigate - just show search results in the overlay
+    // The search will automatically show results for this term
   };
 
   return (
@@ -653,15 +795,182 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
               <div className="max-w-[1400px] mx-auto px-6 py-12 flex justify-center text-center">
                 <div className="max-w-3xl w-full">
                   {/* Search Input */}
-                  <div className="relative mb-12">
+                  <form onSubmit={handleSearchSubmit} className="relative mb-12">
                     <input
                       autoFocus
                       type="text"
-                      placeholder="Search for ritual essentials..."
+                      placeholder="Search for colors, materials, products..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full bg-transparent border-b border-gray-300 py-5 text-center text-2xl font-light placeholder:text-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
                     />
-                    <Search className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                  </div>
+                    <button type="submit" className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-900 transition-colors">
+                      <Search className="h-5 w-5" />
+                    </button>
+                  </form>
+
+                  {/* Search Results */}
+                  {searchQuery && (
+                    <div className="text-left">
+                      {isSearching ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                        </div>
+                      ) : searchResults.length > 0 ? (
+                        <div className="space-y-4">
+                          <h3 className="text-sm font-medium text-gray-600 mb-4">
+                            {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
+                          </h3>
+                          {searchResults.slice(0, 5).map((product) => {
+                            const colorName = extractColorFromTitle(product.node.title);
+                            const colorHex = colorName ? COLOR_HEX[colorName] : null;
+                            
+                            return (
+                              <motion.button
+                                key={product.node.id}
+                                onClick={() => handleSuggestionClick(product)}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="w-full text-left group block p-4 rounded-lg hover:bg-[#e8e3dc] transition-colors"
+                              >
+                                <div className="flex items-center gap-4">
+                                  {colorHex && (
+                                    <div 
+                                      className="w-8 h-8 rounded-full border-2 border-gray-200 flex-shrink-0"
+                                      style={{ backgroundColor: colorHex }}
+                                    />
+                                  )}
+                                  <div className="flex-1">
+                                    <h4 className="text-lg font-medium text-gray-900 group-hover:text-gray-700 transition-colors">
+                                      {product.node.title}
+                                    </h4>
+                                    <p className="text-sm text-gray-500">
+                                      {product.node.productType} • {colorName || 'Various Colors'}
+                                    </p>
+                                    <p className="text-xs text-gray-400 mt-1 line-clamp-2">
+                                      {product.node.description}
+                                    </p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-sm font-medium text-gray-900">
+                                      £{parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2)}
+                                    </p>
+                                  </div>
+                                </div>
+                              </motion.button>
+                            );
+                          })}
+                          {searchResults.length > 5 && (
+                            <button
+                              onClick={handleSearchSubmit}
+                              className="w-full text-center py-3 text-sm text-gray-600 hover:text-gray-900 transition-colors border-t border-gray-200 mt-4"
+                            >
+                              View all {searchResults.length} results →
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <p className="text-gray-500 mb-6">No products found for "{searchQuery}"</p>
+                          <div className="space-y-2">
+                            <p className="text-sm text-gray-400">Try searching for:</p>
+                            <div className="flex flex-wrap gap-2 justify-center">
+                              {popularSearches.map((term) => (
+                                <button
+                                  key={term}
+                                  onClick={() => handlePopularSearchClick(term)}
+                                  className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                                >
+                                  {term}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Popular Searches when no query */}
+                  {!searchQuery && (
+                    <div className="text-center">
+                      <h3 className="text-sm font-medium text-gray-600 mb-6">Popular Searches</h3>
+                      <div className="flex flex-wrap gap-3 justify-center">
+                        {popularSearches.map((term) => (
+                          <button
+                            key={term}
+                            onClick={() => handlePopularSearchClick(term)}
+                            className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                          >
+                            {term}
+                          </button>
+                        ))}
+                      </div>
+                      
+                      <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+                        <div>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Colors</h4>
+                          <div className="space-y-2">
+                            {Object.entries(COLOR_HEX).slice(0, 3).map(([color, hex]) => (
+                              <button
+                                key={color}
+                                onClick={() => handlePopularSearchClick(color)}
+                                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                              >
+                                <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: hex }} />
+                                {color}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Materials</h4>
+                          <div className="space-y-2">
+                            {SEARCH_KEYWORDS.materials.slice(0, 3).map((material) => (
+                              <button
+                                key={material}
+                                onClick={() => handlePopularSearchClick(material)}
+                                className="block text-sm text-gray-600 hover:text-gray-900 transition-colors text-left"
+                              >
+                                {material}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Products</h4>
+                          <div className="space-y-2">
+                            {SEARCH_KEYWORDS.productTypes.slice(0, 3).map((type) => (
+                              <button
+                                key={type}
+                                onClick={() => handlePopularSearchClick(type)}
+                                className="block text-sm text-gray-600 hover:text-gray-900 transition-colors text-left"
+                              >
+                                {type}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Attributes</h4>
+                          <div className="space-y-2">
+                            {['300 Thread Count', 'Hotel Quality', 'OEKO-TEX'].map((attr) => (
+                              <button
+                                key={attr}
+                                onClick={() => handlePopularSearchClick(attr)}
+                                className="block text-sm text-gray-600 hover:text-gray-900 transition-colors text-left"
+                              >
+                                {attr}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               {/* Backdrop for closing */}

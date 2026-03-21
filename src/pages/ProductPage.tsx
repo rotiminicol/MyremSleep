@@ -26,26 +26,23 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-// Color hex values for swatches (used when Shopify doesn't provide swatch data)
-const COLOR_HEX: Record<string, string> = {
-  'Winter Cloud': '#F5F5F7',
-  'Desert Whisperer': '#E5DACE',
-  'Buttermilk': '#FFF4D2',
-  'Clay': '#D2C4B5',
-  'Clay Blush': '#D9A891',
-  'Clayblush Pink': '#D9A891',
-  'Pebble Haze': '#A3A3A3',
-  'Desert Sand': '#E2CA9D',
-  'Cinnamon Bark': '#8B4513',
+const COLOR_HEX: Record<string, { fill: string; shadow: string }> = {
+  'Winter Cloud':     { fill: '#F5F5F7', shadow: '#d0d0d4' },
+  'Desert Whisperer': { fill: '#E5DACE', shadow: '#c0b8ac' },
+  'Buttermilk':       { fill: '#FFF4D2', shadow: '#e0d4a0' },
+  'Clay':             { fill: '#D2C4B5', shadow: '#a89c8e' },
+  'Clay Blush':       { fill: '#D9A891', shadow: '#b07a63' },
+  'Clayblush Pink':   { fill: '#D9A891', shadow: '#b07a63' },
+  'Pebble Haze':      { fill: '#A3A3A3', shadow: '#787878' },
+  'Desert Sand':      { fill: '#E2CA9D', shadow: '#c0a870' },
+  'Cinnamon Bark':    { fill: '#8B4513', shadow: '#5a2c0a' },
 };
 
-// Map product title keywords to a color name for swatch matching
 function extractColorFromTitle(title: string): string | null {
   const colorNames = Object.keys(COLOR_HEX);
   for (const color of colorNames) {
     if (title.toLowerCase().includes(color.toLowerCase())) return color;
   }
-  // Also check partial matches
   if (title.toLowerCase().includes('winter cloud')) return 'Winter Cloud';
   if (title.toLowerCase().includes('buttermilk')) return 'Buttermilk';
   if (title.toLowerCase().includes('desert whisperer')) return 'Desert Whisperer';
@@ -139,14 +136,12 @@ export default function ProductPage() {
     return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
   };
 
-  // Fetch the product and all products (for color navigation)
   useEffect(() => {
     async function loadProduct() {
       if (!handle) return;
       setLoading(true);
       setSelectedImageIndex(0);
       try {
-        // Fetch current product and all products in parallel
         const [productData, allProductsData] = await Promise.all([
           storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle }),
           fetchProducts(20),
@@ -168,7 +163,6 @@ export default function ProductPage() {
           }
           setSelectedOptions(defaultOptions);
 
-          // Fetch recommendations
           try {
             const recs = await storefrontApiRequest(`
               query GetRecommendations($productId: ID!) {
@@ -182,14 +176,12 @@ export default function ProductPage() {
             if (recs?.data?.productRecommendations?.length > 0) {
               setRecommendedProducts(recs.data.productRecommendations.map((p: any) => ({ node: p })));
             } else {
-              // Use other products as recommendations
               setRecommendedProducts(allProductsData?.filter((p: ShopifyProduct) => p.node.handle !== handle).slice(0, 4) || []);
             }
           } catch {
             setRecommendedProducts(allProductsData?.filter((p: ShopifyProduct) => p.node.handle !== handle).slice(0, 4) || []);
           }
         } else {
-          // Fallback to mock
           const mockProduct = MOCK_PRODUCTS.find(p => p.node.handle === handle);
           if (mockProduct) {
             setProduct(mockProduct.node);
@@ -214,7 +206,6 @@ export default function ProductPage() {
     loadProduct();
   }, [handle]);
 
-  // Match variant when options change
   useEffect(() => {
     if (!product) return;
     const matchingVariant = product.variants.edges.find((v) =>
@@ -272,13 +263,33 @@ export default function ProductPage() {
     setSelectedImageIndex(prev => prev < total - 1 ? prev + 1 : 0);
   };
 
-  // Get current color name from product title
   const currentColorName = product ? extractColorFromTitle(product.title) : null;
+  const currentColor = currentColorName ? COLOR_HEX[currentColorName] : null;
 
-  // Navigate to another color product
+  // Instant color switch — swap product in state + sync URL without re-fetching
   const handleColorNavigation = (targetHandle: string) => {
-    navigate(`/product/${targetHandle}`);
+    if (targetHandle === handle) return;
+    const target = allProducts.find(p => p.node.handle === targetHandle);
+    if (target) {
+      setProduct(target.node);
+      setSelectedImageIndex(0);
+      const firstVariant = target.node.variants?.edges[0]?.node;
+      if (firstVariant) {
+        setSelectedVariant(firstVariant);
+        const opts: Record<string, string> = {};
+        firstVariant.selectedOptions.forEach((o: { name: string; value: string }) => {
+          opts[o.name] = o.value;
+        });
+        setSelectedOptions(opts);
+      }
+      navigate(`/product/${targetHandle}`, { replace: true });
+    } else {
+      navigate(`/product/${targetHandle}`);
+    }
   };
+
+  const [selectedSize, setSelectedSize] = useState<string>('Double');
+  const sizes = ['Double', 'King'];
 
   if (loading) {
     return (
@@ -313,15 +324,25 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen bg-[#f2e9dc]">
+      {/* Swatch keyframes */}
+      <style>{`
+        @keyframes swatchBreathe {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.09); }
+        }
+        @keyframes swatchRipple {
+          0%   { transform: scale(1);    opacity: 0.65; }
+          100% { transform: scale(1.85); opacity: 0; }
+        }
+      `}</style>
+
       <StoreNavbar hideOnScroll />
 
       <main className="max-w-[1600px] mx-auto">
-        {/* Main Product Grid — image left, info right */}
         <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] min-h-[90vh]">
 
           {/* ── LEFT: Gallery ── */}
           <div className="relative bg-[#f0ede8] flex flex-col">
-            {/* Thumbnails — vertical strip on the left edge */}
             {hasMultipleImages && (
               <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 flex flex-col gap-2">
                 {images.map((image, idx) => (
@@ -341,7 +362,6 @@ export default function ProductPage() {
               </div>
             )}
 
-            {/* Main image */}
             <div className="relative w-full lg:h-screen overflow-hidden group">
               <AnimatePresence mode="wait">
                 <motion.img
@@ -357,7 +377,6 @@ export default function ProductPage() {
                 />
               </AnimatePresence>
 
-              {/* Arrow navigation */}
               {hasMultipleImages && (
                 <>
                   <button
@@ -374,7 +393,6 @@ export default function ProductPage() {
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
-                  {/* Counter */}
                   <div className="absolute bottom-8 right-6 text-[10px] font-bold tracking-widest text-white/80 uppercase">
                     {selectedImageIndex + 1} / {images.length}
                   </div>
@@ -386,34 +404,28 @@ export default function ProductPage() {
           {/* ── RIGHT: Product Info ── */}
           <div className="flex flex-col justify-start py-10 px-8 lg:px-12 xl:px-14 overflow-y-auto lg:max-h-[100vh] bg-[#f2e9dc] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
-            {/* Brand + Category label */}
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-5">
               <span>REMsleep</span>
               <span>—</span>
               <span>Sateen Bundle Set</span>
             </div>
 
-            {/* Product title from Shopify */}
             <h1 className="font-serif text-[26px] md:text-[30px] leading-tight text-gray-900 tracking-tight">
               {product.title}
             </h1>
 
-            {/* Price from Shopify */}
             <p className="text-[20px] font-medium text-gray-900 mt-3">
               {formatPrice(parseFloat(selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount || '0'))}
             </p>
 
-            {/* Product description from Shopify */}
             {product.description && (
               <p className="text-sm text-gray-600 leading-relaxed mt-3">
                 {product.description}
               </p>
             )}
 
-            {/* Divider */}
             <div className="h-px bg-[#e0dbd5] my-6" />
 
-            {/* The essentials */}
             <div className="space-y-1.5">
               <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900 mb-3">The essentials</p>
               {[
@@ -430,75 +442,99 @@ export default function ProductPage() {
               ))}
             </div>
 
-            {/* Divider */}
             <div className="h-px bg-[#e0dbd5] my-6" />
 
-            {/* Options from Shopify (Size, etc.) — skip "Title" option with single "Default Title" */}
             <div className="space-y-6">
-              {product.options
-                .filter(o => !(o.name === 'Title' && o.values.length === 1 && o.values[0] === 'Default Title'))
-                .filter(o => !o.name.toLowerCase().includes('color') && !o.name.toLowerCase().includes('colour'))
-                .map((option) => (
-                  <div key={option.name}>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">{option.name}</span>
-                      {option.name.toLowerCase().includes('size') && (
-                        <button
-                          onClick={() => { setSizeDrawerPage(1); setOpenDrawer('size'); }}
-                          className="text-[11px] text-gray-500 hover:text-gray-900 underline underline-offset-4 decoration-gray-300 transition-colors"
-                        >
-                          Size guide
-                        </button>
+              {/* Size selector */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">Size</span>
+                  <button
+                    onClick={() => { setSizeDrawerPage(1); setOpenDrawer('size'); }}
+                    className="text-[11px] text-gray-500 hover:text-gray-900 underline underline-offset-4 decoration-gray-300 transition-colors"
+                  >
+                    Size guide
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={cn(
+                        "px-5 py-2.5 text-[12px] font-medium tracking-wide transition-all border",
+                        selectedSize === size
+                          ? "border-gray-900 bg-gray-900 text-white"
+                          : "border-[#e0dbd5] text-gray-500 hover:border-gray-400 hover:text-gray-900 bg-transparent"
                       )}
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {option.values.map((value) => {
-                        const isSelected = selectedOptions[option.name] === value;
-                        return (
-                          <button
-                            key={value}
-                            onClick={() => handleOptionChange(option.name, value)}
-                            className={cn(
-                              "px-5 py-2.5 text-[12px] font-medium tracking-wide transition-all border",
-                              isSelected
-                                ? "border-gray-900 bg-gray-900 text-white"
-                                : "border-[#e0dbd5] text-gray-500 hover:border-gray-400 hover:text-gray-900 bg-transparent"
-                            )}
-                          >
-                            {value}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-              {/* Color navigation between products */}
+              {/* ── Colour swatches ── */}
               {allProducts.length > 1 && (
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-900">
-                      Colour{currentColorName ? ` — ${currentColorName}` : ''}
+                    <span
+                      className="text-[11px] font-bold uppercase tracking-[0.18em] transition-colors duration-400"
+                      style={{ color: currentColor?.shadow ?? '#1a1a1a' }}
+                    >
+                      {currentColorName || 'Colour'}
                     </span>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+
+                  <div className="flex flex-wrap gap-1">
                     {allProducts.map((p) => {
                       const colorName = extractColorFromTitle(p.node.title);
+                      const color = colorName ? COLOR_HEX[colorName] : { fill: '#ccc', shadow: '#999' };
                       const isActive = p.node.handle === handle;
-                      const hex = colorName ? COLOR_HEX[colorName] : '#ccc';
+
                       return (
                         <button
                           key={p.node.id}
                           onClick={() => !isActive && handleColorNavigation(p.node.handle)}
                           title={colorName || p.node.title}
-                          className={cn(
-                            "h-8 w-11 border-2 transition-all relative",
-                            isActive
-                              ? "border-gray-900 ring-1 ring-gray-900 ring-offset-2"
-                              : "border-gray-200 hover:border-gray-400"
+                          className="relative p-2 bg-transparent border-none cursor-pointer flex-shrink-0"
+                          style={{ WebkitTapHighlightColor: 'transparent' }}
+                        >
+                          {/* Ripple ring — active only */}
+                          {isActive && (
+                            <span
+                              style={{
+                                position: 'absolute',
+                                inset: '8px',
+                                borderRadius: '50%',
+                                border: `2px solid ${color.fill}`,
+                                animation: 'swatchRipple 1.4s ease-out infinite',
+                                pointerEvents: 'none',
+                              }}
+                            />
                           )}
-                          style={{ backgroundColor: hex || '#ccc' }}
-                        />
+
+                          {/* Circle */}
+                          <span
+                            style={{
+                              display: 'block',
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '50%',
+                              backgroundColor: color.fill,
+                              border: isActive
+                                ? `2.5px solid ${color.shadow}`
+                                : '2px solid transparent',
+                              boxShadow: isActive
+                                ? `0 0 0 3px ${color.fill}88, 0 4px 18px ${color.shadow}66`
+                                : '0 2px 8px rgba(0,0,0,0.10)',
+                              animation: isActive
+                                ? 'swatchBreathe 2.4s ease-in-out infinite'
+                                : undefined,
+                              transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+                            }}
+                          />
+                        </button>
                       );
                     })}
                   </div>
@@ -506,7 +542,6 @@ export default function ProductPage() {
               )}
             </div>
 
-            {/* Divider */}
             <div className="h-px bg-[#e0dbd5] my-6" />
 
             {/* Quantity selector */}
@@ -556,7 +591,6 @@ export default function ProductPage() {
               </button>
             </div>
 
-            {/* Divider */}
             <div className="h-px bg-[#e0dbd5] my-6" />
 
             {/* Accordions */}
@@ -584,13 +618,12 @@ export default function ProductPage() {
               ))}
             </div>
 
-            {/* Bottom spacer */}
             <div className="h-8" />
           </div>
         </div>
       </main>
 
-      {/* Reviews section below the fold */}
+      {/* Reviews section */}
       <div className="bg-[#f2e9dc]">
         <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16">
           <ReviewsSection
@@ -655,7 +688,6 @@ export default function ProductPage() {
               className="fixed right-0 top-0 h-full w-full max-w-[480px] bg-white shadow-2xl z-50 overflow-y-auto scrollbar-hide"
             >
               <div className="p-8">
-                {/* Header */}
                 <div className="flex items-center justify-between mb-8">
                   {openDrawer !== 'size' && (
                     <h2 className="text-lg font-serif text-gray-900">
@@ -671,7 +703,6 @@ export default function ProductPage() {
                   </button>
                 </div>
 
-                {/* Drawer content */}
                 <div className="space-y-6">
                   {openDrawer === 'why-you-will-love-it' && (
                     <div className="space-y-8">

@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
 import { MOCK_PRODUCTS } from '@/lib/mock-products';
 import { Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const COLOR_HEX: Record<string, string> = {
-  'Winter Cloud': '#F5F5F7',
-  'Desert Whisperer': '#E5DACE',
-  'Buttermilk': '#FFF4D2',
-  'Clay': '#D2C4B5',
-  'Clay Blush': '#D9A891',
-  'Clayblush Pink': '#D9A891',
-  'Pebble Haze': '#A3A3A3',
-  'Desert Sand': '#E2CA9D',
-  'Cinnamon Bark': '#8B4513',
+const COLOR_HEX: Record<string, { fill: string; shadow: string }> = {
+  'Winter Cloud':     { fill: '#F5F5F7', shadow: '#d0d0d4' },
+  'Desert Whisperer': { fill: '#E5DACE', shadow: '#c0b8ac' },
+  'Buttermilk':       { fill: '#FFF4D2', shadow: '#e0d4a0' },
+  'Clay':             { fill: '#D2C4B5', shadow: '#a89c8e' },
+  'Clay Blush':       { fill: '#D9A891', shadow: '#b07a63' },
+  'Clayblush Pink':   { fill: '#D9A891', shadow: '#b07a63' },
+  'Pebble Haze':      { fill: '#A3A3A3', shadow: '#787878' },
+  'Desert Sand':      { fill: '#E2CA9D', shadow: '#c0a870' },
+  'Cinnamon Bark':    { fill: '#8B4513', shadow: '#5a2c0a' },
 };
 
 function extractColorFromTitle(title: string): string | null {
@@ -33,24 +33,38 @@ export function ProductGrid() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeProductIndex, setActiveProductIndex] = useState(0);
+  const breatheRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const idleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     async function loadProducts() {
       try {
+        console.log('Loading products from Shopify store...');
         const data = await fetchProducts(20);
+        console.log('Shopify API response:', data);
+        
         if (data && data.length > 0) {
+          console.log(`Successfully loaded ${data.length} products from Shopify`);
           setProducts(data);
         } else {
-          setProducts(MOCK_PRODUCTS.slice(0, 4));
+          console.warn('No products returned from Shopify API');
+          setProducts([]);
         }
       } catch (error) {
-        console.error('Failed to load products:', error);
-        setProducts(MOCK_PRODUCTS.slice(0, 4));
+        console.error('Failed to load products from Shopify API:', error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
     }
     loadProducts();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (breatheRef.current) clearInterval(breatheRef.current);
+      if (idleRef.current) clearTimeout(idleRef.current);
+    };
   }, []);
 
   if (loading) {
@@ -68,9 +82,26 @@ export function ProductGrid() {
   const activeProduct = products[activeProductIndex];
   const activeImage = activeProduct.node.images.edges[0]?.node;
   const activeColorName = extractColorFromTitle(activeProduct.node.title);
+  const activeColor = activeColorName ? COLOR_HEX[activeColorName] : null;
 
   return (
     <section className="pb-8 md:pb-12 md:px-6 bg-[#f2e9dc]">
+      {/* Keyframe styles injected once */}
+      <style>{`
+        @keyframes swatchBreathe {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.09); }
+        }
+        @keyframes swatchRipple {
+          0%   { transform: scale(1);   opacity: 0.65; }
+          100% { transform: scale(1.85); opacity: 0; }
+        }
+        @keyframes swatchIdlePulse {
+          0%, 100% { transform: scale(1); }
+          50%       { transform: scale(1.05); }
+        }
+      `}</style>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -111,7 +142,7 @@ export function ProductGrid() {
         </Link>
       </motion.div>
 
-      {/* Color Swatches Section — each swatch = a different Shopify product */}
+      {/* Color Swatches Section */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -123,10 +154,12 @@ export function ProductGrid() {
           One set. Eight seasonless colourways. Effortless calm
         </h3>
 
-        <div className="flex flex-nowrap justify-center gap-1.5 sm:gap-2 mb-2 md:mb-4 w-full max-w-full overflow-x-auto px-4 no-scrollbar">
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-2 md:mb-4 w-full max-w-full px-4">
           {products.map((product, idx) => {
             const colorName = extractColorFromTitle(product.node.title);
-            const hex = colorName ? COLOR_HEX[colorName] : '#ccc';
+            const color = colorName ? COLOR_HEX[colorName] : { fill: '#ccc', shadow: '#999' };
+            const isActive = activeProductIndex === idx;
+
             return (
               <button
                 key={product.node.id}
@@ -135,20 +168,68 @@ export function ProductGrid() {
                   e.stopPropagation();
                   setActiveProductIndex(idx);
                 }}
-                className={`flex-shrink-0 w-8 h-8 min-[375px]:w-9 min-[375px]:h-9 min-[425px]:w-10 min-[425px]:h-10 md:w-12 md:h-12 border transition-all duration-300 ${activeProductIndex === idx
-                  ? 'border-gray-900 scale-105 shadow-sm'
-                  : 'border-transparent hover:border-gray-300'
-                  }`}
                 title={colorName || product.node.title}
-                style={{ backgroundColor: hex }}
-              />
+                className="flex flex-col items-center gap-1.5 flex-shrink-0 bg-transparent border-none cursor-pointer"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+              >
+                {/* Ripple ring — only on active */}
+                {isActive && (
+                  <span
+                    key={`ripple-${idx}`}
+                    style={{
+                      position: 'absolute',
+                      inset: '8px',
+                      borderRadius: '50%',
+                      border: `2px solid ${color.fill}`,
+                      animation: 'swatchRipple 1.4s ease-out infinite',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                )}
+
+                {/* Circle */}
+                <span
+                  className="relative"
+                  style={{
+                    display: 'block',
+                    width: 'clamp(32px, 5vw, 48px)',
+                    height: 'clamp(32px, 5vw, 48px)',
+                    borderRadius: '50%',
+                    backgroundColor: color.fill,
+                    border: isActive
+                      ? `2.5px solid ${color.shadow}`
+                      : '2px solid transparent',
+                    boxShadow: isActive
+                      ? `0 0 0 3px ${color.fill}88, 0 4px 18px ${color.shadow}66`
+                      : '0 2px 8px rgba(0,0,0,0.10)',
+                    animation: isActive
+                      ? 'swatchBreathe 2.4s ease-in-out infinite'
+                      : undefined,
+                    transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+                  }}
+                />
+                
+                {/* Color name under circle - only show when active */}
+                {isActive && (
+                  <span
+                    style={{
+                      fontSize: '9px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      fontWeight: 500,
+                      color: '#000000',
+                      textAlign: 'center',
+                      lineHeight: '1.2',
+                      maxWidth: '60px',
+                    }}
+                  >
+                    {colorName || product.node.title.split(' ')[0]}
+                  </span>
+                )}
+              </button>
             );
           })}
         </div>
-
-        <span className="text-[11px] text-gray-900 font-sans uppercase tracking-[0.1em] font-medium min-h-[1.5em]">
-          {activeColorName || activeProduct.node.title}
-        </span>
       </motion.div>
     </section>
   );
