@@ -9,7 +9,7 @@ import { WriteReviewDrawer } from '@/components/WriteReviewDrawer';
 import { useUserCart } from '@/stores/userCartStore';
 import { useFavoritesStore } from '@/stores/favoritesStore';
 import { useCurrency } from '@/hooks/useCurrency';
-import { useProductReviews } from '@/hooks/useProductReviews';
+import { useProductReviews, useAllReviews } from '@/hooks/useProductReviews';
 import {
   Loader2,
   ChevronLeft,
@@ -41,19 +41,21 @@ const COLOR_HEX: Record<string, { fill: string; shadow: string }> = {
   'Cinnamon Bark': { fill: '#8B4513', shadow: '#5a2c0a' },
 };
 
-function extractColorFromTitle(title: string): string | null {
-  const colorNames = Object.keys(COLOR_HEX);
-  for (const color of colorNames) {
-    if (title.toLowerCase().includes(color.toLowerCase())) return color;
+function extractColorFromTitle(title: string, handle: string = ''): string | null {
+  const combined = (title + ' ' + handle.replace(/-/g, ' ')).toLowerCase();
+  
+  if (combined.includes('desert whisperer')) return 'Desert Whisperer';
+  if (combined.includes('buttermilk')) return 'Buttermilk';
+  if (combined.includes('clay blush') || combined.includes('clayblush')) return 'Clay Blush';
+  if (combined.includes('pebble haze')) return 'Pebble Haze';
+  if (combined.includes('cinnamon bark')) return 'Cinnamon Bark';
+  if (combined.includes('desert sand')) return 'Desert Sand';
+  if (combined.includes('clay') && !combined.includes('blush')) return 'Clay';
+  if (combined.includes('winter cloud')) return 'Winter Cloud';
+  
+  if (title.toLowerCase() === 'sateen bedding set' || handle === 'sateen-bedding-set') {
+    return 'Winter Cloud';
   }
-  if (title.toLowerCase().includes('winter cloud')) return 'Winter Cloud';
-  if (title.toLowerCase().includes('buttermilk')) return 'Buttermilk';
-  if (title.toLowerCase().includes('desert whisperer')) return 'Desert Whisperer';
-  if (title.toLowerCase().includes('desert sand')) return 'Desert Sand';
-  if (title.toLowerCase().includes('clay blush') || title.toLowerCase().includes('clayblush')) return 'Clay Blush';
-  if (title.toLowerCase().includes('pebble haze')) return 'Pebble Haze';
-  if (title.toLowerCase().includes('cinnamon bark')) return 'Cinnamon Bark';
-  if (title.toLowerCase().includes('clay') && !title.toLowerCase().includes('blush')) return 'Clay';
   return null;
 }
 
@@ -127,12 +129,15 @@ export default function ProductPage() {
   const { addFavorite, removeFavorite, isFavorited } = useFavoritesStore();
   const { formatPrice } = useCurrency();
 
+  const { data: reviewsStatsData } = useAllReviews(1, 1000);
+  const allReviews = reviewsStatsData?.reviews || [];
+  const totalCount = reviewsStatsData?.total_count || allReviews.length || 0;
+  const averageRating = allReviews.length > 0
+    ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length).toFixed(1)
+    : '0';
+
   const { data: reviewsData, isLoading: isReviewsLoading } = useProductReviews(handle || '', 1, 10);
   const reviews = reviewsData?.reviews || [];
-  const totalCount = reviewsData?.total_count || 0;
-  const averageRating = reviews.length > 0
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-    : '0';
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -266,7 +271,7 @@ export default function ProductPage() {
     setSelectedImageIndex(prev => prev < total - 1 ? prev + 1 : 0);
   };
 
-  const currentColorName = product ? extractColorFromTitle(product.title) : null;
+  const currentColorName = product ? extractColorFromTitle(product.title, handle || '') : null;
   const currentColor = currentColorName ? COLOR_HEX[currentColorName] : null;
 
   const handleColorNavigation = (targetHandle: string) => {
@@ -408,7 +413,9 @@ export default function ProductPage() {
           <div className="flex flex-col justify-start py-10 px-8 lg:px-12 xl:px-14 overflow-y-auto lg:max-h-[100vh] bg-[#F2EDE8] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
             <h1 className="text-[32px] md:text-[38px] leading-tight text-gray-900 font-bold tracking-tight mb-2">
-              Sateen Bedding Set - {currentColorName ? currentColorName.split('—')[0].trim() : (product?.title || '').split('—')[0].trim()}
+              {currentColorName && currentColorName !== 'Winter Cloud'
+                ? `Sateen Bedding Set - ${currentColorName}`
+                : `Sateen Bedding Set`}
             </h1>
 
             {/* Ratings */}
@@ -465,7 +472,7 @@ export default function ProductPage() {
 
                   <div className="flex flex-wrap gap-2.5 mb-4">
                     {allProducts.map((p) => {
-                      const colorName = extractColorFromTitle(p.node.title);
+                      const colorName = extractColorFromTitle(p.node.title, p.node.handle);
                       const color = colorName ? COLOR_HEX[colorName] : { fill: '#ccc', shadow: '#999' };
                       const isActive = p.node.handle === handle;
 
@@ -508,21 +515,24 @@ export default function ProductPage() {
                     Size guide
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={cn(
-                        "flex-1 min-w-[140px] py-4 text-[13px] font-bold tracking-[0.2em] uppercase transition-all border rounded-sm",
-                        selectedSize === size
-                          ? "border-primary bg-primary text-white"
-                          : "border-[#e0dbd5] text-gray-900 hover:border-gray-400 bg-white"
-                      )}
-                    >
-                      {size}
-                    </button>
-                  ))}
+                <div className="flex gap-4">
+                  <div className="flex-[4] flex gap-2">
+                    {sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={cn(
+                          "flex-1 py-4 text-[13px] font-bold tracking-[0.2em] uppercase transition-all border rounded-sm",
+                          selectedSize === size
+                            ? "border-primary bg-primary text-white"
+                            : "border-[#e0dbd5] text-gray-900 hover:border-gray-400 bg-white"
+                        )}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex-1 max-w-[64px]" />
                 </div>
               </div>
 
@@ -597,7 +607,8 @@ export default function ProductPage() {
             {/* Accordions */}
             <div className="space-y-0">
               {[
-                { id: 'why-you-will-love-it', label: 'Why You Will Love It' },
+                { id: 'essentials', label: 'THE ESSENTIALS' },
+                { id: 'why-it-works', label: 'WHY IT WORKS' },
                 { id: 'care', label: 'Care' },
                 { id: 'specifications', label: 'Specifications ' },
                 { id: 'returns', label: 'Return and Delivery ' },
@@ -692,7 +703,8 @@ export default function ProductPage() {
                 <div className="flex items-center justify-between mb-8">
                   {openDrawer !== 'size' && (
                     <h2 className="text-lg font-serif text-gray-900">
-                      {openDrawer === 'why-you-will-love-it' && 'Why You Will Love It'}
+                      {openDrawer === 'essentials' && 'THE ESSENTIALS'}
+                      {openDrawer === 'why-it-works' && 'WHY IT WORKS'}
                       {openDrawer === 'care' && 'Care'}
                       {openDrawer === 'specifications' && 'Specifications'}
                       {openDrawer === 'returns' && 'Return and Delivery'}
@@ -705,31 +717,33 @@ export default function ProductPage() {
                 </div>
 
                 <div className="space-y-6">
-                  {openDrawer === 'why-you-will-love-it' && (
+                  {openDrawer === 'essentials' && (
+                    <div className="space-y-8">
+                      <div className="space-y-6">
+                        {[
+                          { label: 'Material', content: '100% long-staple Egyptian cotton, selected for a longer, finer fibre that produces exceptional softness, natural breathability and the durability to age well rather than wear out.' },
+                          { label: 'Construction', content: 'Sateen weave, crafted by specialist textile manufacturers with generations of expertise in fine cotton. Woven so the fabric drapes cleanly, catches light softly and feels distinct from standard percale or cotton blends.' },
+                          { label: 'Thread count', content: '300, the point at which softness, breathability and longevity meet. Not inflated for marketing. Chosen because it performs.' },
+                          { label: 'What\'s included', content: 'Duvet cover, fitted sheet, 2 Oxford pillowcases and 2 plain pillowcases. Everything needed to make the room feel complete, in one set.' },
+                          { label: 'Certification', content: 'Produced at an OEKO-TEX® Standard 100 certified facility, independently tested and verified free from harmful substances.' },
+                        ].map((item) => (
+                          <div key={item.label} className="space-y-2 pb-4 border-b border-[#e0dbd5] last:border-0 last:pb-0">
+                            <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900">{item.label}</h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">{item.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {openDrawer === 'why-it-works' && (
                     <div className="space-y-8">
                       <p className="text-sm text-gray-600 leading-relaxed">
-                        Everything that meets your skin should feel right. We focus on Fabric, Finish and Function—so your bedroom feels calm not cluttered. Our Bedding bundles gives you the hotel-feel comfort, effortlessly. Our 100% cotton 300 thread count sateen bundle brings a smooth, breathable finish and a subtle sheen—so your bed looks instantly considered, every night.
+                        Egyptian cotton sateen sits differently to standard cotton. The longer the fibre, the smoother and more consistent the weave, which is why long-staple Egyptian cotton is the preferred choice for premium bedding. At 300 thread count, the fabric has enough density to feel considered without sacrificing breathability. The sateen finish means it drapes cleanly and resists the washed-out look that lower-quality white bedding develops over time.
                       </p>
-                      <div className="space-y-4 pt-2 border-t border-[#e0dbd5]">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Each Set Includes</h4>
-                        <p className="text-sm text-gray-600 leading-relaxed">A fitted sheet, duvet cover, and four pillowcases (2 Oxford + 2 plain).</p>
-                      </div>
-                      <div className="space-y-4">
-                        <ul className="space-y-3">
-                          {[
-                            '100% Egyptian cotton · 300 thread count sateen weave',
-                            'Bundle set = effortless styling (no overthinking, no add-ons)',
-                            'Four pillowcases included: 2 Oxford (framed, elevated look) + 2 plain (everyday rotation)',
-                            'Tonal colours that make layering easy',
-                            'Certified: OEKO-TEX® 100',
-                            'Made to last and gets softer with every wash',
-                          ].map((f) => (
-                            <li key={f} className="flex items-start gap-3 text-sm text-gray-600 leading-relaxed">
-                              <span className="mt-1.5 w-1 h-1 rounded-full bg-gray-400 flex-shrink-0" />{f}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      <p className="text-sm text-gray-600 leading-relaxed pt-4 border-t border-[#e0dbd5]">
+                        REMsleep Sateen Bundle Sets are designed to be lived with. They do not need careful handling or precise styling to look good. They settle naturally and hold their finish, wash after wash.
+                      </p>
                     </div>
                   )}
 
