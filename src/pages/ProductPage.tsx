@@ -43,7 +43,7 @@ const COLOR_HEX: Record<string, { fill: string; shadow: string }> = {
 
 function extractColorFromTitle(title: string, handle: string = ''): string | null {
   const combined = (title + ' ' + handle.replace(/-/g, ' ')).toLowerCase();
-  
+
   if (combined.includes('desert whisperer')) return 'Desert Whisperer';
   if (combined.includes('buttermilk')) return 'Buttermilk';
   if (combined.includes('clay blush') || combined.includes('clayblush')) return 'Clay Blush';
@@ -52,7 +52,7 @@ function extractColorFromTitle(title: string, handle: string = ''): string | nul
   if (combined.includes('desert sand')) return 'Desert Sand';
   if (combined.includes('clay') && !combined.includes('blush')) return 'Clay';
   if (combined.includes('winter cloud')) return 'Winter Cloud';
-  
+
   if (title.toLowerCase() === 'sateen bedding set' || handle === 'sateen-bedding-set') {
     return 'Winter Cloud';
   }
@@ -630,10 +630,44 @@ export default function ProductPage() {
               ))}
             </div>
 
-            <div className="h-8" />
+            <div className="h-8 md:h-8 mb-20 md:mb-0" />
           </div>
         </div>
       </main>
+
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#F2EDE8] border-t border-[#e0dbd5] px-6 py-4 z-50 flex items-stretch justify-between gap-6 shadow-[0_-12px_45px_rgba(0,0,0,0.12)] h-[100px]">
+        <div className="flex flex-col justify-between py-1">
+          <div className="flex flex-col">
+            <span className="text-[24px] font-bold text-gray-900 leading-none">
+              {formatPrice(parseFloat(selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount || '0') * quantity)}
+            </span>
+          </div>
+
+          <div className="flex items-center border border-[#e0dbd5] h-9 bg-[#F2EDE8] rounded-sm overflow-hidden min-w-[100px] w-fit font-sans">
+            <button
+              onClick={() => setQuantity(q => Math.max(1, q - 1))}
+              className="flex-1 h-full px-4 flex items-center justify-center hover:bg-gray-100 transition-colors border-r border-[#e0dbd5]"
+            >
+              <Minus className="w-3 h-3 text-gray-500" />
+            </button>
+            <span className="px-3 text-center text-[13px] font-bold text-gray-900">{quantity}</span>
+            <button
+              onClick={() => setQuantity(q => q + 1)}
+              className="flex-1 h-full px-4 flex items-center justify-center hover:bg-gray-100 transition-colors border-l border-[#e0dbd5]"
+            >
+              <Plus className="w-3 h-3 text-gray-500" />
+            </button>
+          </div>
+        </div>
+
+        <Button
+          onClick={handleAddToCart}
+          disabled={!selectedVariant?.availableForSale || isCartLoading}
+          className="h-full px-8 bg-primary text-white rounded-sm text-[13px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50 flex-1 max-w-[200px]"
+        >
+          {isCartLoading ? <Loader2 className="h-6 w-6 animate-spin text-white" /> : 'Add to Cart'}
+        </Button>
+      </div>
 
       {/* Reviews section */}
       <div id="reviews-section" className="bg-[#F2EDE8]">
