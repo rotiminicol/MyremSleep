@@ -413,9 +413,7 @@ export default function ProductPage() {
           <div className="flex flex-col justify-start py-10 px-8 lg:px-12 xl:px-14 overflow-y-auto lg:max-h-[100vh] bg-[#F2EDE8] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
             <h1 className="text-[32px] md:text-[38px] leading-tight text-gray-900 font-bold tracking-tight mb-2">
-              {currentColorName && currentColorName !== 'Winter Cloud'
-                ? `Sateen Bedding Set - ${currentColorName}`
-                : `Sateen Bedding Set`}
+              Sateen Bedding Set
             </h1>
 
             {/* Ratings */}
