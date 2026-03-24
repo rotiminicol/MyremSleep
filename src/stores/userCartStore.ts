@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { ShopifyProduct, storefrontApiRequest, normalizeShopifyCheckoutUrl } from '@/lib/shopify';
 import { useCustomerStore } from '@/stores/customerStore';
 import { supabase } from '@/integrations/supabase/client';
@@ -201,13 +202,14 @@ async function deleteCartFromDb(userId: string) {
 
 const createUserCartStore = (userId: string) => {
   return create<UserCartStore>()(
-    (set, get) => ({
-      items: [],
-      cartId: null,
-      checkoutUrl: null,
-      isLoading: false,
-      isSyncing: false,
-      isCartOpen: false,
+    persist(
+      (set, get) => ({
+        items: [],
+        cartId: null,
+        checkoutUrl: null,
+        isLoading: false,
+        isSyncing: false,
+        isCartOpen: false,
 
       loadFromDb: async () => {
         const dbCart = await loadCartFromDb(userId);
@@ -357,7 +359,16 @@ const createUserCartStore = (userId: string) => {
           set({ isSyncing: false });
         }
       },
-    })
+    }),
+    {
+      name: `cart-storage-${userId}`,
+      partialize: (state) => ({
+        items: state.items,
+        cartId: state.cartId,
+        checkoutUrl: state.checkoutUrl,
+      }),
+    }
+  )
   );
 };
 
@@ -384,8 +395,11 @@ export const useUserCart = () => {
         if (mergedUsers.has(userId)) return;
         mergedUsers.add(userId);
 
-        const guestStore = cartStores.get('guest');
-        if (!guestStore) return;
+        let guestStore = cartStores.get('guest');
+        if (!guestStore) {
+          guestStore = createUserCartStore('guest');
+          cartStores.set('guest', guestStore);
+        }
         const guestItems = guestStore.getState().items;
         if (guestItems.length === 0) return;
 

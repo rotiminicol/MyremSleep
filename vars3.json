@@ -1,0 +1,237 @@
+﻿[
+  {
+    "node": {
+      "title": "Sateen Bedding Set - Winter Cloud",
+      "handle": "sateen-bedding-set-winter-cloud",
+      "options": [
+        {
+          "name": "Bedding size",
+          "values": [
+            "Double",
+            "King"
+          ]
+        }
+      ],
+      "variants": {
+        "edges": [
+          {
+            "node": {
+              "title": "Double",
+              "selectedOptions": [
+                {
+                  "name": "Bedding size",
+                  "value": "Double"
+                }
+              ],
+              "price": {
+                "amount": "85.0"
+              }
+            }
+          },
+          {
+            "node": {
+              "title": "King",
+              "selectedOptions": [
+                {
+                  "name": "Bedding size",
+                  "value": "King"
+                }
+              ],
+              "price": {
+                "amount": "97.0"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "node": {
+      "title": "Sateen Bedding Set - Dessert Whisperer",
+      "handle": "sateen-bedding-set-desert-whisperer",
+      "options": [
+        {
+          "name": "Bedding size",
+          "values": [
+            "Double",
+            "King"
+          ]
+        }
+      ],
+      "variants": {
+        "edges": [
+          {
+            "node": {
+              "title": "Double",
+              "selectedOptions": [
+                {
+                  "name": "Bedding size",
+                  "value": "Double"
+                }
+              ],
+              "price": {
+                "amount": "85.0"
+              }
+            }
+          },
+          {
+            "node": {
+              "title": "King",
+              "selectedOptions": [
+                {
+                  "name": "Bedding size",
+                  "value": "King"
+                }
+              ],
+              "price": {
+                "amount": "97.0"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "node": {
+      "title": "Sateen Bedding Set - Buttermilk",
+      "handle": "sateen-bedding-set-buttermilk",
+      "options": [
+        {
+          "name": "Bedding size",
+          "values": [
+            "Double",
+            "King"
+          ]
+        }
+      ],
+      "variants": {
+        "edges": [
+          {
+            "node": {
+              "title": "Double",
+              "selectedOptions": [
+                {
+                  "name": "Bedding size",
+                  "value": "Double"
+                }
+              ],
+              "price": {
+                "amount": "85.0"
+              }
+            }
+          },
+          {
+            "node": {
+              "title": "King",
+              "selectedOptions": [
+                {
+                  "name": "Bedding size",
+                  "value": "King"
+                }
+              ],
+              "price": {
+                "amount": "97.0"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "node": {
+      "title": "Sateen Bedding Set - Clayblush Pink",
+      "handle": "sateen-bedding-set-clayblush-pink",
+      "options": [
+        {
+          "name": "Bedding size",
+          "values": [
+            "King",
+            "Double"
+          ]
+        }
+      ],
+      "variants": {
+        "edges": [
+          {
+            "node": {
+              "title": "King",
+              "selectedOptions": [
+                {
+                  "name": "Bedding size",
+                  "value": "King"
+                }
+              ],
+              "price": {
+                "amount": "95.0"
+              }
+            }
+          },
+          {
+            "node": {
+              "title": "Double",
+              "selectedOptions": [
+                {
+                  "name": "Bedding size",
+                  "value": "Double"
+                }
+              ],
+              "price": {
+                "amount": "87.0"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "node": {
+      "title": "Sateen Bedding Set - Pebble Haze",
+      "handle": "sateen-bedding-set-pebble-haze",
+      "options": [
+        {
+          "name": "Bedding Size",
+          "values": [
+            "Double",
+            "King"
+          ]
+        }
+      ],
+      "variants": {
+        "edges": [
+          {
+            "node": {
+              "title": "Double",
+              "selectedOptions": [
+                {
+                  "name": "Bedding Size",
+                  "value": "Double"
+                }
+              ],
+              "price": {
+                "amount": "87.0"
+              }
+            }
+          },
+          {
+            "node": {
+              "title": "King",
+              "selectedOptions": [
+                {
+                  "name": "Bedding Size",
+                  "value": "King"
+                }
+              ],
+              "price": {
+                "amount": "95.0"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+]

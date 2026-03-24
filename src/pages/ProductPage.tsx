@@ -360,30 +360,23 @@ export default function ProductPage() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover cursor-grab active:cursor-grabbing"
+                  draggable={false}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(e, { offset }) => {
+                    if (offset.x < -50) {
+                      handleNextImage();
+                    } else if (offset.x > 50) {
+                      handlePreviousImage();
+                    }
+                  }}
                 />
               </AnimatePresence>
 
               {hasMultipleImages && (
                 <>
-                  {/* Circular arrow — left */}
-                  <button
-                    onClick={handlePreviousImage}
-                    className="absolute left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white text-gray-900 rounded-full transition-all shadow-md hover:scale-110 active:scale-95"
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-
-                  {/* Circular arrow — right */}
-                  <button
-                    onClick={handleNextImage}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white text-gray-900 rounded-full transition-all shadow-md hover:scale-110 active:scale-95"
-                    aria-label="Next image"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-
                   {/* Bottom thumbnail strip */}
                   <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 px-6 w-full justify-center overflow-x-auto no-scrollbar">
                     {images.slice(0, 4).map((image, idx) => {
@@ -515,20 +508,26 @@ export default function ProductPage() {
                 </div>
                 <div className="flex gap-4">
                   <div className="flex-[4] flex gap-2">
-                    {sizes.map((size) => (
+                    {sizes.map((size) => {
+                      const sizeOptionName = product.options.find(o => o.name.toLowerCase().includes('size'))?.name || 'Size';
+                      const isSelected = selectedOptions[sizeOptionName] === size || selectedSize === size;
+                      return (
                       <button
                         key={size}
-                        onClick={() => setSelectedSize(size)}
+                        onClick={() => {
+                          setSelectedSize(size);
+                          handleOptionChange(sizeOptionName, size);
+                        }}
                         className={cn(
                           "flex-1 py-4 text-[13px] font-bold tracking-[0.2em] uppercase transition-all border rounded-sm",
-                          selectedSize === size
+                          isSelected
                             ? "border-primary bg-primary text-white"
                             : "border-[#e0dbd5] text-gray-900 hover:border-gray-400 bg-white"
                         )}
                       >
                         {size}
                       </button>
-                    ))}
+                    )})}
                   </div>
                   <div className="flex-1 max-w-[64px]" />
                 </div>
@@ -538,7 +537,12 @@ export default function ProductPage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-[#8e8e8e]">Quantity</span>
-                  <span className="text-[11px] font-bold text-[#8e8e8e] uppercase tracking-widest">In stock</span>
+                  <span className={cn(
+                    "text-[11px] font-bold uppercase tracking-widest",
+                    selectedVariant?.availableForSale === false ? "text-red-500" : "text-[#8e8e8e]"
+                  )}>
+                    {selectedVariant?.availableForSale === false ? 'Out of stock' : 'In stock'}
+                  </span>
                 </div>
                 <div className="flex items-center w-full max-w-[160px] h-14 border border-[#e0dbd5] rounded-xl overflow-hidden bg-white shadow-sm">
                   <button
@@ -663,7 +667,9 @@ export default function ProductPage() {
           disabled={!selectedVariant?.availableForSale || isCartLoading}
           className="h-full px-8 bg-primary text-white rounded-sm text-[13px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50 flex-1 max-w-[200px]"
         >
-          {isCartLoading ? <Loader2 className="h-6 w-6 animate-spin text-white" /> : 'Add to Cart'}
+          {isCartLoading ? <Loader2 className="h-6 w-6 animate-spin text-white" /> : (
+            !selectedVariant?.availableForSale ? 'Out of Stock' : 'Add to Cart'
+          )}
         </Button>
       </div>
 

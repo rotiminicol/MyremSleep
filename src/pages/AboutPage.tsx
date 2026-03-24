@@ -59,14 +59,7 @@ export default function AboutPage() {
         }
     ];
 
-    const milestones = [
-        { year: "2020", title: "The Beginning", description: "Founded with a vision to revolutionize sleep" },
-        { year: "2021", title: "First Collection", description: "Launched our signature silk bedding line" },
-        { year: "2022", title: "Sustainable Switch", description: "Achieved 100% eco-friendly packaging" },
-        { year: "2023", title: "Global Reach", description: "Expanded to 15+ countries worldwide" },
-        { year: "2024", title: "Innovation Award", description: "Recognized for sleep technology innovation" },
-        { year: "2025", title: "Community", description: "10,000+ happy sleepers and growing" }
-    ];
+
 
     return (
         <div ref={containerRef} className="min-h-screen bg-[#F2EDE8] flex flex-col">
@@ -237,52 +230,7 @@ export default function AboutPage() {
                     </div>
                 </section>
 
-                {/* Journey Timeline */}
-                <section className="px-6 max-w-[1200px] mx-auto mb-32">
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        viewport={{ once: true }}
-                        className="text-center mb-16"
-                    >
-                        <span className="text-sm tracking-[0.3em] text-[#8f877d] mb-4 block">OUR JOURNEY</span>
-                        <h2 className="text-4xl md:text-5xl font-serif text-gray-900">Milestones</h2>
-                    </motion.div>
 
-                    <div className="relative">
-                        {/* Timeline line */}
-                        <div className="absolute left-1/2 transform -translate-x-1/2 w-px h-full bg-[#d8d1c8]" />
-                        
-                        <div className="space-y-24">
-                            {milestones.map((milestone, index) => (
-                                <motion.div
-                                    key={index}
-                                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.6 }}
-                                    viewport={{ once: true, margin: "-100px" }}
-                                    className={`relative flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
-                                >
-                                    {/* Content */}
-                                    <div className={`w-1/2 ${index % 2 === 0 ? 'pr-12 text-right' : 'pl-12'}`}>
-                                        <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
-                                            <span className="text-sm font-mono text-[#8f877d]">{milestone.year}</span>
-                                            <h3 className="text-xl font-serif text-gray-900 mt-2">{milestone.title}</h3>
-                                            <p className="text-gray-600 mt-2">{milestone.description}</p>
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Center dot */}
-                                    <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-[#c2b9ae] rounded-full border-4 border-[#F2EDE8]" />
-                                    
-                                    {/* Empty space for other side */}
-                                    <div className="w-1/2" />
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
 
                 {/* CTA Section */}
                 <section className="px-6 max-w-[1200px] mx-auto mb-16">
