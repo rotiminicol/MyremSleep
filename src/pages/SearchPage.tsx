@@ -1,24 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
-import { MOCK_PRODUCTS } from '@/lib/mock-products';
+import { COLOR_HEX, extractColorFromTitle } from '@/lib/product-colors';
 import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { StoreFooter } from '@/components/store/StoreFooter';
 import { Loader2, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-// Color hex mapping for search results
-const COLOR_HEX: Record<string, string> = {
-  'Winter Cloud': '#F5F5F7',
-  'Desert Whisperer': '#E5DACE',
-  'Buttermilk': '#FFF4D2',
-  'Clay': '#D2C4B5',
-  'Clay Blush': '#D9A891',
-  'Clayblush Pink': '#D9A891',
-  'Pebble Haze': '#A3A3A3',
-  'Desert Sand': '#E2CA9D',
-  'Cinnamon Bark': '#8B4513',
-};
 
 // Material and attribute keywords for search
 const SEARCH_KEYWORDS = {
@@ -27,14 +14,6 @@ const SEARCH_KEYWORDS = {
   productTypes: ['bedding', 'bundle', 'duvet', 'sheets', 'pillowcase', 'pillowcases'],
   attributes: ['thread count', '300', 'egyptian', 'soft', 'luxury', 'hotel', 'premium']
 };
-
-function extractColorFromTitle(title: string): string | null {
-  const colorNames = Object.keys(COLOR_HEX);
-  for (const color of colorNames) {
-    if (title.toLowerCase().includes(color.toLowerCase())) return color;
-  }
-  return null;
-}
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
@@ -218,7 +197,7 @@ export default function SearchPage() {
                         <div className="absolute top-4 right-4">
                           <div 
                             className="w-8 h-8 rounded-full border-2 border-white shadow-md"
-                            style={{ backgroundColor: colorHex }}
+                            style={{ backgroundColor: colorHex.fill }}
                             title={colorName}
                           />
                         </div>
@@ -305,7 +284,7 @@ export default function SearchPage() {
                     >
                       <div 
                         className="w-6 h-6 rounded-full border border-gray-300 flex-shrink-0" 
-                        style={{ backgroundColor: hex }} 
+                        style={{ backgroundColor: hex.fill }} 
                       />
                       {color}
                     </Link>

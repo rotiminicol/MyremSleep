@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, X } from 'lucide-react';
 import { useUserCart } from '@/stores/userCartStore';
-import { normalizeShopifyCheckoutUrl } from '@/lib/shopify';
+import { normalizeShopifyCheckoutUrl, ShopifyProduct } from '@/lib/shopify';
+import { COLOR_HEX, extractColorFromTitle } from '@/lib/product-colors';
 
 import { useCurrency } from '@/hooks/useCurrency';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -18,50 +19,39 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-// Color mappings for cart display
-const COLOR_MAP: Record<string, string> = {
-  'Winter Cloud': '/products/midnight-silk.png',
-  'Desert Whisperer': '/products/linen-duvet-clay.png',
-  'Buttermilk': '/products/cotton-quilt-sandstone.png',
-  'Clay': '/products/bamboo-sheets-grey.png',
-  'Clay Blush': '/products/lavender-eye-pillow.png',
-  'Pebble Haze': '/products/sleep-mask-indigo.png',
-  'Desert Sand': '/products/midnight-silk.png',
-  'Cinnamon Bark': '/cinamon3.png',
-};
 
 const COLOR_DESCRIPTIONS: Record<string, { title: string; description: string }> = {
   'Winter Cloud': {
-    title: 'Winter Cloud — Crisp white. Soft glow. Always polished.',
+    title: 'Winter Cloud  Crisp white. Soft glow. Always polished.',
     description: 'A bright, clean white with a hotel-fresh finish. In sateen it looks luminous (never flat) and makes every room feel lighter.'
   },
   'Buttermilk': {
-    title: 'Buttermilk — Warm cream. Quiet luxury.',
-    description: 'A creamy off-white with a gentle warmth. Sateen makes it look rich and smooth—like classic white, upgraded.'
+    title: 'Buttermilk  Warm cream. Quiet luxury.',
+    description: 'A creamy off-white with a gentle warmth. Sateen makes it look rich and smoothlike classic white, upgraded.'
   },
   'Desert Whisperer': {
-    title: 'Desert Whisperer — Sun-washed nude. Calm, not sweet.',
+    title: 'Desert Whisperer  Sun-washed nude. Calm, not sweet.',
     description: 'A blush-sand neutral that warms a room without stealing focus. Sateen adds a refined, clean sheen.'
   },
   'Desert Sand': {
-    title: 'Desert Sand — The anchor neutral. Effortlessly styled.',
-    description: 'A modern beige with balance and depth—made for layering. Always looks intentional, even on low-effort days.'
+    title: 'Desert Sand  The anchor neutral. Effortlessly styled.',
+    description: 'A modern beige with balance and depthmade for layering. Always looks intentional, even on low-effort days.'
   },
   'Clay Blush': {
-    title: 'Clayblush Pink — Muted blush. Modern and grown.',
-    description: 'A dusty rose-clay neutral—soft, earthy, quietly romantic. In sateen it reads smooth and elevated, not shiny.'
+    title: 'Clayblush Pink  Muted blush. Modern and grown.',
+    description: 'A dusty rose-clay neutralsoft, earthy, quietly romantic. In sateen it reads smooth and elevated, not shiny.'
   },
   'Pebble Haze': {
-    title: 'Pebble Haze — Cool grey. Clean calm.',
-    description: 'A mid-grey with an architectural feel. Sateen gives it depth and softness—minimal, but never cold.'
+    title: 'Pebble Haze  Cool grey. Clean calm.',
+    description: 'A mid-grey with an architectural feel. Sateen gives it depth and softnessminimal, but never cold.'
   },
   'Cinnamon Bark': {
-    title: 'Cinnamon Bark — Deep brown. Grounded. Inviting.',
+    title: 'Cinnamon Bark  Deep brown. Grounded. Inviting.',
     description: 'A rich, earthy brown that makes the room feel intentional. Sateen adds a soft sheen and tailored drape.'
   },
   'Clay': {
-    title: 'Clay — Soft clay. Lightly sun-warmed. Calm and clean.',
-    description: 'A pale clay with no pink in it—just a quiet warmth that feels natural and modern. It brightens the room without turning cold.'
+    title: 'Clay  Soft clay. Lightly sun-warmed. Calm and clean.',
+    description: 'A pale clay with no pink in itjust a quiet warmth that feels natural and modern. It brightens the room without turning cold.'
   }
 };
 
@@ -190,13 +180,12 @@ export function CartDrawer() {
                       )?.value;
                       
                       // Get color-specific title and image
-                      const colorTitle = selectedColor && COLOR_DESCRIPTIONS[selectedColor] 
-                        ? COLOR_DESCRIPTIONS[selectedColor].title 
+                      const colorName = selectedColor || extractColorFromTitle(item.product.node.title, item.product.node.handle);
+                      const colorTitle = colorName 
+                        ? `${colorName}  ${COLOR_HEX[colorName]?.fill || ''}` // Fallback logic
                         : item.product.node.title;
                       
-                      const colorImage = selectedColor && COLOR_MAP[selectedColor]
-                        ? COLOR_MAP[selectedColor]
-                        : item.product.node.images?.edges?.[0]?.node?.url;
+                      const colorImage = item.product.node.images?.edges?.[0]?.node?.url;
 
                       return (
                         <div

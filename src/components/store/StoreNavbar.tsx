@@ -10,20 +10,8 @@ import { FavoritesDrawer } from './FavoritesDrawer';
 import { CartDrawer } from './CartDrawer';
 import { AccountDrawer } from './AccountDrawer';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
-import { MOCK_PRODUCTS } from '@/lib/mock-products';
+import { COLOR_HEX, extractColorFromTitle } from '@/lib/product-colors';
 
-// Color hex mapping for search
-const COLOR_HEX: Record<string, string> = {
-  'Winter Cloud': '#F5F5F7',
-  'Desert Whisperer': '#E5DACE',
-  'Buttermilk': '#FFF4D2',
-  'Clay': '#D2C4B5',
-  'Clay Blush': '#D9A891',
-  'Clayblush Pink': '#D9A891',
-  'Pebble Haze': '#A3A3A3',
-  'Desert Sand': '#E2CA9D',
-  'Cinnamon Bark': '#8B4513',
-};
 
 // Material and attribute keywords for search
 const SEARCH_KEYWORDS = {
@@ -33,13 +21,6 @@ const SEARCH_KEYWORDS = {
   attributes: ['thread count', '300', 'egyptian', 'soft', 'luxury', 'hotel', 'premium', 'new']
 };
 
-function extractColorFromTitle(title: string): string | null {
-  const colorNames = Object.keys(COLOR_HEX);
-  for (const color of colorNames) {
-    if (title.toLowerCase().includes(color.toLowerCase())) return color;
-  }
-  return null;
-}
 
 const announcements = [
   'Sign up for 10% and Newsletter',
@@ -401,7 +382,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
 
             {/* Center Column: Logo */}
             <div className="flex justify-center">
-              <Link to="/store" className="flex-shrink-0">
+              <Link to="/" className="flex-shrink-0">
                 <img
                   src="/logo5.png"
                   alt="Remsleep"
@@ -837,7 +818,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                                   {colorHex && (
                                     <div 
                                       className="w-8 h-8 rounded-full border-2 border-gray-200 flex-shrink-0"
-                                      style={{ backgroundColor: colorHex }}
+                                      style={{ backgroundColor: colorHex.fill }}
                                     />
                                   )}
                                   <div className="flex-1">
@@ -917,7 +898,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
                                 onClick={() => handlePopularSearchClick(color)}
                                 className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
                               >
-                                <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: hex }} />
+                                <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: hex.fill }} />
                                 {color}
                               </button>
                             ))}

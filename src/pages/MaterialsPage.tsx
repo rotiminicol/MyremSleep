@@ -43,21 +43,21 @@ const sections = [
   {
     label: 'What is sateen?',
     body: [
-      'Sateen is a weave technique — not a fibre — that floats more yarns across the surface of the fabric. This creates the signature qualities: an exceptionally smooth hand-feel, a fluid drape, and a subtle, sophisticated sheen that looks quietly luxurious without ever feeling shiny or artificial.',
+      'Sateen is a weave technique  not a fibre  that floats more yarns across the surface of the fabric. This creates the signature qualities: an exceptionally smooth hand-feel, a fluid drape, and a subtle, sophisticated sheen that looks quietly luxurious without ever feeling shiny or artificial.',
     ],
     image: { src: 'https://m.media-amazon.com/images/I/71OcIWVV0qL.jpg', alt: 'Close-up of smooth Egyptian cotton sateen fabric texture' },
   },
   {
     label: 'What does 300 thread count mean?',
     body: [
-      'Thread count measures yarns per square inch — a higher number can suggest density, but it\'s far from the full story. True quality lives in fibre length (long-staple Egyptian cotton), precise weave construction, and careful finishing processes.',
+      'Thread count measures yarns per square inch  a higher number can suggest density, but it\'s far from the full story. True quality lives in fibre length (long-staple Egyptian cotton), precise weave construction, and careful finishing processes.',
       'At 300 thread count, we hit the ideal balance: luxurious smoothness and breathability without unnecessary weight or heat retention. The result is bedding that drapes beautifully, softens over time, and maintains its refined appearance wash after wash.',
     ],
   },
   {
     label: 'Sateen vs Percale',
     body: [
-      'Percale uses a plain, one-over-one-under weave for a crisp, matte, highly breathable feel — perfect if you sleep hot and love that fresh, hotel-sheet snap.',
+      'Percale uses a plain, one-over-one-under weave for a crisp, matte, highly breathable feel  perfect if you sleep hot and love that fresh, hotel-sheet snap.',
       'Sateen floats yarns across the surface for silkier smoothness, richer drape, and a gentle luminous finish that feels more enveloping and calm.',
     ],
     image: { src: 'https://bedroommood.com/media/bf/cf/65/1754477797/Bedroommood%20percale%20and%20sateen%20bedding%20comparison.webp', alt: 'Side-by-side comparison: percale vs sateen' },
@@ -89,9 +89,9 @@ export default function MaterialsPage() {
           <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }} className="max-w-[820px] relative z-10">
             <span className="text-xs tracking-[0.4em] text-[#8f877d] block mb-5 uppercase font-medium">Materials</span>
             <h1 className="text-[clamp(48px,8vw,110px)] font-serif text-gray-900 leading-none tracking-tight mb-8">Materials</h1>
-            <p className="text-xl md:text-2xl text-gray-500 font-light leading-[1.7]">Clean, natural, considered — nothing more, nothing less.</p>
+            <p className="text-xl md:text-2xl text-gray-500 font-light leading-[1.7]">Clean, natural, considered  nothing more, nothing less.</p>
           </motion.div>
-          {/* Decorative icon — consistent with other pages */}
+          {/* Decorative icon  consistent with other pages */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, rotate: 20 }}
             animate={{ opacity: 0.06, scale: 1, rotate: 0 }}
@@ -120,10 +120,10 @@ export default function MaterialsPage() {
 
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }} viewport={{ once: true }} className="space-y-6">
               <p className="text-[17px] md:text-lg text-gray-600 leading-[1.85]">
-                We begin with what truly matters: long-staple natural fibres, a balanced weave, and a finish engineered for lasting beauty. REMsleep bundle sets are crafted from 100% Egyptian cotton in a 300 thread count sateen weave — buttery smooth against the skin, naturally breathable night after night, with a quiet, elegant sheen that elevates the entire bed without effort.
+                We begin with what truly matters: long-staple natural fibres, a balanced weave, and a finish engineered for lasting beauty. REMsleep bundle sets are crafted from 100% Egyptian cotton in a 300 thread count sateen weave  buttery smooth against the skin, naturally breathable night after night, with a quiet, elegant sheen that elevates the entire bed without effort.
               </p>
               <p className="text-[17px] md:text-lg text-gray-600 leading-[1.85]">
-                Our bedding is produced by a single family-run specialist factory with three generations of cotton weaving expertise. The emphasis is unwavering consistency: colours that remain grounded season after season, stitching that holds sharp, and a hand-feel that improves gently with time — so your bed feels as considered on year three as it did on day one.
+                Our bedding is produced by a single family-run specialist factory with three generations of cotton weaving expertise. The emphasis is unwavering consistency: colours that remain grounded season after season, stitching that holds sharp, and a hand-feel that improves gently with time  so your bed feels as considered on year three as it did on day one.
               </p>
             </motion.div>
           </div>
@@ -187,7 +187,7 @@ export default function MaterialsPage() {
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-white leading-tight mb-5">Feel the Difference</h2>
                     <p className="text-lg text-gray-400 leading-relaxed max-w-lg">Egyptian cotton sateen that softens with every wash, drapes beautifully, and lasts for years.</p>
                   </div>
-                  <motion.a href="/product/winter-cloud" whileHover={{ scale: 1.05, x: 3 }} whileTap={{ scale: 0.97 }}
+                  <motion.a href="/product/sateen-bedding-set-winter-cloud" whileHover={{ scale: 1.05, x: 3 }} whileTap={{ scale: 0.97 }}
                     className="flex-shrink-0 inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase shadow-lg whitespace-nowrap">
                     Shop Bundle Sets <ArrowRight className="w-4 h-4" />
                   </motion.a>
@@ -199,7 +199,7 @@ export default function MaterialsPage() {
       </main>
 
       <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#F2EDE8]">
-        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
+        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep  Crafted for Nightly Ritual</p>
       </footer>
 
       <StoreFooter/>

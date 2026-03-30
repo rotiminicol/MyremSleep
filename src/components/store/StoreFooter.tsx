@@ -47,9 +47,7 @@ export function StoreFooter() {
     {
       title: 'Connect',
       links: [
-        { label: 'Pinterest', href: '#', external: true },
         { label: 'Instagram', href: 'https://www.instagram.com/myremsleepclub/', external: true },
-        { label: 'Tiktok', href: '#', external: true },
       ],
     },
     {
@@ -57,6 +55,7 @@ export function StoreFooter() {
       links: [
         { label: 'Privacy Policy', href: '/privacy' },
         { label: 'Terms & Conditions', href: '/terms' },
+        { label: 'Returns & Exchanges', href: '/returns-exchanges' },
       ],
     },
   ];

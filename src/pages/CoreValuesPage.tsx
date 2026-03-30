@@ -43,7 +43,7 @@ const values = [
   {
     number: '01',
     title: 'Calm Over Clutter',
-    body: 'Seasonless colour. Clean lines. Quiet luxe Bundle Sets that make the bedroom feel like a sanctuary — softening the day, night after night. We design everything to reduce decisions, not multiply them.',
+    body: 'Seasonless colour. Clean lines. Quiet luxe Bundle Sets that make the bedroom feel like a sanctuary  softening the day, night after night. We design everything to reduce decisions, not multiply them.',
   },
   {
     number: '02',
@@ -53,7 +53,7 @@ const values = [
   {
     number: '03',
     title: 'Materials That Earn Their Place',
-    body: '100% Egyptian cotton, chosen for comfort and longevity — so your sateen wears beautifully and stays in rotation, season after season. Every thread is there for a reason.',
+    body: '100% Egyptian cotton, chosen for comfort and longevity  so your sateen wears beautifully and stays in rotation, season after season. Every thread is there for a reason.',
   },
 ];
 
@@ -137,7 +137,7 @@ export default function CoreValuesPage() {
               <span className="text-xs tracking-[0.4em] text-[#8f877d] block mb-4 uppercase font-medium">Experience the Difference</span>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-gray-900 leading-tight">Feel the Quality</h2>
             </div>
-            <motion.a href="/product/winter-cloud" whileHover={{ scale: 1.05, x: 3 }} whileTap={{ scale: 0.97 }}
+            <motion.a href="/product/sateen-bedding-set-winter-cloud" whileHover={{ scale: 1.05, x: 3 }} whileTap={{ scale: 0.97 }}
               className="flex-shrink-0 inline-flex items-center gap-3 bg-gray-900 text-white px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase shadow-lg whitespace-nowrap">
               Shop Bundle Sets <ArrowRight className="w-4 h-4" />
             </motion.a>
@@ -146,7 +146,7 @@ export default function CoreValuesPage() {
       </main>
 
       <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#F2EDE8]">
-        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
+        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep  Crafted for Nightly Ritual</p>
       </footer>
       <StoreFooter/>
     </div>

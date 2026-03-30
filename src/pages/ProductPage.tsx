@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { storefrontApiRequest, ShopifyProduct, fetchProducts } from '@/lib/shopify';
-import { MOCK_PRODUCTS } from '@/lib/mock-products';
+import { COLOR_HEX, extractColorFromTitle } from '@/lib/product-colors';
 import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { StoreFooter } from '@/components/store/StoreFooter';
 import { ReviewsSection } from '@/components/ReviewsSection';
@@ -28,36 +28,6 @@ import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-
-const COLOR_HEX: Record<string, { fill: string; shadow: string }> = {
-  'Winter Cloud': { fill: '#F5F5F7', shadow: '#d0d0d4' },
-  'Desert Whisperer': { fill: '#E5DACE', shadow: '#c0b8ac' },
-  'Buttermilk': { fill: '#FFF4D2', shadow: '#e0d4a0' },
-  'Clay': { fill: '#D2C4B5', shadow: '#a89c8e' },
-  'Clay Blush': { fill: '#D9A891', shadow: '#b07a63' },
-  'Clayblush Pink': { fill: '#D9A891', shadow: '#b07a63' },
-  'Pebble Haze': { fill: '#A3A3A3', shadow: '#787878' },
-  'Desert Sand': { fill: '#E2CA9D', shadow: '#c0a870' },
-  'Cinnamon Bark': { fill: '#8B4513', shadow: '#5a2c0a' },
-};
-
-function extractColorFromTitle(title: string, handle: string = ''): string | null {
-  const combined = (title + ' ' + handle.replace(/-/g, ' ')).toLowerCase();
-
-  if (combined.includes('desert whisperer')) return 'Desert Whisperer';
-  if (combined.includes('buttermilk')) return 'Buttermilk';
-  if (combined.includes('clay blush') || combined.includes('clayblush')) return 'Clay Blush';
-  if (combined.includes('pebble haze')) return 'Pebble Haze';
-  if (combined.includes('cinnamon bark')) return 'Cinnamon Bark';
-  if (combined.includes('desert sand')) return 'Desert Sand';
-  if (combined.includes('clay') && !combined.includes('blush')) return 'Clay';
-  if (combined.includes('winter cloud')) return 'Winter Cloud';
-
-  if (title.toLowerCase() === 'sateen bedding set' || handle === 'sateen-bedding-set') {
-    return 'Winter Cloud';
-  }
-  return null;
-}
 
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
@@ -188,21 +158,6 @@ export default function ProductPage() {
             }
           } catch {
             setRecommendedProducts(allProductsData?.filter((p: ShopifyProduct) => p.node.handle !== handle).slice(0, 4) || []);
-          }
-        } else {
-          const mockProduct = MOCK_PRODUCTS.find(p => p.node.handle === handle);
-          if (mockProduct) {
-            setProduct(mockProduct.node);
-            const firstVariant = mockProduct.node.variants.edges[0]?.node;
-            if (firstVariant) {
-              setSelectedVariant(firstVariant);
-              let defaultOptions: Record<string, string> = {};
-              firstVariant.selectedOptions.forEach((opt: { name: string; value: string }) => {
-                defaultOptions[opt.name] = opt.value;
-              });
-              setSelectedOptions(defaultOptions);
-            }
-            setRecommendedProducts(MOCK_PRODUCTS.filter(p => p.node.handle !== handle).slice(0, 4));
           }
         }
       } catch (error) {
@@ -348,7 +303,7 @@ export default function ProductPage() {
       <main className="max-w-[1600px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] min-h-[90vh]">
 
-          {/* ── LEFT: Gallery — full-bleed image, circular arrows, bottom thumbnails ── */}
+          {/* ── LEFT: Gallery  full-bleed image, circular arrows, bottom thumbnails ── */}
           <div className="relative lg:h-screen lg:sticky lg:top-0">
             <div className="relative w-full h-full overflow-hidden">
               <AnimatePresence mode="wait">
@@ -803,7 +758,7 @@ export default function ProductPage() {
                             <li key={i} className="flex items-start gap-3 text-sm text-gray-600"><span className="mt-1.5 w-1 h-1 rounded-full bg-gray-400 flex-shrink-0" />{i}</li>
                           ))}
                         </ul>
-                        <p className="text-sm text-gray-600 italic leading-relaxed pt-2">Pro tip: duvet covers and pillowcases inside out—that is where sateen glow is protected</p>
+                        <p className="text-sm text-gray-600 italic leading-relaxed pt-2">Pro tip: duvet covers and pillowcases inside outthat is where sateen glow is protected</p>
                       </div>
                       <div className="space-y-4 border-t border-[#e0dbd5]">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">Dry</h4>
@@ -839,7 +794,7 @@ export default function ProductPage() {
                   {openDrawer === 'returns' && (
                     <p className="text-sm text-gray-600 leading-relaxed">
                       Changed your mind? No problem. We accept returns on unused, unwashed, and undamaged bedding for a full refund within 30 days of delivery. Items must be returned in their original packaging, with all tags and labels attached. Please see our{' '}
-                      <Link to="/help" className="underline hover:text-gray-900 transition-colors">Returns Policy</Link> for full details.
+                      <Link to="/returns-exchanges" className="underline hover:text-gray-900 transition-colors">Returns Policy</Link> for full details.
                     </p>
                   )}
 
@@ -899,7 +854,7 @@ export default function ProductPage() {
                             </div>
                           ))
                         ) : (
-                          <p className="text-sm text-gray-500 font-sans italic py-4">No reviews yet — be the first to share your experience.</p>
+                          <p className="text-sm text-gray-500 font-sans italic py-4">No reviews yet  be the first to share your experience.</p>
                         )}
                       </div>
                       <div className="sticky bottom-0 py-6 border-t border-[#e0dbd5] bg-[#F2EDE8]">
@@ -956,10 +911,10 @@ export default function ProductPage() {
                           </motion.div>
                         ) : (
                           <motion.div key="t2" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
-                            <h3 className="font-serif text-2xl text-gray-900 leading-snug">A fitted sheet that stays put — even on deeper mattresses.</h3>
+                            <h3 className="font-serif text-2xl text-gray-900 leading-snug">A fitted sheet that stays put  even on deeper mattresses.</h3>
                             <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
                               <p>A bed should look finished, not fussy. REMsleep is made for real life: sleep, slow mornings, and the occasional full-day reset.</p>
-                              <p>Our fitted sheet is designed to keep the bed looking made — with less shifting, less bunching, and no corner slip.</p>
+                              <p>Our fitted sheet is designed to keep the bed looking made  with less shifting, less bunching, and no corner slip.</p>
                             </div>
                             <div className="space-y-3 pt-2 border-t border-[#e0dbd5]">
                               <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 pt-4">How sizing works</h4>

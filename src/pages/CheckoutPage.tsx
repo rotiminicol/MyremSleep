@@ -12,14 +12,14 @@ import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { toast } from 'sonner';
 
 const COLOR_DESCRIPTIONS: Record<string, { title: string; description: string }> = {
-  'Winter Cloud': { title: 'Winter Cloud — Crisp white. Soft glow. Always polished.', description: '' },
-  'Buttermilk': { title: 'Buttermilk — Warm cream. Quiet luxury.', description: '' },
-  'Desert Whisperer': { title: 'Desert Whisperer — Sun-washed nude. Calm, not sweet.', description: '' },
-  'Desert Sand': { title: 'Desert Sand — The anchor neutral. Effortlessly styled.', description: '' },
-  'Clay Blush': { title: 'Clayblush Pink — Muted blush. Modern and grown.', description: '' },
-  'Pebble Haze': { title: 'Pebble Haze — Cool grey. Clean calm.', description: '' },
-  'Cinnamon Bark': { title: 'Cinnamon Bark — Deep brown. Grounded. Inviting.', description: '' },
-  'Clay': { title: 'Clay — Soft clay. Lightly sun-warmed. Calm and clean.', description: '' },
+  'Winter Cloud': { title: 'Winter Cloud  Crisp white. Soft glow. Always polished.', description: '' },
+  'Buttermilk': { title: 'Buttermilk  Warm cream. Quiet luxury.', description: '' },
+  'Desert Whisperer': { title: 'Desert Whisperer  Sun-washed nude. Calm, not sweet.', description: '' },
+  'Desert Sand': { title: 'Desert Sand  The anchor neutral. Effortlessly styled.', description: '' },
+  'Clay Blush': { title: 'Clayblush Pink  Muted blush. Modern and grown.', description: '' },
+  'Pebble Haze': { title: 'Pebble Haze  Cool grey. Clean calm.', description: '' },
+  'Cinnamon Bark': { title: 'Cinnamon Bark  Deep brown. Grounded. Inviting.', description: '' },
+  'Clay': { title: 'Clay  Soft clay. Lightly sun-warmed. Calm and clean.', description: '' },
 };
 
 const COLOR_MAP: Record<string, string> = {
@@ -73,7 +73,7 @@ function REMsleepPromise() {
         </svg>
       ),
       title: 'QUALITY GUARANTEED',
-      body: '128 ★★★★★ reviews — crafted to last, softer with every wash.',
+      body: '128 ★★★★★ reviews  crafted to last, softer with every wash.',
     },
     {
       icon: (
@@ -83,7 +83,7 @@ function REMsleepPromise() {
         </svg>
       ),
       title: 'FREE RETURNS',
-      body: '30 days to decide. Love it or send it back — no questions asked.',
+      body: '30 days to decide. Love it or send it back  no questions asked.',
     },
     {
       icon: (
@@ -556,8 +556,8 @@ export default function CheckoutPage() {
   const shippingCost = formData.shippingMethod === 'express' ? 75.00 : formData.shippingMethod === 'next' ? 99.99 : 50.00;
   const total = subtotal + shippingCost;
 
-  const getContactSummary = () => formData.email || '—';
-  const getShippingSummary = () => formData.firstName ? `${formData.firstName} ${formData.lastName}, ${formData.city || '—'}` : '—';
+  const getContactSummary = () => formData.email || '';
+  const getShippingSummary = () => formData.firstName ? `${formData.firstName} ${formData.lastName}, ${formData.city || ''}` : '';
 
   const steps = ['Contact', 'Shipping', 'Review & Pay'];
 
@@ -678,7 +678,7 @@ export default function CheckoutPage() {
       </main>
 
       <footer className="relative z-10 border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#f5f1ed]">
-        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase" style={{ fontFamily: 'Montserrat' }}>REMsleep — Crafted for Nightly Ritual</p>
+        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase" style={{ fontFamily: 'Montserrat' }}>REMsleep  Crafted for Nightly Ritual</p>
       </footer>
     </div>
   );

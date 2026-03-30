@@ -154,7 +154,7 @@ export default function HelpCenterPage() {
         },
         {
           question: "Is 300 thread count good?",
-          answer: "Yes — when it is done properly. Thread count is only one signal. What matters more is the quality of the cotton fibres, the weave, and the finishing. 300 thread count sateen is a sweet spot: smooth, breathable, and durable without feeling heavy. Long, well-spun fibres tend to wear better and pill less over time — that's why at REMsleep we focus on the thread count, the weave, and the length of fibres."
+          answer: "Yes  when it is done properly. Thread count is only one signal. What matters more is the quality of the cotton fibres, the weave, and the finishing. 300 thread count sateen is a sweet spot: smooth, breathable, and durable without feeling heavy. Long, well-spun fibres tend to wear better and pill less over time  that's why at REMsleep we focus on the thread count, the weave, and the length of fibres."
         },
         {
           question: "What is included in a REMsleep bundle set?",
@@ -174,7 +174,7 @@ export default function HelpCenterPage() {
         },
         {
           question: "Are pillowcases Oxford or housewife?",
-          answer: "Yes, we have four pillowcases, so your bedding comes in a complete set. Fuss free:\n• Standard pillowcases: clean edge, no border\n• Oxford pillowcases: a stitched border/flange\n\nIt is designed to look finished the moment it is made — no piecemeal shopping."
+          answer: "Yes, we have four pillowcases, so your bedding comes in a complete set. Fuss free:\n• Standard pillowcases: clean edge, no border\n• Oxford pillowcases: a stitched border/flange\n\nIt is designed to look finished the moment it is made  no piecemeal shopping."
         },
         {
           question: "Is OEKO-TEX® certified?",
@@ -196,7 +196,7 @@ export default function HelpCenterPage() {
         },
         {
           question: "Is sateen too warm for all seasons?",
-          answer: "Our sateen is 100% cotton — so it stays breathable. If you sleep very hot, choose lighter layers and keep your room cool; the fabric will still ventilate well."
+          answer: "Our sateen is 100% cotton  so it stays breathable. If you sleep very hot, choose lighter layers and keep your room cool; the fabric will still ventilate well."
         },
         {
           question: "Do you sell pieces separately?",
@@ -209,7 +209,7 @@ export default function HelpCenterPage() {
       items: [
         {
           question: "What sizes do you offer?",
-          answer: "We offer standard UK sizes for Launch: Double and King.\n\nSize Guide (UK):\n\nDouble — Duvet Cover: 200×200cm | Fitted Sheet: 135×190×40cm | Oxford Pillowcase: 50×75cm +5cm | Regular Pillowcase: 50×75cm\n\nKing — Duvet Cover: 225×220cm | Fitted Sheet: 150×200×40cm | Oxford Pillowcase: 50×75cm +5cm | Regular Pillowcase: 50×75cm"
+          answer: "We offer standard UK sizes for Launch: Double and King.\n\nSize Guide (UK):\n\nDouble  Duvet Cover: 200×200cm | Fitted Sheet: 135×190×40cm | Oxford Pillowcase: 50×75cm +5cm | Regular Pillowcase: 50×75cm\n\nKing  Duvet Cover: 225×220cm | Fitted Sheet: 150×200×40cm | Oxford Pillowcase: 50×75cm +5cm | Regular Pillowcase: 50×75cm"
         },
         {
           question: "How deep are your fitted sheets?",
@@ -227,7 +227,7 @@ export default function HelpCenterPage() {
       items: [
         {
           question: "What are your delivery options?",
-          answer: "Every REMsleep order is packed with care and shipped with trusted carriers.\n\nExpress Delivery (UK) — £6.95\nOrders placed before 12pm (Mon–Fri) are dispatched the same day via DPD (express, tracked). Limited to UK mainland addresses.\n\nStandard Delivery (UK) — Free on orders over £99\nPlease allow 3–5 working days. Ships via DPD, Royal Mail, or Evri. Most deliveries include tracking with advance notification.\n\nNorthern Ireland & Channel Islands — £9.95\n\nEU & international\nDelivery charge shown at checkout covers shipping plus local taxes and import duties. Typically within 5 days."
+          answer: "Every REMsleep order is packed with care and shipped with trusted carriers.\n\nExpress Delivery (UK)  £6.95\nOrders placed before 12pm (Mon–Fri) are dispatched the same day via DPD (express, tracked). Limited to UK mainland addresses.\n\nStandard Delivery (UK)  Free on orders over £99\nPlease allow 3–5 working days. Ships via DPD, Royal Mail, or Evri. Most deliveries include tracking with advance notification.\n\nNorthern Ireland & Channel Islands  £9.95\n\nEU & international\nDelivery charge shown at checkout covers shipping plus local taxes and import duties. Typically within 5 days."
         }
       ]
     },
@@ -252,7 +252,7 @@ export default function HelpCenterPage() {
           answer: "You can return your order within 30 days of delivery for a refund, exchange, or store credit, as long as items are unused, unwashed, and in their original packaging.\n\nPlease note: You will need to arrange with your local courier to return the package."
         },
         {
-          question: "I did not receive my order confirmation — what should I do?",
+          question: "I did not receive my order confirmation  what should I do?",
           answer: "Check your spam/junk folder first. If it is not there, contact us with your name and the email used at checkout."
         }
       ]
@@ -357,7 +357,7 @@ export default function HelpCenterPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
                 <div className="absolute inset-0 flex items-end p-8 md:p-12">
-                  <p className="text-white/80 text-sm tracking-[0.3em] uppercase">Egyptian Cotton Sateen — 300 Thread Count</p>
+                  <p className="text-white/80 text-sm tracking-[0.3em] uppercase">Egyptian Cotton Sateen  300 Thread Count</p>
                 </div>
               </div>
             </TiltCard>
@@ -410,7 +410,7 @@ export default function HelpCenterPage() {
 
       {/* Footer stub */}
       <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#F2EDE8]">
-        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
+        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep  Crafted for Nightly Ritual</p>
       </footer>
 
       <StoreFooter/>

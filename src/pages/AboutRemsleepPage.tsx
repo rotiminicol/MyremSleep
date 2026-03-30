@@ -82,7 +82,7 @@ export default function AboutRemsleepPage() {
             <h1 className="text-[clamp(48px,8vw,110px)] font-serif text-gray-900 leading-none tracking-tight mb-8">Quiet-Luxe Bedding</h1>
             <p className="text-xl md:text-2xl text-gray-500 font-light leading-[1.7]">For people who treat the bed as essential, not an afterthought.</p>
           </motion.div>
-          {/* Decorative icon — consistent with other pages */}
+          {/* Decorative icon  consistent with other pages */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, rotate: -20 }}
             animate={{ opacity: 0.06, scale: 1, rotate: 0 }}
@@ -141,7 +141,7 @@ export default function AboutRemsleepPage() {
 
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }} viewport={{ once: true }} className="space-y-6">
               <p className="text-[17px] md:text-lg text-gray-600 leading-[1.85]">
-                We launch with 100% Egyptian cotton sateen in a 300 thread count sateen weave — smooth on skin, breathable through the night, with a refined, subtle sheen.
+                We launch with 100% Egyptian cotton sateen in a 300 thread count sateen weave  smooth on skin, breathable through the night, with a refined, subtle sheen.
               </p>
               <p className="text-[17px] md:text-lg text-gray-600 leading-[1.85]">
                 Softer and more cocooning than crisp percale, with a finish that looks polished even when life is not.
@@ -160,7 +160,7 @@ export default function AboutRemsleepPage() {
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-gray-900 leading-tight">Seasonless Neutrals</h2>
                 <div className="w-8 h-px bg-[#d8d1c8]" />
                 <p className="text-[15px] text-gray-500 leading-relaxed">
-                  Our palette is seasonless and designed to layer — modern neutrals and grounded tones that make the space feel considered the moment you walk in.
+                  Our palette is seasonless and designed to layer  modern neutrals and grounded tones that make the space feel considered the moment you walk in.
                 </p>
               </motion.div>
 
@@ -224,7 +224,7 @@ export default function AboutRemsleepPage() {
               </div>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-gray-900 leading-tight">One Click, Done.</h2>
             </div>
-            <motion.a href="/product/winter-cloud" whileHover={{ scale: 1.05, x: 3 }} whileTap={{ scale: 0.97 }}
+            <motion.a href="/product/sateen-bedding-set-winter-cloud" whileHover={{ scale: 1.05, x: 3 }} whileTap={{ scale: 0.97 }}
               className="flex-shrink-0 inline-flex items-center gap-3 bg-gray-900 text-white px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase shadow-lg whitespace-nowrap">
               Shop Bundle Sets <ArrowRight className="w-4 h-4" />
             </motion.a>
@@ -233,7 +233,7 @@ export default function AboutRemsleepPage() {
       </main>
 
       <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#F2EDE8]">
-        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
+        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep  Crafted for Nightly Ritual</p>
       </footer>
       <StoreFooter/>
     </div>

@@ -185,7 +185,7 @@ export default function OurStoryPage() {
                 className="space-y-6 text-[17px] md:text-lg text-gray-600 leading-[1.85]"
               >
                 <p>
-                  REMsleep began with a simple frustration: "premium bedding" still felt like a piecemeal purchase. A duvet cover here, a fitted sheet there, pillowcases from somewhere else — never quite matching, never quite finished.
+                  REMsleep began with a simple frustration: "premium bedding" still felt like a piecemeal purchase. A duvet cover here, a fitted sheet there, pillowcases from somewhere else  never quite matching, never quite finished.
                 </p>
                 <p>
                   We wanted one set that looked quiet, felt indulgent, and stayed polished night after night.
@@ -243,7 +243,7 @@ export default function OurStoryPage() {
                 viewport={{ once: true }}
               >
                 <p className="text-[17px] md:text-lg text-gray-600 leading-[1.85] mb-12">
-                  So we built the set we could not find: complete bundle sets in calm, seasonless colours — crafted from 100% Egyptian cotton sateen for a smooth drape, a subtle sheen, and that instantly finished feel.
+                  So we built the set we could not find: complete bundle sets in calm, seasonless colours  crafted from 100% Egyptian cotton sateen for a smooth drape, a subtle sheen, and that instantly finished feel.
                 </p>
 
                 {/* Feature list */}
@@ -251,7 +251,7 @@ export default function OurStoryPage() {
                   {[
                     { title: 'Complete Sets', desc: 'Everything included, nothing missing. Duvet cover, fitted sheet, four pillowcases.' },
                     { title: 'Seasonless Colours', desc: 'Calm neutrals that work year-round, never trend-chasing.' },
-                    { title: 'Premium Materials', desc: '100% Egyptian cotton sateen — smooth, breathable, quietly luxurious.' },
+                    { title: 'Premium Materials', desc: '100% Egyptian cotton sateen  smooth, breathable, quietly luxurious.' },
                   ].map((f, i) => (
                     <motion.div
                       key={i}
@@ -314,7 +314,7 @@ export default function OurStoryPage() {
                 <div className="aspect-square">
                   <img
                     src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1000&q=80"
-                    alt="Joel 2:28 — dreams and visions"
+                    alt="Joel 2:28  dreams and visions"
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
@@ -351,10 +351,10 @@ export default function OurStoryPage() {
                 className="space-y-6 text-[17px] md:text-lg text-gray-600 leading-[1.85]"
               >
                 <p>
-                  REMsleep has a deeper root. The name is drawn from Joel 2:28 — The Spirit of God poured out; dreams and visions stirred awake.
+                  REMsleep has a deeper root. The name is drawn from Joel 2:28  The Spirit of God poured out; dreams and visions stirred awake.
                 </p>
                 <p>
-                  We hold that as a quiet truth: rest is not passive. It is where you exhale and make space for what is next. The room settles. The mind clears. In the stillness, sleep becomes restoration — sometimes even a return to dreaming again.
+                  We hold that as a quiet truth: rest is not passive. It is where you exhale and make space for what is next. The room settles. The mind clears. In the stillness, sleep becomes restoration  sometimes even a return to dreaming again.
                 </p>
               </motion.div>
             </div>
@@ -395,14 +395,14 @@ export default function OurStoryPage() {
                   We believe better sleep starts with better rituals. The bed sits at the centre, so we obsess over feel, drape, and the quiet details that change the whole room.
                 </p>
                 <p>
-                  A made bed, without the fuss — effortless, every day. That is why we make bedding sets designed for bedrooms that feel calm, clean, and considered.
+                  A made bed, without the fuss  effortless, every day. That is why we make bedding sets designed for bedrooms that feel calm, clean, and considered.
                 </p>
 
                 <TiltCard className="!rounded-2xl shadow-md" intensity={0.5}>
                   <div className="bg-[#ece8e2] p-8 md:p-10">
                     <div className="text-5xl text-[#8f877d] font-serif leading-none mb-3">"</div>
                     <p className="text-xl md:text-2xl font-serif text-gray-900 leading-[1.6]">
-                      Our mission is simple: to make rest feel more intentional — through quiet materials, grounded colours, and complete sets designed for real life.
+                      Our mission is simple: to make rest feel more intentional  through quiet materials, grounded colours, and complete sets designed for real life.
                     </p>
                   </div>
                 </TiltCard>
@@ -434,7 +434,7 @@ export default function OurStoryPage() {
                 </p>
 
                 <motion.a
-                  href="/store"
+                  href="/product/sateen-bedding-set-winter-cloud"
                   whileHover={{ scale: 1.03, x: 4 }}
                   whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center gap-3 bg-gray-900 text-white px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase mt-4 shadow-lg"
@@ -460,9 +460,9 @@ export default function OurStoryPage() {
 
       </main>
 
-      {/* Footer stub — replace with <StoreFooter /> */}
+      {/* Footer stub  replace with <StoreFooter /> */}
       <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#F2EDE8]">
-        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
+        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep  Crafted for Nightly Ritual</p>
       </footer>
 
       <StoreFooter/>

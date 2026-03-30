@@ -125,7 +125,7 @@ export default function SustainabilityPage() {
               Sustainability at REMsleep
             </h1>
             <p className="text-xl md:text-2xl text-gray-500 font-light leading-[1.7]">
-              Quiet luxury that feels good — on your skin, in your home, and for the world we share.
+              Quiet luxury that feels good  on your skin, in your home, and for the world we share.
             </p>
           </motion.div>
 
@@ -176,7 +176,7 @@ export default function SustainabilityPage() {
               className="space-y-8 pb-24 md:pb-32"
             >
               <p className="text-[17px] md:text-lg text-gray-600 leading-[1.85]">
-                Quiet luxury should feel good in every sense — soft against the skin, calming in the bedroom, and responsible in its making. We focus on longevity: durable Egyptian cotton sateen, thoughtful construction, timeless neutrals built to last many years, not seasons.
+                Quiet luxury should feel good in every sense  soft against the skin, calming in the bedroom, and responsible in its making. We focus on longevity: durable Egyptian cotton sateen, thoughtful construction, timeless neutrals built to last many years, not seasons.
               </p>
 
               <div className="grid sm:grid-cols-3 gap-4">
@@ -207,7 +207,7 @@ export default function SustainabilityPage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            HERO IMAGE — FULL WIDTH
+            HERO IMAGE  FULL WIDTH
         ══════════════════════════════════════════ */}
         <div className="px-8 md:px-16 xl:px-24 max-w-[1400px] mx-auto mb-0">
           <motion.div
@@ -276,7 +276,7 @@ export default function SustainabilityPage() {
               </p>
 
               <div className="space-y-4">
-                <CheckItem delay={0}>One dedicated specialist partner factory — not a rotating network of suppliers.</CheckItem>
+                <CheckItem delay={0}>One dedicated specialist partner factory  not a rotating network of suppliers.</CheckItem>
                 <CheckItem delay={0.1}>Long-term partnership built on trust, continuous improvement, and consistent workmanship.</CheckItem>
                 <CheckItem delay={0.2}>Regularly verified standards: fair working conditions and no forced labour.</CheckItem>
               </div>
@@ -317,7 +317,7 @@ export default function SustainabilityPage() {
               className="space-y-8"
             >
               <p className="text-[17px] md:text-lg text-gray-600 leading-[1.85]">
-                Orders ship in 100% recyclable paper bags made from responsibly sourced materials. We keep packaging minimal and practical — easy to reuse or recycle — so the focus stays on the product, not excess.
+                Orders ship in 100% recyclable paper bags made from responsibly sourced materials. We keep packaging minimal and practical  easy to reuse or recycle  so the focus stays on the product, not excess.
               </p>
 
               <div className="grid sm:grid-cols-3 gap-4">
@@ -376,11 +376,11 @@ export default function SustainabilityPage() {
                       Choose Lasting Design
                     </h2>
                     <p className="text-lg text-gray-400 leading-relaxed max-w-lg">
-                      Egyptian cotton sateen crafted to feel exceptional every night — and made to last.
+                      Egyptian cotton sateen crafted to feel exceptional every night  and made to last.
                     </p>
                   </div>
                   <motion.a
-                    href="/product/winter-cloud"
+                    href="/product/sateen-bedding-set-winter-cloud"
                     whileHover={{ scale: 1.05, x: 3 }}
                     whileTap={{ scale: 0.97 }}
                     className="flex-shrink-0 inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase shadow-lg whitespace-nowrap"
@@ -397,7 +397,7 @@ export default function SustainabilityPage() {
 
       {/* Footer stub */}
       <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#F2EDE8]">
-        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
+        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep  Crafted for Nightly Ritual</p>
       </footer>
       <StoreFooter/>
     </div>

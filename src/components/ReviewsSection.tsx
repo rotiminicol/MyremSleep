@@ -46,7 +46,7 @@ function sortReviews(reviews: Review[], sortBy: string): Review[] {
   });
 }
 
-/** Bespoke animated dropdown — replaces the native <select> */
+/** Bespoke animated dropdown  replaces the native <select> */
 function SortDropdown({
   value,
   onChange,
@@ -258,7 +258,7 @@ export function ReviewsSection({
             </>
           ) : (
             <p className="text-sm text-gray-500 font-sans italic">
-              {isLoading ? 'Loading reviews…' : 'No reviews yet — be the first to share your experience.'}
+              {isLoading ? 'Loading reviews…' : 'No reviews yet  be the first to share your experience.'}
             </p>
           )}
 

@@ -164,7 +164,7 @@ export default function AboutPage() {
                                 <span className="text-sm tracking-[0.2em] text-[#8f877d] block">CRAFTED WITH CARE</span>
                                 <h2 className="text-4xl font-serif text-gray-900">Conscious Materials</h2>
                                 <p className="text-gray-600 font-light leading-relaxed text-lg">
-                                    Every thread counts. We source only the finest, sustainable materials—from 22-momme Mulberry silk 
+                                    Every thread counts. We source only the finest, sustainable materialsfrom 22-momme Mulberry silk 
                                     to organic bamboo and European flax linen. We believe in luxury that doesn't cost the earth.
                                 </p>
                                 
@@ -252,13 +252,14 @@ export default function AboutPage() {
                             <p className="text-gray-700 text-lg max-w-2xl mx-auto mb-10 font-light">
                                 Join thousands of happy sleepers who've transformed their nightly routine.
                             </p>
-                            <motion.button
+                            <motion.a
+                                href="/product/sateen-bedding-set-winter-cloud"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="bg-[#2c2c2c] text-[#F2EDE8] px-12 py-4 rounded-full text-sm tracking-widest uppercase hover:bg-[#1a1a1a] transition-colors"
                             >
                                 Shop Now
-                            </motion.button>
+                            </motion.a>
                         </div>
                     </motion.div>
                 </section>

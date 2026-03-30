@@ -16,9 +16,8 @@ import ProductPage from "./pages/ProductPage";
 import BlogPage from "./pages/BlogPage";
 import AllPostsPage from "./pages/AllPostsPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
-import ShopPage from "./pages/ShopPage";
-import NewInPage from "./pages/NewInPage";
 import AboutPage from "./pages/AboutPage";
+import ReturnsExchangesPage from "./pages/ReturnsExchangesPage";
 import OurStoryPage from "./pages/OurStoryPage";
 import AboutRemsleepPage from "./pages/AboutRemsleepPage";
 import CoreValuesPage from "./pages/CoreValuesPage";
@@ -84,15 +83,14 @@ const App = () => (
         <GoogleAnalytics />
         <AppProviders>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/store" element={<StorePage />} />
+            <Route path="/" element={<StorePage />} />
+            <Route path="/waiting-list" element={<Index />} />
             <Route path="/product/:handle" element={<ProductPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/all" element={<AllPostsPage />} />
             <Route path="/blog/:blogHandle/:articleHandle" element={<BlogDetailPage />} />
-            <Route path="/shop" element={<ShopPage />} />
-            <Route path="/new-in" element={<NewInPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/returns-exchanges" element={<ReturnsExchangesPage />} />
             <Route path="/our-story" element={<OurStoryPage />} />
             <Route path="/about-remsleep" element={<AboutRemsleepPage />} />
             <Route path="/core-values" element={<CoreValuesPage />} />

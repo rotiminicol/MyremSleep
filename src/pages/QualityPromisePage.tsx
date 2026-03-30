@@ -73,7 +73,7 @@ export default function QualityPromisePage() {
               The REMsleep Quality Promise
             </h1>
             <p className="text-xl md:text-2xl text-gray-500 font-light leading-[1.7]">
-              Our commitment to excellence — in every thread, every stitch, every night.
+              Our commitment to excellence  in every thread, every stitch, every night.
             </p>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 0.06, scale: 1 }} transition={{ duration: 1.6, delay: 0.5 }} className="absolute right-8 md:right-24 top-20 pointer-events-none">
@@ -95,7 +95,7 @@ export default function QualityPromisePage() {
 
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }} viewport={{ once: true }} className="space-y-8">
               <p className="text-[17px] md:text-lg text-gray-600 leading-[1.85]">
-                We prioritize how the fabric feels against skin — then rigorously test for long-term durability, wash performance, and nightly comfort. Our 100% Egyptian cotton sateen is crafted to improve with age: it softens gently over washes while retaining its smooth drape and subtle sheen.
+                We prioritize how the fabric feels against skin  then rigorously test for long-term durability, wash performance, and nightly comfort. Our 100% Egyptian cotton sateen is crafted to improve with age: it softens gently over washes while retaining its smooth drape and subtle sheen.
               </p>
               <div className="grid sm:grid-cols-3 gap-4">
                 {[
@@ -123,7 +123,7 @@ export default function QualityPromisePage() {
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }}>
             <TiltCard className="shadow-xl" intensity={0.3}>
               <div className="aspect-[21/8]">
-                <img src="https://www.pureparima.com/cdn/shop/files/Triple_Luxe_Side_bde32881-e373-4acb-8c8f-caa30feba61e.jpg?v=1770341022" alt="Luxury Egyptian cotton sateen bedding — perfectly made neutral bed" className="w-full h-full object-cover" loading="lazy" />
+                <img src="https://www.pureparima.com/cdn/shop/files/Triple_Luxe_Side_bde32881-e373-4acb-8c8f-caa30feba61e.jpg?v=1770341022" alt="Luxury Egyptian cotton sateen bedding  perfectly made neutral bed" className="w-full h-full object-cover" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
                 <div className="absolute inset-0 flex items-end p-8 md:p-12">
                   <p className="text-white/80 text-sm tracking-[0.3em] uppercase">100% Egyptian Cotton Sateen</p>
@@ -144,12 +144,12 @@ export default function QualityPromisePage() {
 
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }} viewport={{ once: true }} className="space-y-10">
               <p className="text-[17px] md:text-lg text-gray-600 leading-[1.85]">
-                We collaborate closely with our makers on precise, intentional details — from reinforced stitching and thoughtful closures to balanced proportions that ensure elegant drape and a consistently polished look, night after night.
+                We collaborate closely with our makers on precise, intentional details  from reinforced stitching and thoughtful closures to balanced proportions that ensure elegant drape and a consistently polished look, night after night.
               </p>
 
               <div className="space-y-4">
                 {[
-                  { title: 'Stitching', desc: 'Sharp, reinforced seams built to endure — no fraying, no unravelling.' },
+                  { title: 'Stitching', desc: 'Sharp, reinforced seams built to endure  no fraying, no unravelling.' },
                   { title: 'Closures', desc: 'Secure, discreet, and easy to use every single night.' },
                   { title: 'Proportions', desc: 'Perfectly scaled for beautiful drape on every bed size.' },
                 ].map((item, i) => (
@@ -170,7 +170,7 @@ export default function QualityPromisePage() {
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}>
                 <TiltCard className="shadow-lg" intensity={0.5}>
                   <div className="aspect-[16/9]">
-                    <img src="https://parachutehome.com/cdn/shop/files/sateen-pillowcase-set_white_studio_2834__1_7e729ab5-c8d7-4e28-a636-0a5e3bd3f515.jpg?v=1770757935" alt="Premium sateen pillowcase — close-up of clean stitching and quality finish" className="w-full h-full object-cover" loading="lazy" />
+                    <img src="https://parachutehome.com/cdn/shop/files/sateen-pillowcase-set_white_studio_2834__1_7e729ab5-c8d7-4e28-a636-0a5e3bd3f515.jpg?v=1770757935" alt="Premium sateen pillowcase  close-up of clean stitching and quality finish" className="w-full h-full object-cover" loading="lazy" />
                   </div>
                 </TiltCard>
               </motion.div>
@@ -193,7 +193,7 @@ export default function QualityPromisePage() {
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-white leading-tight mb-4">Feel the Difference</h2>
                     <p className="text-lg text-gray-400 leading-relaxed max-w-lg">Experience Egyptian cotton sateen crafted to feel exceptional from the very first night.</p>
                   </div>
-                  <motion.a href="/product/winter-cloud" whileHover={{ scale: 1.05, x: 3 }} whileTap={{ scale: 0.97 }}
+                  <motion.a href="/product/sateen-bedding-set-winter-cloud" whileHover={{ scale: 1.05, x: 3 }} whileTap={{ scale: 0.97 }}
                     className="flex-shrink-0 inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase shadow-lg whitespace-nowrap">
                     Shop Bundle Sets <ArrowRight className="w-4 h-4" />
                   </motion.a>
@@ -205,7 +205,7 @@ export default function QualityPromisePage() {
       </main>
 
       <footer className="border-t border-[#e8e3dc] px-8 md:px-16 xl:px-24 py-10 bg-[#F2EDE8]">
-        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep — Crafted for Nightly Ritual</p>
+        <p className="text-sm text-[#8f877d] tracking-[0.2em] uppercase">REMsleep  Crafted for Nightly Ritual</p>
       </footer>
 
       <StoreFooter/>

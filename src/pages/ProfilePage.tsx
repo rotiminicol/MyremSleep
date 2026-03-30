@@ -411,7 +411,7 @@ export default function ProfilePage() {
                           <input className={inputBase} value={draft.firstName}
                             onChange={e => setDraft({ ...draft, firstName: e.target.value })} />
                         ) : (
-                          <div className={inputDisabled}>{profile.first_name || '—'}</div>
+                          <div className={inputDisabled}>{profile.first_name || ''}</div>
                         )}
                       </FormField>
                       <FormField label="Last Name">
@@ -419,7 +419,7 @@ export default function ProfilePage() {
                           <input className={inputBase} value={draft.lastName}
                             onChange={e => setDraft({ ...draft, lastName: e.target.value })} />
                         ) : (
-                          <div className={inputDisabled}>{profile.last_name || '—'}</div>
+                          <div className={inputDisabled}>{profile.last_name || ''}</div>
                         )}
                       </FormField>
                       <FormField label="Email Address">
@@ -438,7 +438,7 @@ export default function ProfilePage() {
                         ) : (
                           <div className={`${inputDisabled} flex items-center gap-2`}>
                             <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            {profile.phone || '—'}
+                            {profile.phone || ''}
                           </div>
                         )}
                       </FormField>

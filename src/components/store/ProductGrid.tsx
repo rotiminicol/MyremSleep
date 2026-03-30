@@ -1,33 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
-import { MOCK_PRODUCTS } from '@/lib/mock-products';
+import { COLOR_HEX, extractColorFromTitle } from '@/lib/product-colors';
 import { Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const COLOR_HEX: Record<string, { fill: string; shadow: string }> = {
-  'Winter Cloud': { fill: '#F5F5F7', shadow: '#d0d0d4' },
-  'Desert Whisperer': { fill: '#E5DACE', shadow: '#c0b8ac' },
-  'Buttermilk': { fill: '#FFF4D2', shadow: '#e0d4a0' },
-  'Clay': { fill: '#D2C4B5', shadow: '#a89c8e' },
-  'Clay Blush': { fill: '#D9A891', shadow: '#b07a63' },
-  'Clayblush Pink': { fill: '#D9A891', shadow: '#b07a63' },
-  'Pebble Haze': { fill: '#A3A3A3', shadow: '#787878' },
-  'Desert Sand': { fill: '#E2CA9D', shadow: '#c0a870' },
-  'Cinnamon Bark': { fill: '#8B4513', shadow: '#5a2c0a' },
-};
-
-function extractColorFromTitle(title: string): string | null {
-  if (title.toLowerCase().includes('winter cloud')) return 'Winter Cloud';
-  if (title.toLowerCase().includes('buttermilk')) return 'Buttermilk';
-  if (title.toLowerCase().includes('desert whisperer')) return 'Desert Whisperer';
-  if (title.toLowerCase().includes('desert sand')) return 'Desert Sand';
-  if (title.toLowerCase().includes('clay blush') || title.toLowerCase().includes('clayblush')) return 'Clay Blush';
-  if (title.toLowerCase().includes('pebble haze')) return 'Pebble Haze';
-  if (title.toLowerCase().includes('cinnamon bark')) return 'Cinnamon Bark';
-  if (title.toLowerCase().includes('clay') && !title.toLowerCase().includes('blush')) return 'Clay';
-  return null;
-}
 
 export function ProductGrid() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
@@ -81,7 +57,7 @@ export function ProductGrid() {
 
   const activeProduct = products[activeProductIndex];
   const activeImage = activeProduct.node.images.edges[0]?.node;
-  const activeColorName = extractColorFromTitle(activeProduct.node.title);
+  const activeColorName = extractColorFromTitle(activeProduct.node.title, activeProduct.node.handle);
   const activeColor = activeColorName ? COLOR_HEX[activeColorName] : null;
 
   return (
@@ -154,7 +130,7 @@ export function ProductGrid() {
         <div className="w-full overflow-x-auto overflow-y-visible md:overflow-x-visible pb-2 hide-scrollbar">
           <div className="flex md:flex-wrap justify-start md:justify-center gap-4 sm:gap-6 md:gap-8 w-max md:w-full min-w-full px-4 md:px-0">
             {products.map((product, idx) => {
-              const colorName = extractColorFromTitle(product.node.title);
+              const colorName = extractColorFromTitle(product.node.title, product.node.handle);
               const color = colorName ? COLOR_HEX[colorName] : { fill: '#ccc', shadow: '#999' };
               const isActive = activeProductIndex === idx;
 

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ShopifyProduct } from '@/lib/shopify';
+import { COLOR_HEX, extractColorFromTitle } from '@/lib/product-colors';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 

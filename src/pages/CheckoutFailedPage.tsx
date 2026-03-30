@@ -8,7 +8,7 @@ export default function CheckoutFailedPage() {
         <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" aria-hidden="true" />
         <h1 className="text-3xl font-semibold tracking-tight">Payment not completed</h1>
         <p className="mt-3 text-muted-foreground">
-          No worries — your checkout was not completed. You can try again or go back to your cart.
+          No worries  your checkout was not completed. You can try again or go back to your cart.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
