@@ -358,11 +358,8 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
             </button>
           </div>
 
-          {/* Right: Help Info */}
-          <div className="hidden md:flex items-center justify-end gap-2 flex-1 lowercase text-[11px]">
-            <Phone className="h-3 w-3" />
-            <span>Here to help +44 1242 339 161</span>
-          </div>
+          {/* Right: Empty for balance */}
+          <div className="hidden md:flex flex-1"></div>
         </div>
       )}
 
@@ -585,7 +582,7 @@ export function StoreNavbar({ hideOnScroll = false }: { hideOnScroll?: boolean }
             <div className="md:hidden flex items-center justify-between h-8 px-1">
               {/* Left: Logo */}
               <div className="flex items-center -ml-6">
-                <Link to="/store" className="flex-shrink-0">
+                <Link to="/" className="flex-shrink-0">
                   <img src="/logo5.png" alt="Remsleep" className="h-8 w-auto" />
                 </Link>
               </div>
