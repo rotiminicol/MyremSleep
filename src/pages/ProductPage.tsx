@@ -361,7 +361,7 @@ export default function ProductPage() {
           <div className="flex flex-col justify-start py-10 px-8 lg:px-12 xl:px-14 overflow-y-auto lg:max-h-[100vh] bg-[#F2EDE8] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
             <h1 className="text-[32px] md:text-[38px] leading-tight text-gray-900 font-bold tracking-tight mb-2">
-              Sateen Bedding Set
+              The Sateen Set
             </h1>
 
             {/* Ratings */}
@@ -399,6 +399,11 @@ export default function ProductPage() {
                 </button>
               </span>
             </div>
+
+            <p className="text-sm text-gray-600 leading-relaxed mb-6 max-w-[440px]">
+              The complete bedding set in 300-thread-count Egyptian cotton sateen. Six pieces. One
+              considered choice.
+            </p>
 
             <p className="text-[28px] font-bold text-gray-900 mb-2">
               {formatPrice(parseFloat(selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount || '0'))}
@@ -467,22 +472,23 @@ export default function ProductPage() {
                       const sizeOptionName = product.options.find(o => o.name.toLowerCase().includes('size'))?.name || 'Size';
                       const isSelected = selectedOptions[sizeOptionName] === size || selectedSize === size;
                       return (
-                      <button
-                        key={size}
-                        onClick={() => {
-                          setSelectedSize(size);
-                          handleOptionChange(sizeOptionName, size);
-                        }}
-                        className={cn(
-                          "flex-1 py-4 text-[13px] font-bold tracking-[0.2em] uppercase transition-all border rounded-sm",
-                          isSelected
-                            ? "border-primary bg-primary text-white"
-                            : "border-[#e0dbd5] text-gray-900 hover:border-gray-400 bg-white"
-                        )}
-                      >
-                        {size}
-                      </button>
-                    )})}
+                        <button
+                          key={size}
+                          onClick={() => {
+                            setSelectedSize(size);
+                            handleOptionChange(sizeOptionName, size);
+                          }}
+                          className={cn(
+                            "flex-1 py-4 text-[13px] font-bold tracking-[0.2em] uppercase transition-all border rounded-sm",
+                            isSelected
+                              ? "border-primary bg-primary text-white"
+                              : "border-[#e0dbd5] text-gray-900 hover:border-gray-400 bg-white"
+                          )}
+                        >
+                          {size}
+                        </button>
+                      )
+                    })}
                   </div>
                   <div className="flex-1 max-w-[64px]" />
                 </div>
@@ -553,7 +559,7 @@ export default function ProductPage() {
                     <RotateCcw className="w-3.5 h-3.5" /> Free Returns
                   </div>
                   <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest text-gray-900">
-                    <ShieldCheck className="w-3.5 h-3.5" /> Secure Checkout
+                    <Check className="w-3.5 h-3.5" /> 6-Piece Set
                   </div>
                 </div>
               </div>
@@ -585,6 +591,18 @@ export default function ProductPage() {
                   <Plus className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" />
                 </button>
               ))}
+            </div>
+
+            <div className="mt-12 pt-12 border-t border-[#e0dbd5] space-y-4 text-center">
+              <h3 className="text-[13px] font-bold uppercase tracking-[0.2em] text-gray-900">
+                Rest, considered.
+              </h3>
+              <p className="text-[13px] text-gray-600 leading-relaxed mx-auto">
+                REMsleep makes bedding for people who care about how they sleep, not just whether
+                they slept. We believe the bedroom should feel calm, intentional, and quietly beautiful.
+                So we begin with exceptional materials, design with restraint, and price without
+                pretence.
+              </p>
             </div>
 
             <div className="h-8 md:h-8 mb-20 md:mb-0" />
@@ -715,9 +733,9 @@ export default function ProductPage() {
                       <div className="space-y-6">
                         {[
                           { label: 'Material', content: '100% long-staple Egyptian cotton, selected for a longer, finer fibre that produces exceptional softness, natural breathability and the durability to age well rather than wear out.' },
-                          { label: 'Construction', content: 'Sateen weave, crafted by specialist textile manufacturers with generations of expertise in fine cotton. Woven so the fabric drapes cleanly, catches light softly and feels distinct from standard percale or cotton blends.' },
+                          { label: 'Construction', content: 'Sateen weave, produced by specialist mills with deep expertise in fine cotton. Woven so the fabric drapes cleanly, catches light softly and feels distinct from standard percale or cotton blends.' },
                           { label: 'Thread count', content: '300, the point at which softness, breathability and longevity meet. Not inflated for marketing. Chosen because it performs.' },
-                          { label: 'What\'s included', content: 'Duvet cover, fitted sheet, 2 Oxford pillowcases and 2 plain pillowcases. Everything needed to make the room feel complete, in one set.' },
+                          { label: 'What\'s included', content: 'Six pieces: duvet cover, fitted sheet, 2 Oxford pillowcases and 2 plain pillowcases. Everything needed to make the room feel complete, in one set.' },
                           { label: 'Certification', content: 'Produced at an OEKO-TEX® Standard 100 certified facility, independently tested and verified free from harmful substances.' },
                         ].map((item) => (
                           <div key={item.label} className="space-y-2 pb-4 border-b border-[#e0dbd5] last:border-0 last:pb-0">
@@ -732,10 +750,13 @@ export default function ProductPage() {
                   {openDrawer === 'why-it-works' && (
                     <div className="space-y-8">
                       <p className="text-sm text-gray-600 leading-relaxed">
-                        Egyptian cotton sateen sits differently to standard cotton. The longer the fibre, the smoother and more consistent the weave, which is why long-staple Egyptian cotton is the preferred choice for premium bedding. At 300 thread count, the fabric has enough density to feel considered without sacrificing breathability. The sateen finish means it drapes cleanly and resists the washed-out look that lower-quality white bedding develops over time.
-                      </p>
-                      <p className="text-sm text-gray-600 leading-relaxed pt-4 border-t border-[#e0dbd5]">
-                        REMsleep Sateen Bundle Sets are designed to be lived with. They do not need careful handling or precise styling to look good. They settle naturally and hold their finish, wash after wash.
+                        Most premium bedding brands sell each piece separately   a duvet cover here, a fitted sheet
+                        there, pillowcases as an afterthought. By the time you've built a full set in Egyptian cotton
+                        sateen, you've spent well over £150. The REMsleep Sateen Set includes all six pieces   duvet
+                        cover, fitted sheet, 2 Oxford pillowcases and 2 plain pillowcases, come in a bundle, at one price.
+                        No hunting, no mismatched whites, no inflated markup on individual items. It's designed to be
+                        lived with, not fussed over. The fabric settles naturally, holds its shape and looks better with
+                        every wash. A complete bed, considered from the start.
                       </p>
                     </div>
                   )}
@@ -778,10 +799,11 @@ export default function ProductPage() {
                   {openDrawer === 'specifications' && (
                     <div className="space-y-8">
                       {[
-                        { label: 'Material', value: '100% Egyptian cotton' },
-                        { label: 'Weave', value: 'Sateen' },
-                        { label: 'Thread Count', value: '300' },
-                        { label: 'Finish / Feel', value: 'Smooth, softly luminous, elegant drape' },
+                        { label: 'Sizes', value: 'Double / King' },
+                        { label: 'Fitted sheet depth', value: '35cm deep pocket, designed to fit even deep mattresses without charging extra' },
+                        { label: 'Duvet cover closure', value: 'Button fastening, colour-matched to your set' },
+                        { label: 'Pillowcase closure', value: 'Envelope back' },
+                        { label: 'Certification', value: 'OEKO-TEX® Standard 100' },
                       ].map(({ label, value }) => (
                         <div key={label} className="space-y-1 border-t border-[#e0dbd5] pt-6 first:border-t-0 first:pt-0">
                           <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900">{label}</h4>

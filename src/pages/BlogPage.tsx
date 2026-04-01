@@ -1,4 +1,4 @@
-// BlogPage.tsx - Elevated "Best of the Week" Design
+// BlogPage.tsx - Elevated "The Rest Edit" Design
 import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { motion, useScroll } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -20,7 +20,7 @@ export default function BlogPage() {
                 <StoreNavbar />
                 <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-4 sm:pt-2 lg:pt-4 pb-6 sm:pb-4 mb-6 sm:mb-8">
                     <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black italic font-sans text-gray-900 tracking-tighter">
-                        Best of the week
+                         The Rest Edit
                     </h1>
                 </div>
                 <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
@@ -42,7 +42,7 @@ export default function BlogPage() {
                 <StoreNavbar />
                 <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-4 sm:pt-2 lg:pt-4 pb-6 sm:pb-4 mb-6 sm:mb-8">
                     <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black italic font-sans text-gray-900 tracking-tighter">
-                        Best of the week
+                        The Rest Edit
                     </h1>
                 </div>
                 <main className="max-w-[1600px] mx-auto px-4 sm:px-6 pb-16 sm:pb-20 lg:pb-32">
@@ -99,11 +99,11 @@ export default function BlogPage() {
         <div className="min-h-screen bg-[#F2EDE8]" ref={containerRef}>
             <StoreNavbar />
 
-            {/* Refined "Best of the Week" Header */}
+            {/* Refined "The Rest Edit" Header */}
             <div className="max-w-[1600px] mx-auto px-4 sm:px-6 pt-4 sm:pt-2 lg:pt-4 pb-6 sm:pb-4 flex flex-col sm:flex-row items-start sm:items-baseline justify-between gap-3 sm:gap-0 mb-6 sm:mb-8">
                 <div className="flex items-baseline gap-3 sm:gap-6">
                     <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black italic font-sans text-gray-900 tracking-tighter">
-                        Best of the week
+                        The Rest Edit
                     </h1>
                 </div>
                 <Link
@@ -114,7 +114,7 @@ export default function BlogPage() {
                 </Link>
             </div>
 
-            {/* Bento Grid Layout - "Best of the Week" Refined */}
+            {/* Bento Grid Layout - "The Rest Edit" Refined */}
             <main className="max-w-[1600px] mx-auto px-4 sm:px-6 pb-16 sm:pb-20 lg:pb-32">
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
                     {/* 1. Featured Blog Post Container */}
