@@ -1,29 +1,23 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
-import { COLOR_HEX, extractColorFromTitle } from '@/lib/product-colors';
+import { extractColorFromTitle } from '@/lib/product-colors';
 import { Loader2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export function ProductGrid() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeProductIndex, setActiveProductIndex] = useState(0);
-  const breatheRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const idleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Tracks current image index per product  advances by 1 on each hover-in
+  const [imageIndexes, setImageIndexes] = useState<Record<string, number>>({});
 
   useEffect(() => {
     async function loadProducts() {
       try {
-        console.log('Loading products from Shopify store...');
         const data = await fetchProducts(20);
-        console.log('Shopify API response:', data);
-
         if (data && data.length > 0) {
-          console.log(`Successfully loaded ${data.length} products from Shopify`);
           setProducts(data);
         } else {
-          console.warn('No products returned from Shopify API');
           setProducts([]);
         }
       } catch (error) {
@@ -36,17 +30,18 @@ export function ProductGrid() {
     loadProducts();
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (breatheRef.current) clearInterval(breatheRef.current);
-      if (idleRef.current) clearTimeout(idleRef.current);
-    };
-  }, []);
+  const handleMouseEnter = (productId: string, imageCount: number) => {
+    if (imageCount <= 1) return;
+    setImageIndexes(prev => ({
+      ...prev,
+      [productId]: ((prev[productId] ?? 0) + 1) % imageCount,
+    }));
+  };
 
   if (loading) {
     return (
-      <section className="py-16 px-6">
-        <div className="flex items-center justify-center py-20">
+      <section style={{ padding: 'clamp(3rem, 8vw, 7rem) clamp(1rem, 4vw, 3rem)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '5rem 0' }}>
           <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
         </div>
       </section>
@@ -55,160 +50,171 @@ export function ProductGrid() {
 
   if (products.length === 0) return null;
 
-  const activeProduct = products[activeProductIndex];
-  const activeImage = activeProduct.node.images.edges[0]?.node;
-  const activeColorName = extractColorFromTitle(activeProduct.node.title, activeProduct.node.handle);
-  const activeColor = activeColorName ? COLOR_HEX[activeColorName] : null;
+  const filteredProducts = products.filter(product => {
+    const node = product.node;
+    const combined = (node.title + ' ' + node.handle.replace(/-/g, ' ')).toLowerCase();
+    return !combined.includes('pebble haze');
+  });
+
+  const displayProducts = filteredProducts.slice(0, 6);
 
   return (
-    <section className="md:px-6 bg-[#F2EDE8]">
+    <section style={{ padding: 'clamp(3rem, 8vw, 0rem) clamp(1rem, 4vw, 1.5rem) clamp(3.5rem, 8vw, 7rem)' }}>
+
+      {/* Section label */}
+      <p
+        style={{
+          textAlign: 'center',
+          fontSize: '0.625rem',
+          letterSpacing: '0.2rem',
+          textTransform: 'uppercase',
+          color: '#8A7E74',
+          marginBottom: '2.5rem',
+          fontFamily: "'Jost', sans-serif",
+          fontWeight: 300,
+        }}
+      >
+        Six colourways
+      </p>
+
+      {/* Grid  2 cols on mobile, 3 cols on sm+ */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '0.5rem',
+          maxWidth: '90rem',
+          margin: '0 auto',
+        }}
+        className="sm:grid-cols-3 sm:gap-3"
+      >
+        {displayProducts.map((product, idx) => {
+          const node = product.node;
+          const images = node.images.edges.map(e => e.node);
+          const currentIndex = imageIndexes[node.id] ?? 0;
+          const currentImage = images[currentIndex] ?? images[0];
+          const colorName = extractColorFromTitle(node.title, node.handle);
+
+          return (
+            <motion.div
+              key={node.id}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: idx * 0.07 }}
+              viewport={{ once: true }}
+              className="product-card"
+              style={{
+                position: 'relative',
+                overflow: 'hidden',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={() => handleMouseEnter(node.id, images.length)}
+            >
+              <Link
+                to={`/product/${node.handle}`}
+                style={{ display: 'block', width: '100%', height: '100%' }}
+              >
+                {currentImage ? (
+                  <motion.img
+                    key={currentImage.url}
+                    src={currentImage.url}
+                    alt={currentImage.altText || node.title}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.4, ease: 'easeInOut' }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
+                      position: 'absolute',
+                      inset: 0,
+                    }}
+                  />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', background: '#E8E4DE' }} />
+                )}
+
+                <span
+                  className="colour-label"
+                  style={{
+                    position: 'absolute',
+                    bottom: '0.75rem',
+                    left: '0.75rem',
+                    fontSize: '0.5rem',
+                    letterSpacing: '0.12rem',
+                    textTransform: 'uppercase',
+                    color: '#FFFFFF',
+                    fontFamily: "'Jost', sans-serif",
+                    fontWeight: 400,
+                    pointerEvents: 'none',
+                    transition: 'opacity 0.3s',
+                    zIndex: 2,
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '0.125rem',
+                    backdropFilter: 'blur(4px)',
+                  }}
+                >
+                  {colorName || node.title}
+                </span>
+              </Link>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* CTA */}
+      <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+        <Link
+          to="/product/sateen-bedding-set-winter-cloud"
+          style={{
+            display: 'inline-block',
+            fontFamily: "'Jost', sans-serif",
+            fontSize: '0.625rem',
+            fontWeight: 400,
+            letterSpacing: '0.18rem',
+            textTransform: 'uppercase',
+            color: '#2C2824',
+            textDecoration: 'none',
+            padding: '0.9rem 2.5rem',
+            border: '0.0625rem solid #2C2824',
+            transition: 'all 0.35s ease',
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLAnchorElement).style.background = '#2C2824';
+            (e.currentTarget as HTMLAnchorElement).style.color = '#FAF8F5';
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+            (e.currentTarget as HTMLAnchorElement).style.color = '#2C2824';
+          }}
+        >
+          Shop the set
+        </Link>
+      </div>
+
       <style>{`
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
+        /* Mobile: 3/4 ratio */
+        .product-card {
+          aspect-ratio: 3/4;
         }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
+
+        /* Desktop: shorter cards */
+        @media (min-width: 640px) {
+          .product-card {
+            aspect-ratio: 4/5;
+          }
+          .sm\\:grid-cols-3 { grid-template-columns: repeat(3, 1fr) !important; }
+          .sm\\:gap-3 { gap: 0.75rem !important; }
+          .colour-label { opacity: 0 !important; }
+          a:hover .colour-label { opacity: 1 !important; }
+        }
+
+        @media (max-width: 639px) {
+          .colour-label { opacity: 1 !important; }
         }
       `}</style>
-      
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="group"
-      >
-        <Link to={`/product/${activeProduct.node.handle}`} className="block">
-          <div className="relative aspect-[3/4] md:aspect-[21/9] bg-[#EBE7E0] overflow-hidden md:rounded-sm shadow-sm group-hover:shadow-md transition-shadow duration-700">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={activeProduct.node.id}
-                src={activeImage?.url}
-                alt={activeImage?.altText || activeProduct.node.title}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-              />
-            </AnimatePresence>
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700" />
-
-            {/* Centered Content Overlay */}
-            <div className="absolute inset-x-0 bottom-0 p-8 md:p-16 flex flex-col items-center text-center bg-gradient-to-t from-black/20 to-transparent">
-              <div className="w-full max-w-xs transition-all duration-300">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="w-full bg-white text-gray-900 py-4 text-[10px] font-semibold tracking-[0.2em] uppercase rounded-sm hover:bg-black hover:text-white transition-all transform active:scale-[0.98] flex items-center justify-center cursor-pointer"
-                >
-                  Shop Now
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        </Link>
-      </motion.div>
-
-      {/* Color Swatches Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-        viewport={{ once: true }}
-        className="mt-2 md:mt-12 flex flex-col items-center text-center px-1 md:px-6"
-      >
-        <h3 className="text-[11px] min-[375px]:text-[13px] min-[425px]:text-sm sm:text-lg md:text-2xl font-serif text-gray-900 mb-2 md:mb-6 px-4">
-          One set. Eight seasonless colourways. Effortless calm
-        </h3>
-
-        {/* Mobile: single line with hidden scrollbar, Desktop: wrap with proper spacing */}
-        <div className="w-full overflow-x-auto overflow-y-visible md:overflow-x-visible pb-2 hide-scrollbar">
-          <div className="flex md:flex-wrap justify-start md:justify-center gap-4 sm:gap-6 md:gap-8 w-max md:w-full min-w-full px-4 md:px-0">
-            {products.map((product, idx) => {
-              const colorName = extractColorFromTitle(product.node.title, product.node.handle);
-              const color = colorName ? COLOR_HEX[colorName] : { fill: '#ccc', shadow: '#999' };
-              const isActive = activeProductIndex === idx;
-
-              return (
-                <button
-                  key={product.node.id}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setActiveProductIndex(idx);
-                  }}
-                  title={colorName || product.node.title}
-                  className="flex flex-col items-center gap-1.5 sm:gap-2 flex-shrink-0 bg-transparent border-none cursor-pointer"
-                  style={{ 
-                    WebkitTapHighlightColor: 'transparent',
-                    width: 'clamp(50px, 8vw, 70px)',
-                  }}
-                >
-                  {/* Circle wrapper with fixed dimensions */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 'clamp(36px, 6vw, 52px)',
-                      height: 'clamp(36px, 6vw, 52px)',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {/* Circle - always same size, only border and shadow change */}
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: '50%',
-                        backgroundColor: color.fill,
-                        border: isActive ? `2.5px solid ${color.shadow}` : '2.5px solid transparent',
-                        boxShadow: isActive
-                          ? `0 0 0 2px ${color.shadow}40`
-                          : 'none',
-                        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-                      }}
-                    />
-                  </div>
-
-                  {/* Color name with fixed height */}
-                  <div 
-                    style={{
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      justifyContent: 'center',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    {isActive && (
-                      <span 
-                        style={{
-                          fontSize: 'clamp(9px, 2vw, 11px)',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.08em',
-                          fontWeight: 500,
-                          color: '#000000',
-                          textAlign: 'center',
-                          lineHeight: 1.2,
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {colorName || product.node.title.split(' ')[0]}
-                      </span>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </motion.div>
     </section>
   );
 }
