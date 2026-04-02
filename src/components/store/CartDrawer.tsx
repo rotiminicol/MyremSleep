@@ -244,7 +244,7 @@ export function CartDrawer() {
                               onClick={() => removeItem(item.variantId)}
                               className="mt-6 text-gray-400 hover:text-gray-600 transition-colors text-[10px] uppercase underline tracking-wider font-bold"
                             >
-                              Remove
+                              <Trash2 className="w-4 h-4 inline mr-1 text-red-500" />
                             </button>
                           </div>
                         </div>
