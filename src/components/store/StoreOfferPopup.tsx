@@ -52,7 +52,7 @@ export function StoreOfferPopup() {
                 if (!open) handleClose();
             }}>
                 <DialogContent className="w-[80vw] max-w-[340px] sm:max-w-[400px] md:max-w-[1000px] p-0 overflow-hidden bg-white border-none shadow-3xl rounded-none ring-1 ring-black/5">
-                    <div className="relative min-h-[420px] md:min-h-[600px] flex flex-col md:flex-row bg-white">
+                    <div className="relative min-h-[320px] md:min-h-[600px] flex flex-col md:flex-row bg-white">
                         {/* Image Section - Left (Desktop Only) */}
                         <div className="hidden md:block md:w-[50%] relative overflow-hidden">
                             <img
@@ -63,7 +63,7 @@ export function StoreOfferPopup() {
                         </div>
 
                         {/* Content Section - Right */}
-                        <div className="w-full md:w-[50%] flex flex-col justify-center items-center md:items-start px-5 py-8 md:px-14 md:py-16 relative h-[420px] md:h-[600px]">
+                        <div className="w-full md:w-[50%] flex flex-col justify-center items-center md:items-start px-5 py-6 md:px-14 md:py-16 relative h-[320px] md:h-[600px]">
                             {/* Close Button */}
                             <button
                                 onClick={handleClose}
@@ -81,7 +81,7 @@ export function StoreOfferPopup() {
                                         exit={{ opacity: 0, y: -10 }}
                                         className="flex flex-col items-center text-center w-full"
                                     >
-                                        <h2 className="text-[28px] md:text-5xl font-serif text-gray-900 mb-6 md:mb-12 leading-tight tracking-tight">
+                                        <h2 className="text-2xl md:text-5xl font-serif text-gray-900 mb-4 md:mb-12 leading-tight tracking-tight">
                                             You've got a <br />
                                             special offer
                                         </h2>
