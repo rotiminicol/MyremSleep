@@ -14,16 +14,39 @@ export function StoreOfferPopup() {
     const [step, setStep] = useState<PopupStep>('offer');
 
     useEffect(() => {
-        // Temporarily disabled for verification
-        // const hasSeenPopup = sessionStorage.getItem('store_popup_seen');
+        // Check if offer should be shown (max 2 times per 30 minutes)
+        const checkOfferDisplay = () => {
+            const storageKey = 'store_popup_seen';
+            const now = Date.now();
+            const lastShown = sessionStorage.getItem(storageKey);
+            const timesShown = lastShown ? parseInt(lastShown) : 0;
+            
+            // Check if 30 minutes have passed since last shown
+            if (lastShown) {
+                const lastShownTime = parseInt(sessionStorage.getItem(`${storageKey}_time`) || '0');
+                const timeDiff = now - lastShownTime;
+                const thirtyMinutes = 30 * 60 * 1000; // 30 minutes in milliseconds
+                
+                if (timeDiff < thirtyMinutes) {
+                    return; // Don't show again if within 30 minutes
+                }
+            }
+            
+            // Show offer if less than 2 times shown
+            if (timesShown < 2) {
+                setIsOpen(true);
+                sessionStorage.setItem(storageKey, (timesShown + 1).toString());
+                sessionStorage.setItem(`${storageKey}_time`, now.toString());
+            }
+        };
 
-        // if (!hasSeenPopup) {
-        const timer = setTimeout(() => {
-            setIsOpen(true);
-        }, 1000); // Reduced delay to 1s
-
-        return () => clearTimeout(timer);
-        // }
+        // Check on page load
+        checkOfferDisplay();
+        
+        // Check every 30 seconds in case user stays on page
+        const interval = setInterval(checkOfferDisplay, 30000);
+        
+        return () => clearInterval(interval);
     }, []);
 
     const handleClose = () => {

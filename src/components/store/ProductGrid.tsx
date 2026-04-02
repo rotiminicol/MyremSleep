@@ -8,8 +8,6 @@ import { motion } from 'framer-motion';
 export function ProductGrid() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  // Tracks current image index per product  advances by 1 on each hover-in
-  const [imageIndexes, setImageIndexes] = useState<Record<string, number>>({});
 
   useEffect(() => {
     async function loadProducts() {
@@ -29,14 +27,6 @@ export function ProductGrid() {
     }
     loadProducts();
   }, []);
-
-  const handleMouseEnter = (productId: string, imageCount: number) => {
-    if (imageCount <= 1) return;
-    setImageIndexes(prev => ({
-      ...prev,
-      [productId]: ((prev[productId] ?? 0) + 1) % imageCount,
-    }));
-  };
 
   if (loading) {
     return (
@@ -91,8 +81,7 @@ export function ProductGrid() {
         {displayProducts.map((product, idx) => {
           const node = product.node;
           const images = node.images.edges.map(e => e.node);
-          const currentIndex = imageIndexes[node.id] ?? 0;
-          const currentImage = images[currentIndex] ?? images[0];
+          const currentImage = images[0]; // Always show first image
           const colorName = extractColorFromTitle(node.title, node.handle);
 
           return (
@@ -108,7 +97,6 @@ export function ProductGrid() {
                 overflow: 'hidden',
                 cursor: 'pointer',
               }}
-              onMouseEnter={() => handleMouseEnter(node.id, images.length)}
             >
               <Link
                 to={`/product/${node.handle}`}

@@ -4,6 +4,7 @@ import { ProductGrid } from '@/components/store/ProductGrid';
 import { StoreFooter } from '@/components/store/StoreFooter';
 import { StoreBelief } from '@/components/store/StoreBelief';
 import { StoreCraft } from '@/components/store/StoreCraft';
+import { FabricDetail } from '@/components/store/FabricDetail';
 
 export default function StorePage() {
   return (
@@ -12,6 +13,7 @@ export default function StorePage() {
       <StoreHero />
       <StoreBelief />
       <ProductGrid />
+      <FabricDetail />
       <StoreCraft />
       <StoreFooter />
     </div>
