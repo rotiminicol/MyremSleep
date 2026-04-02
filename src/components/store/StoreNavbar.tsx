@@ -24,7 +24,7 @@ const SEARCH_KEYWORDS = {
 
 const announcements = [
   'Sign up for 10% and Newsletter',
-  'Free Shipping over £99',
+  'Free Shipping over £90',
   'Launch Bundles: duvet cover + fitted sheet + 4 pillowcases.',
   '300 thread count Egyptian cotton sateen bundles.'
 ];

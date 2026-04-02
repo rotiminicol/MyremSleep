@@ -74,7 +74,7 @@ export function ProductGrid() {
           fontWeight: 300,
         }}
       >
-        Six colourways
+        Seven colours
       </p>
 
       {/* Grid  2 cols on mobile, 3 cols on sm+ */}
@@ -200,10 +200,10 @@ export function ProductGrid() {
           aspect-ratio: 3/4;
         }
 
-        /* Desktop: shorter cards */
+        /* Desktop: slightly reduced height */
         @media (min-width: 640px) {
           .product-card {
-            aspect-ratio: 4/5;
+            aspect-ratio: 4/4.5;
           }
           .sm\\:grid-cols-3 { grid-template-columns: repeat(3, 1fr) !important; }
           .sm\\:gap-3 { gap: 0.75rem !important; }
