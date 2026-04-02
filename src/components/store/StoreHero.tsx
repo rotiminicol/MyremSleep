@@ -4,15 +4,17 @@ import { motion } from 'framer-motion';
 export function StoreHero() {
   return (
     <section className="w-full">
-      {/* Hero  full viewport, gradient background, centred copy */}
+      {/* Hero  full viewport, background image, centred copy */}
       <div
-        className="relative flex items-center justify-center"
+        className="relative flex items-center justify-center bg-cover bg-center bg-no-repeat"
         style={{
           height: '90vh',
           minHeight: '32rem',
-          background: 'linear-gradient(155deg, #DDD5C8, #D0C6B6, #E0D8CC)',
+          backgroundImage: 'url(/herosection5.webp)',
+          backgroundColor: '#E0D8CC', // fallback color
         }}
       >
+        <div className="absolute inset-0 bg-black/10 z-0" /> {/* Slight overlay for text readability */}
         <motion.div
           className="text-center z-10"
           initial={{ opacity: 0, y: 20 }}
