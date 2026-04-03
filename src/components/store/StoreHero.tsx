@@ -10,7 +10,7 @@ export function StoreHero() {
         style={{
           height: '90vh',
           minHeight: '32rem',
-          backgroundImage: 'url(/steven-ungermann-0dAXtVhtBgg-unsplash.jpg)',
+          backgroundImage: 'url(/herosection5.webp)',
           backgroundColor: '#E0D8CC', // fallback color
         }}
       >
