@@ -164,7 +164,7 @@ export default function MaterialsPage() {
                 {sec.image && (
                   <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}>
                     <TiltCard className="shadow-lg mt-4" intensity={0.5}>
-                      <div className="aspect-[16/10]">
+                      <div className="aspect-[16/12]">
                         <img src={sec.image.src} alt={sec.image.alt} className="w-full h-full object-cover" loading="lazy" />
                       </div>
                     </TiltCard>

@@ -20,7 +20,7 @@ export function FabricDetail() {
         }}
       >
         <img
-          src="/clayblush2.png"
+          src="/image3.png"
           alt="Close-up of sateen fabric texture"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', objectPosition: 'center 30%' }}
           onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}

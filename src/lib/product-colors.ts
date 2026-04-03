@@ -1,12 +1,12 @@
 export const COLOR_HEX: Record<string, { fill: string; shadow: string }> = {
-  'Winter Cloud': { fill: '#F5F5F7', shadow: '#d0d0d4' },
-  'Desert Whisperer': { fill: '#E5DACE', shadow: '#c0b8ac' },
-  'Buttermilk': { fill: '#FFF4D2', shadow: '#e0d4a0' },
-  'Clay Blush': { fill: '#D9A891', shadow: '#b07a63' },
-  'Clayblush Pink': { fill: '#D9A891', shadow: '#b07a63' },
-  'Pebble Haze': { fill: '#A3A3A3', shadow: '#787878' },
-  'Desert Sand': { fill: '#E2CA9D', shadow: '#c0a870' },
-  'Cinnamon Bark': { fill: '#8B6040', shadow: '#5a2c0a' },
+  'Winter Cloud': { fill: '#FFFFFF', shadow: '#e0e0e0' },
+  'Desert Whisperer': { fill: '#E6C9A8', shadow: '#d0b090' },
+  'Buttermilk': { fill: '#FBF3DB', shadow: '#e0d0b0' },
+  'Clay Blush': { fill: '#AF8C82', shadow: '#906050' },
+  'Clayblush Pink': { fill: '#AF8C82', shadow: '#906050' },
+  'Pebble Haze': { fill: '#9D9D9D', shadow: '#787878' },
+  'Desert Sand': { fill: '#C3874D', shadow: '#a06030' },
+  'Cinnamon Bark': { fill: '#875C32', shadow: '#603020' },
 };
 
 /**

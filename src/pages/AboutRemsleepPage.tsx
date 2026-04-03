@@ -3,6 +3,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Heart, ArrowRight, CheckCircle, Moon } from 'lucide-react';
 import { StoreFooter } from '@/components/store/StoreFooter';
 import { StoreNavbar } from '@/components/store/StoreNavbar';
+import { useNavigate } from 'react-router-dom';
 
 function TiltCard({ children, className = '', intensity = 1 }) {
   const ref = useRef(null);
@@ -40,14 +41,13 @@ function Divider() {
 }
 
 const colors = [
-  { name: 'Winter Cloud', hex: '#F5F5F7' },
-  { name: 'Desert Whisperer', hex: '#E5DACE' },
-  { name: 'Buttermilk', hex: '#FFF4D2' },
-  { name: 'Clay', hex: '#D2C4B5' },
-  { name: 'Clay Blush', hex: '#D9A891' },
-  { name: 'Pebble Haze', hex: '#A3A3A3' },
-  { name: 'Desert Sand', hex: '#E2CA9D' },
-  { name: 'Cinnamon Bark', hex: '#8B6040' },
+  { name: 'Winter Cloud', hex: '#FFFFFF', handle: 'sateen-bedding-set-winter-cloud' },
+  { name: 'Desert Whisperer', hex: '#E6C9A8', handle: 'sateen-bedding-set-desert-whisperer' },
+  { name: 'Buttermilk', hex: '#FBF3DB', handle: 'sateen-bedding-set-buttermilk' },
+  { name: 'Clay Blush', hex: '#AF8C82', handle: 'sateen-bedding-set-clay-blush' },
+  { name: 'Pebble Haze', hex: '#9D9D9D', handle: 'sateen-bedding-set-pebble-haze' },
+  { name: 'Desert Sand', hex: '#C3874D', handle: 'sateen-bedding-set-desert-sand' },
+  { name: 'Cinnamon Bark', hex: '#875C32', handle: 'sateen-bedding-set-cinnamon-bark' },
 ];
 
 const bundleBenefits = [
@@ -57,6 +57,7 @@ const bundleBenefits = [
 ];
 
 export default function AboutRemsleepPage() {
+  const navigate = useNavigate();
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
   const heroOpacity = useTransform(scrollYProgress, [0, 0.18, 0.28], [1, 1, 0]);
@@ -64,6 +65,10 @@ export default function AboutRemsleepPage() {
   const heroY = useTransform(scrollYProgress, [0, 0.28], [0, -40]);
   const blob1Y = useTransform(scrollYProgress, [0, 1], [0, 160]);
   const blob2Y = useTransform(scrollYProgress, [0, 1], [0, -130]);
+
+  const handleColorClick = (colorHandle: string) => {
+    navigate(`/product/${colorHandle}`);
+  };
 
   return (
     <div ref={containerRef} className="min-h-screen bg-[#F2EDE8] flex flex-col overflow-x-hidden font-['Georgia',serif]">
@@ -170,6 +175,8 @@ export default function AboutRemsleepPage() {
                     <motion.div key={i} initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: i * 0.07 }} viewport={{ once: true }} className="text-center group">
                       <motion.div
                         whileHover={{ scale: 1.1, y: -4 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleColorClick(color.handle)}
                         className="w-full aspect-square rounded-xl shadow-md mb-3 border border-black/5 cursor-pointer"
                         style={{ backgroundColor: color.hex }}
                       />

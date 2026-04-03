@@ -155,7 +155,7 @@ export default function ContactPage() {
                       onBlur={() => setFocusedField(null)}
                       required
                       className={`${inputClasses('name')} pl-12`}
-                      placeholder="John Doe"
+                      placeholder=""
                     />
                   </div>
                 </motion.div>

@@ -203,7 +203,7 @@ export default function OurStoryPage() {
               <TiltCard className="shadow-2xl" intensity={0.8}>
                 <div className="aspect-[4/3] bg-[#e8e3dc]">
                   <img
-                    src="https://www.pureparima.com/cdn/shop/files/Silken_Sateen_Oyster_Q_Duvet_Set-side_1_59a7f1dd-756d-4cd9-8a06-22720ad6840a.png?v=1769722845"
+                    src="/clayblush2.png"
                     alt="Luxury Egyptian cotton sateen bedding set"
                     className="w-full h-full object-cover"
                     loading="lazy"

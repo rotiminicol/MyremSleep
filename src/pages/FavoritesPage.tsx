@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ShoppingBag, ArrowLeft, Loader2, Trash2 } from 'lucide-react';
+import { Heart, ShoppingBag, ArrowLeft, Loader2, Trash2, X } from 'lucide-react';
 import { useFavoritesStore } from '@/stores/favoritesStore';
 import { useUserCart } from '@/stores/userCartStore';
 import { useCurrency } from '@/hooks/useCurrency';
-import { SimpleBackButton } from '@/components/SimpleBackButton';
+import { StoreNavbar } from '@/components/store/StoreNavbar';
 import { toast } from 'sonner';
 
 // Color mappings for favorites display
@@ -61,6 +61,7 @@ export default function FavoritesPage() {
   const { addItem: addToCart, isLoading: isCartLoading } = useUserCart();
   const { formatPrice } = useCurrency();
   const [isRemoving, setIsRemoving] = useState<string | null>(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   useEffect(() => {
     syncFromDb();
@@ -98,10 +99,13 @@ export default function FavoritesPage() {
   };
 
   const handleClearAll = () => {
-    if (window.confirm('Are you sure you want to clear all favorites?')) {
-      clearFavorites();
-      toast.success('All favorites cleared', { position: 'top-center' });
-    }
+    setShowClearConfirm(true);
+  };
+
+  const confirmClearAll = () => {
+    clearFavorites();
+    setShowClearConfirm(false);
+    toast.success('All favorites cleared', { position: 'top-center' });
   };
 
   const getCurrencySymbol = (code: string) => {
@@ -117,21 +121,7 @@ export default function FavoritesPage() {
 
   return (
     <div className="min-h-screen bg-[#f5f1ed]">
-      {/* Ambient orbs */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <motion.div 
-          className="absolute top-[-80px] right-0 w-[500px] h-[500px] rounded-full bg-[#d4ccc3] blur-[100px] opacity-20"
-          animate={{ scale: [1, 1.15, 1], x: [0, -40, 0] }} 
-          transition={{ duration: 20, repeat: Infinity }} 
-        />
-        <motion.div 
-          className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-[#c8c0b7] blur-[90px] opacity-15"
-          animate={{ scale: [1, 1.1, 1], y: [0, -30, 0] }} 
-          transition={{ duration: 16, repeat: Infinity, delay: 4 }} 
-        />
-      </div>
-
-      <SimpleBackButton />
+      <StoreNavbar />
 
       <main className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 pt-16 pb-24">
         {/* Page Header */}
@@ -194,7 +184,7 @@ export default function FavoritesPage() {
                 <motion.button
                   whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => navigate('/store')}
+                  onClick={() => navigate('/product/sateen-bedding-set-winter-cloud')}
                   className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white text-sm font-bold tracking-[0.2em] uppercase hover:bg-black transition-all shadow-lg"
                 >
                   <ShoppingBag className="w-4 h-4" />
@@ -308,6 +298,57 @@ export default function FavoritesPage() {
           )}
         </AnimatePresence>
       </main>
+
+      {/* Clear All Confirmation Popup */}
+      <AnimatePresence>
+        {showClearConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowClearConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-serif text-gray-900">Clear All Favorites?</h3>
+                <button
+                  onClick={() => setShowClearConfirm(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <X className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+              
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to remove all {items.length} favorite{items.length === 1 ? '' : 's'}? This action cannot be undone.
+              </p>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowClearConfirm(false)}
+                  className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmClearAll}
+                  className="flex-1 px-4 py-2.5 bg-red-500 text-white hover:bg-red-600 rounded-xl transition-colors font-medium"
+                >
+                  Clear All
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -268,7 +268,7 @@ export default function AboutPage() {
                             className="aspect-square md:aspect-auto h-[60vh] md:h-[80vh] relative overflow-hidden group"
                         >
                             <img
-                                src="/image2.png"
+                                src="/clayblush.png"
                                 alt="Our Materials"
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                             />
