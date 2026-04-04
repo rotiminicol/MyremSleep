@@ -17,7 +17,7 @@ export function StoreBelief() {
           margin: '0 auto',
         }}
       >
-        We make one product, made well  sateen bedding designed to feel as intentional as the ritual around it.
+        We began with one thing, premium sateen bedding for calmer evenings and better rest.
       </p>
     </section>
   );
