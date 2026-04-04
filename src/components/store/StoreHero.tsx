@@ -10,7 +10,7 @@ export function StoreHero() {
         style={{
           height: '90vh',
           minHeight: '32rem',
-          backgroundImage: 'url(/herosection5.webp)',
+          backgroundImage: 'url(/HeroImagebeigebedroom.png)',
           backgroundColor: '#E0D8CC', // fallback color
         }}
       >
@@ -49,7 +49,7 @@ export function StoreHero() {
               marginBottom: '2.5rem',
             }}
           >
-            300 thread count Egyptian cotton sateen bedding
+            We make one product, made well sateen bedding designed to feel as intentional as the ritual around it.
           </p>
 
           {/* CTA */}

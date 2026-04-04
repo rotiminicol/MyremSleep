@@ -5,44 +5,88 @@ export function FabricDetail() {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 20rem), 1fr))',
+        gridTemplateColumns: '1fr 1fr',
         minHeight: 'auto',
       }}
     >
-      {/* Image */}
+      {/* Images - Half Section */}
       <div
         style={{
-          position: 'relative',
-          overflow: 'hidden',
-          background: 'linear-gradient(155deg, #D8CFC2, #C8BBAB, #D2C8BA)',
-          minHeight: '580px', // Increased from 480px
-          maxHeight: '580px', // Increased from 480px
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '0',
         }}
       >
-        <img
-          src="/image3.png"
-          alt="Close-up of sateen fabric texture"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', objectPosition: 'center 30%' }}
-          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-        />
-        <span
+        {/* First Image */}
+        <div
           style={{
-            position: 'absolute',
-            bottom: '0.5rem',
-            left: '0.5rem',
-            fontSize: '0.5rem',
-            letterSpacing: '0.12rem',
-            textTransform: 'uppercase',
-            color: '#B8ADA2',
-            fontFamily: "'Jost', sans-serif",
-            fontWeight: 300,
+            position: 'relative',
+            overflow: 'hidden',
+            background: 'linear-gradient(155deg, #D8CFC2, #C8BBAB, #D2C8BA)',
+            minHeight: '580px', // Increased from 480px
+            maxHeight: '580px', // Increased from 480px
+            margin: '0',
+            padding: '0',
           }}
         >
-          Close-up fabric texture
-        </span>
+          <img
+            src="/clayblush1.png"
+            alt="Close-up of sateen fabric texture"
+            style={{ height: '100%', objectFit: 'contain', display: 'block', objectPosition: 'center' }}
+            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+          />
+          <span
+            style={{
+              position: 'absolute',
+              bottom: '0.5rem',
+              left: '0.5rem',
+              fontSize: '0.5rem',
+              letterSpacing: '0.12rem',
+              textTransform: 'uppercase',
+              color: '#B8ADA2',
+              fontFamily: "'Jost', sans-serif",
+              fontWeight: 300,
+            }}
+          >
+            Close-up fabric texture
+          </span>
+        </div>
+
+        {/* Second Image */}
+        <div
+          style={{
+            position: 'relative',
+            overflow: 'hidden',
+            background: 'linear-gradient(155deg, #D8CFC2, #C8BBAB, #D2C8BA)',
+            minHeight: '580px', // Increased from 480px
+            maxHeight: '580px', // Increased from 480px
+          }}
+        >
+          <img
+            src="/clayblush.png"
+            alt="Close-up of sateen fabric texture"
+            style={{ height: '100%', objectFit: 'contain', display: 'block', objectPosition: 'center' }}
+            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+          />
+          <span
+            style={{
+              position: 'absolute',
+              bottom: '0.5rem',
+              left: '0.5rem',
+              fontSize: '0.5rem',
+              letterSpacing: '0.12rem',
+              textTransform: 'uppercase',
+              color: '#B8ADA2',
+              fontFamily: "'Jost', sans-serif",
+              fontWeight: 300,
+            }}
+          >
+            Close-up fabric texture
+          </span>
+        </div>
       </div>
 
-      {/* Copy */}
+      {/* Copy - Other Half */}
       <div
         style={{
           display: 'flex',
